@@ -1,8 +1,8 @@
 package service
 
 import (
-	"github/charmingruby/habits/internal/device/dto"
-	"github/charmingruby/habits/internal/device/repository"
+	"github/charmingruby/gew/internal/device/dto"
+	"github/charmingruby/gew/internal/device/repository"
 )
 
 type UseCase interface {

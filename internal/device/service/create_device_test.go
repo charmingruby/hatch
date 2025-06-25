@@ -2,7 +2,7 @@ package service_test
 
 import (
 	"errors"
-	"github/charmingruby/habits/internal/device/dto"
+	"github/charmingruby/gew/internal/device/dto"
 	"testing"
 	"time"
 

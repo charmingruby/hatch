@@ -1,7 +1,7 @@
 package model
 
 import (
-	"github/charmingruby/habits/pkg/id"
+	"github/charmingruby/gew/pkg/id"
 	"time"
 )
 

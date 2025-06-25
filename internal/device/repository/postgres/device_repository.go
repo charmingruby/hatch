@@ -1,6 +1,6 @@
 package postgres
 
-import "github/charmingruby/habits/internal/device/model"
+import "github/charmingruby/gew/internal/device/model"
 
 type DeviceRepo struct{}
 

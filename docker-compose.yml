@@ -1,13 +1,13 @@
 services:
   postgres:
     image: postgres:15
-    container_name: habit
+    container_name: postgres
     ports:
       - "5432:5432"
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=habit
+      - POSTGRES_DB=gew
     volumes:
       - ./db/seeder:/docker-entrypoint-initdb.d
     

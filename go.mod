@@ -1,4 +1,4 @@
-module github/charmingruby/habits
+module github/charmingruby/gew
 
 go 1.24.3
 

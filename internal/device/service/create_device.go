@@ -1,8 +1,8 @@
 package service
 
 import (
-	"github/charmingruby/habits/internal/device/dto"
-	"github/charmingruby/habits/internal/device/model"
+	"github/charmingruby/gew/internal/device/dto"
+	"github/charmingruby/gew/internal/device/model"
 )
 
 func (s *Service) CreateDevice(dto dto.CreateDeviceInput) error {

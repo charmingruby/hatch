@@ -1,8 +1,8 @@
 package service_test
 
 import (
-	"github/charmingruby/habits/internal/device/mocks"
-	"github/charmingruby/habits/internal/device/service"
+	"github/charmingruby/gew/internal/device/mocks"
+	"github/charmingruby/gew/internal/device/service"
 	"testing"
 )
 

@@ -3,7 +3,7 @@
 package mocks
 
 import (
-	dto "github/charmingruby/habits/internal/device/dto"
+	dto "github/charmingruby/gew/internal/device/dto"
 
 	mock "github.com/stretchr/testify/mock"
 )

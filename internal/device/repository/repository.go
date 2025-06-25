@@ -1,6 +1,6 @@
 package repository
 
-import "github/charmingruby/habits/internal/device/model"
+import "github/charmingruby/gew/internal/device/model"
 
 type DeviceRepository interface {
 	Create(device model.Device) error
