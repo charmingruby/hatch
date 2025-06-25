@@ -3,7 +3,7 @@
 package mocks
 
 import (
-	message "github/charmingruby/habits/internal/device/delivery/queue/message"
+	queue "github/charmingruby/habits/internal/device/delivery/queue"
 
 	mock "github.com/stretchr/testify/mock"
 )
@@ -14,7 +14,7 @@ type DeviceQueue struct {
 }
 
 // OnDeviceConnected provides a mock function with given fields: msg
-func (_m *DeviceQueue) OnDeviceConnected(msg message.OnDeviceConnectedMessage) error {
+func (_m *DeviceQueue) OnDeviceConnected(msg queue.OnDeviceConnectedMessage) error {
 	ret := _m.Called(msg)
 
 	if len(ret) == 0 {
@@ -22,7 +22,7 @@ func (_m *DeviceQueue) OnDeviceConnected(msg message.OnDeviceConnectedMessage) e
 	}
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(message.OnDeviceConnectedMessage) error); ok {
+	if rf, ok := ret.Get(0).(func(queue.OnDeviceConnectedMessage) error); ok {
 		r0 = rf(msg)
 	} else {
 		r0 = ret.Error(0)
