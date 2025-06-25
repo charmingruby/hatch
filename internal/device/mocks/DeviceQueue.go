@@ -13,16 +13,16 @@ type DeviceQueue struct {
 	mock.Mock
 }
 
-// OnDeviceConnected provides a mock function with given fields: msg
-func (_m *DeviceQueue) OnDeviceConnected(msg queue.OnDeviceConnectedMessage) error {
+// OnDeviceBooted provides a mock function with given fields: msg
+func (_m *DeviceQueue) OnDeviceBooted(msg queue.OnDeviceBootedMessage) error {
 	ret := _m.Called(msg)
 
 	if len(ret) == 0 {
-		panic("no return value specified for OnDeviceConnected")
+		panic("no return value specified for OnDeviceBooted")
 	}
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(queue.OnDeviceConnectedMessage) error); ok {
+	if rf, ok := ret.Get(0).(func(queue.OnDeviceBootedMessage) error); ok {
 		r0 = rf(msg)
 	} else {
 		r0 = ret.Error(0)
