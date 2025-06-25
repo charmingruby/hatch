@@ -3,6 +3,8 @@ module github/charmingruby/gew
 go 1.24.3
 
 require (
+	github.com/caarlos0/env v3.5.0+incompatible
+	github.com/joho/godotenv v1.5.1
 	github.com/oklog/ulid/v2 v2.1.1
 	github.com/stretchr/testify v1.10.0
 )
