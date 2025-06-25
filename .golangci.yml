@@ -68,6 +68,8 @@ linters:
     - protogetter
     - reassign
     - recvcheck
+    # Disables documentation lint, if needed, only enable
+    # - revive
     - rowserrcheck
     - sloglint
     - spancheck
