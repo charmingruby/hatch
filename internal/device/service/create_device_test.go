@@ -9,6 +9,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+	"github.com/stretchr/testify/require"
 )
 
 func Test_Service_CreateDevice_Success(t *testing.T) {
@@ -38,10 +39,10 @@ func Test_Service_CreateDevice_DeviceAlreadyExistsErr(t *testing.T) {
 		HardwareType: "Solar",
 	})
 
-	assert.Error(t, err)
+	require.Error(t, err)
 
 	var alreadyExistsErr *errs.ResourceAlreadyExistsError
-	assert.True(t, errors.As(err, &alreadyExistsErr), "expected a ResourceAlreadyExistsError")
+	assert.ErrorAs(t, err, &alreadyExistsErr)
 }
 
 func Test_Service_CreateDevice_RepositoryErr(t *testing.T) {
