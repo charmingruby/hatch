@@ -2,11 +2,13 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"github/charmingruby/pack/config"
 	"github/charmingruby/pack/internal/device"
 	"github/charmingruby/pack/pkg/database/postgres"
 	"github/charmingruby/pack/pkg/http/rest"
 	"github/charmingruby/pack/pkg/telemetry/logger"
+	"github/charmingruby/pack/pkg/validator"
 	"os"
 	"os/signal"
 	"time"
@@ -45,7 +47,9 @@ func main() {
 
 	log.Info("starting device module...")
 
-	if err := device.New(r, db.Conn); err != nil {
+	val := validator.New()
+
+	if err := device.New(r, db.Conn, val); err != nil {
 		log.Error("failed to start device module", "error", err)
 		failAndExit(log, db, nil)
 	}
@@ -69,9 +73,11 @@ func main() {
 
 	log.Info("starting graceful shutdown...")
 
-	gracefulShutdown(log, db, srv)
+	signal := gracefulShutdown(log, db, srv)
 
-	log.Info("gracefully shutdown")
+	log.Info(fmt.Sprintf("gracefully shutdown, with code %d", signal))
+
+	os.Exit(signal)
 }
 
 func failAndExit(log *logger.Logger, db *postgres.Client, srv *rest.Server) {
@@ -79,7 +85,7 @@ func failAndExit(log *logger.Logger, db *postgres.Client, srv *rest.Server) {
 	os.Exit(1)
 }
 
-func gracefulShutdown(log *logger.Logger, db *postgres.Client, srv *rest.Server) {
+func gracefulShutdown(log *logger.Logger, db *postgres.Client, srv *rest.Server) int {
 	parentCtx := context.Background()
 
 	var hasError bool
@@ -105,8 +111,8 @@ func gracefulShutdown(log *logger.Logger, db *postgres.Client, srv *rest.Server)
 	}
 
 	if hasError {
-		os.Exit(1)
+		return 1
 	}
 
-	os.Exit(0)
+	return 0
 }
