@@ -1,7 +1,10 @@
 package repository
 
-import "github/charmingruby/pack/internal/device/model"
+import (
+	"context"
+	"github/charmingruby/pack/internal/device/model"
+)
 
 type DeviceRepository interface {
-	Create(device model.Device) error
+	Create(ctx context.Context, device model.Device) error
 }

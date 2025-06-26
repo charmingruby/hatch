@@ -1,6 +1,7 @@
 package service
 
 import (
+	"context"
 	"github/charmingruby/pack/internal/device/model"
 )
 
@@ -10,7 +11,7 @@ func (s *Service) CreateDevice(in CreateDeviceInput) error {
 		HardwareType: in.HardwareType,
 	})
 
-	if err := s.deviceRepo.Create(device); err != nil {
+	if err := s.deviceRepo.Create(context.Background(), device); err != nil {
 		return err
 	}
 

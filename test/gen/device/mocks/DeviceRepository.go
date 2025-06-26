@@ -3,6 +3,7 @@
 package mocks
 
 import (
+	context "context"
 	model "github/charmingruby/pack/internal/device/model"
 
 	mock "github.com/stretchr/testify/mock"
@@ -13,17 +14,17 @@ type DeviceRepository struct {
 	mock.Mock
 }
 
-// Create provides a mock function with given fields: device
-func (_m *DeviceRepository) Create(device model.Device) error {
-	ret := _m.Called(device)
+// Create provides a mock function with given fields: ctx, device
+func (_m *DeviceRepository) Create(ctx context.Context, device model.Device) error {
+	ret := _m.Called(ctx, device)
 
 	if len(ret) == 0 {
 		panic("no return value specified for Create")
 	}
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(model.Device) error); ok {
-		r0 = rf(device)
+	if rf, ok := ret.Get(0).(func(context.Context, model.Device) error); ok {
+		r0 = rf(ctx, device)
 	} else {
 		r0 = ret.Error(0)
 	}

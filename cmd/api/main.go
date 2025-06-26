@@ -2,6 +2,8 @@ package main
 
 import (
 	"github/charmingruby/pack/config"
+	"github/charmingruby/pack/internal/device"
+	"github/charmingruby/pack/pkg/database/postgres"
 	"github/charmingruby/pack/pkg/http/rest"
 	"github/charmingruby/pack/pkg/telemetry/logger"
 	"os"
@@ -23,7 +25,19 @@ func main() {
 		failAndExit()
 	}
 
-	srv, _ := rest.New(cfg.RestServerPort)
+	db, err := postgres.New(cfg.PostgresURL)
+	if err != nil {
+		log.Error("failed to connect to Postgres", "error", err)
+		failAndExit()
+	}
+
+	srv, r := rest.New(cfg.RestServerPort)
+
+	if err := device.New(r, db.Conn); err != nil {
+		log.Error("failed to start device module", "error", err)
+		failAndExit()
+
+	}
 
 	go func() {
 		log.Info("rest server is running...")

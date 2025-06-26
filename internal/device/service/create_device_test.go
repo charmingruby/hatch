@@ -12,7 +12,7 @@ import (
 func Test_Service_CreateDevice_Success(t *testing.T) {
 	svc, repo := setupTest(t)
 
-	repo.On("Create", mock.Anything).Return(nil)
+	repo.On("Create", mock.Anything, mock.Anything).Return(nil)
 
 	err := svc.CreateDevice(service.CreateDeviceInput{
 		HardwareID:   "1",
@@ -25,7 +25,7 @@ func Test_Service_CreateDevice_Success(t *testing.T) {
 func Test_Service_CreateDevice_RepositoryErr(t *testing.T) {
 	svc, repo := setupTest(t)
 
-	repo.On("Create", mock.Anything).Return(errors.New("operation error"))
+	repo.On("Create", mock.Anything, mock.Anything).Return(errors.New("operation error"))
 
 	err := svc.CreateDevice(service.CreateDeviceInput{
 		HardwareID:   "1",
