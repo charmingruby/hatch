@@ -9,5 +9,5 @@ import (
 func RegisterRoutes(r *gin.Engine, svc service.UseCase) {
 	v1 := r.Group("/api/v1")
 
-	v1.POST("/devices")
+	v1.POST("/devices", createDeviceHandler(svc))
 }
