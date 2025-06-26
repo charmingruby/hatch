@@ -49,7 +49,7 @@ func main() {
 
 	val := validator.New()
 
-	if err := device.New(r, db.Conn, val); err != nil {
+	if err := device.New(log, r, db.Conn, val); err != nil {
 		log.Error("failed to start device module", "error", err)
 		failAndExit(log, db, nil)
 	}

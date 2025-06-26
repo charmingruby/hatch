@@ -14,7 +14,7 @@ func Test_Service_CreateDevice_Success(t *testing.T) {
 
 	repo.On("Create", mock.Anything, mock.Anything).Return(nil)
 
-	err := svc.CreateDevice(service.CreateDeviceInput{
+	_, err := svc.CreateDevice(service.CreateDeviceInput{
 		HardwareID:   "1",
 		HardwareType: "Solar",
 	})
@@ -27,7 +27,7 @@ func Test_Service_CreateDevice_RepositoryErr(t *testing.T) {
 
 	repo.On("Create", mock.Anything, mock.Anything).Return(errors.New("operation error"))
 
-	err := svc.CreateDevice(service.CreateDeviceInput{
+	_, err := svc.CreateDevice(service.CreateDeviceInput{
 		HardwareID:   "1",
 		HardwareType: "Solar",
 	})

@@ -14,21 +14,31 @@ type UseCase struct {
 }
 
 // CreateDevice provides a mock function with given fields: in
-func (_m *UseCase) CreateDevice(in service.CreateDeviceInput) error {
+func (_m *UseCase) CreateDevice(in service.CreateDeviceInput) (service.CreateDeviceOuput, error) {
 	ret := _m.Called(in)
 
 	if len(ret) == 0 {
 		panic("no return value specified for CreateDevice")
 	}
 
-	var r0 error
-	if rf, ok := ret.Get(0).(func(service.CreateDeviceInput) error); ok {
+	var r0 service.CreateDeviceOuput
+	var r1 error
+	if rf, ok := ret.Get(0).(func(service.CreateDeviceInput) (service.CreateDeviceOuput, error)); ok {
+		return rf(in)
+	}
+	if rf, ok := ret.Get(0).(func(service.CreateDeviceInput) service.CreateDeviceOuput); ok {
 		r0 = rf(in)
 	} else {
-		r0 = ret.Error(0)
+		r0 = ret.Get(0).(service.CreateDeviceOuput)
 	}
 
-	return r0
+	if rf, ok := ret.Get(1).(func(service.CreateDeviceInput) error); ok {
+		r1 = rf(in)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
 }
 
 // NewUseCase creates a new instance of UseCase. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.

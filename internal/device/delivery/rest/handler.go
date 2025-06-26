@@ -2,8 +2,9 @@ package rest
 
 import (
 	"github/charmingruby/pack/internal/device/service"
+	"github/charmingruby/pack/pkg/http/rest"
+	"github/charmingruby/pack/pkg/telemetry/logger"
 	"github/charmingruby/pack/pkg/validator"
-	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
@@ -13,30 +14,32 @@ type createDeviceRequest struct {
 	HardwareType string `json:"hardware_type" validate:"required,min=1"`
 }
 
-func createDeviceHandler(svc service.UseCase, v *validator.Validator) gin.HandlerFunc {
+func createDeviceHandler(log *logger.Logger, svc service.UseCase, v *validator.Validator) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		var req createDeviceRequest
 
 		if err := ctx.ShouldBindJSON(&req); err != nil {
-			ctx.JSON(http.StatusBadRequest, gin.H{"error": "invalid json: " + err.Error()})
+			rest.SendBadRequestResponse(ctx, err.Error())
 			return
 		}
 
 		if err := v.Validate(req); err != nil {
-			ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			rest.SendBadRequestResponse(ctx, err.Error())
 			return
 		}
 
-		err := svc.CreateDevice(service.CreateDeviceInput{
+		op, err := svc.CreateDevice(service.CreateDeviceInput{
 			HardwareID:   req.HardwareID,
 			HardwareType: req.HardwareType,
 		})
 
 		if err != nil {
-			ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			log.Error("uncaught error", "error", err)
+
+			rest.SendUncaughtErrorResponse(ctx)
 			return
 		}
 
-		ctx.Status(http.StatusCreated)
+		rest.SendCreatedResponse(ctx, "", op.DeviceID, "device")
 	}
 }

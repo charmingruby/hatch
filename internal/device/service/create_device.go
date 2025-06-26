@@ -5,15 +5,17 @@ import (
 	"github/charmingruby/pack/internal/device/model"
 )
 
-func (s *Service) CreateDevice(in CreateDeviceInput) error {
+func (s *Service) CreateDevice(in CreateDeviceInput) (CreateDeviceOuput, error) {
 	device := model.NewDevice(model.DeviceInput{
 		HardwareID:   in.HardwareID,
 		HardwareType: in.HardwareType,
 	})
 
 	if err := s.deviceRepo.Create(context.Background(), device); err != nil {
-		return err
+		return CreateDeviceOuput{}, err
 	}
 
-	return nil
+	return CreateDeviceOuput{
+		DeviceID: device.ID,
+	}, nil
 }

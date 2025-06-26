@@ -9,8 +9,12 @@ type CreateDeviceInput struct {
 	HardwareType string
 }
 
+type CreateDeviceOuput struct {
+	DeviceID string
+}
+
 type UseCase interface {
-	CreateDevice(in CreateDeviceInput) error
+	CreateDevice(in CreateDeviceInput) (CreateDeviceOuput, error)
 }
 
 type Service struct {
