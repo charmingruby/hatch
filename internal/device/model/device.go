@@ -16,7 +16,6 @@ type Device struct {
 type DeviceInput struct {
 	HardwareID   string
 	HardwareType string
-	IconURL      string
 }
 
 func NewDevice(in DeviceInput) Device {
@@ -24,7 +23,6 @@ func NewDevice(in DeviceInput) Device {
 		ID:           id.New(),
 		HardwareID:   in.HardwareID,
 		HardwareType: in.HardwareType,
-		IconURL:      in.IconURL,
 		CreatedAt:    time.Now(),
 	}
 }

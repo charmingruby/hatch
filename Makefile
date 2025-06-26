@@ -26,7 +26,7 @@ new-mig:
 # Mocks           #
 ###################
 gen-mocks:
-	mockery --output internal/device/mocks --dir internal/device --all
+	mockery --output test/gen/device/mocks --dir internal/device --all
 
 ###################
 # Tests           #

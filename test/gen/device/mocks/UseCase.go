@@ -3,7 +3,7 @@
 package mocks
 
 import (
-	dto "github/charmingruby/gew/internal/device/dto"
+	service "github/charmingruby/gew/internal/device/service"
 
 	mock "github.com/stretchr/testify/mock"
 )
@@ -13,17 +13,17 @@ type UseCase struct {
 	mock.Mock
 }
 
-// CreateDevice provides a mock function with given fields: _a0
-func (_m *UseCase) CreateDevice(_a0 dto.CreateDeviceInput) error {
-	ret := _m.Called(_a0)
+// CreateDevice provides a mock function with given fields: in
+func (_m *UseCase) CreateDevice(in service.CreateDeviceInput) error {
+	ret := _m.Called(in)
 
 	if len(ret) == 0 {
 		panic("no return value specified for CreateDevice")
 	}
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(dto.CreateDeviceInput) error); ok {
-		r0 = rf(_a0)
+	if rf, ok := ret.Get(0).(func(service.CreateDeviceInput) error); ok {
+		r0 = rf(in)
 	} else {
 		r0 = ret.Error(0)
 	}

@@ -1,15 +1,13 @@
 package service
 
 import (
-	"github/charmingruby/gew/internal/device/dto"
 	"github/charmingruby/gew/internal/device/model"
 )
 
-func (s *Service) CreateDevice(dto dto.CreateDeviceInput) error {
+func (s *Service) CreateDevice(in CreateDeviceInput) error {
 	device := model.NewDevice(model.DeviceInput{
-		HardwareID:   dto.HardwareID,
-		HardwareType: dto.HardwareType,
-		IconURL:      "dummy for moment",
+		HardwareID:   in.HardwareID,
+		HardwareType: in.HardwareType,
 	})
 
 	if err := s.deviceRepo.Create(device); err != nil {

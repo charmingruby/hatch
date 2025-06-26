@@ -1,12 +1,16 @@
 package service
 
 import (
-	"github/charmingruby/gew/internal/device/dto"
 	"github/charmingruby/gew/internal/device/repository"
 )
 
+type CreateDeviceInput struct {
+	HardwareID   string
+	HardwareType string
+}
+
 type UseCase interface {
-	CreateDevice(dto dto.CreateDeviceInput) error
+	CreateDevice(in CreateDeviceInput) error
 }
 
 type Service struct {
