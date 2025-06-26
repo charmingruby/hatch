@@ -32,6 +32,34 @@ func (_m *DeviceRepository) Create(ctx context.Context, device model.Device) err
 	return r0
 }
 
+// FindByHardwareIDAndType provides a mock function with given fields: ctx, hwID, hwType
+func (_m *DeviceRepository) FindByHardwareIDAndType(ctx context.Context, hwID string, hwType string) (model.Device, error) {
+	ret := _m.Called(ctx, hwID, hwType)
+
+	if len(ret) == 0 {
+		panic("no return value specified for FindByHardwareIDAndType")
+	}
+
+	var r0 model.Device
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, string, string) (model.Device, error)); ok {
+		return rf(ctx, hwID, hwType)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, string, string) model.Device); ok {
+		r0 = rf(ctx, hwID, hwType)
+	} else {
+		r0 = ret.Get(0).(model.Device)
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context, string, string) error); ok {
+		r1 = rf(ctx, hwID, hwType)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // NewDeviceRepository creates a new instance of DeviceRepository. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.
 // The first argument is typically a *testing.T value.
 func NewDeviceRepository(t interface {

@@ -2,6 +2,7 @@ package postgres
 
 import (
 	"context"
+	"database/sql"
 	"github/charmingruby/pack/internal/device/model"
 	"github/charmingruby/pack/pkg/database/postgres"
 	"time"
@@ -12,7 +13,8 @@ import (
 const (
 	defaultQueryTimeout = 10
 
-	createDevice = "create device"
+	createDevice                  = "create device"
+	findDeviceByHardwareIDAndType = "find device by hardware id and type"
 )
 
 type DeviceRepo struct {
@@ -40,6 +42,9 @@ func NewDeviceRepo(db *sqlx.DB) (*DeviceRepo, error) {
 
 func deviceQueries() map[string]string {
 	return map[string]string{
+		findDeviceByHardwareIDAndType: `
+		SELECT * FROM devices
+		WHERE hardware_id = $1 AND hardware_type = $2`,
 		createDevice: `
 		INSERT INTO devices(
 			id, hardware_id, hardware_type, created_at
@@ -58,6 +63,32 @@ func (r *DeviceRepo) statement(queryName string) (*sqlx.Stmt, error) {
 	}
 
 	return stmt, nil
+}
+
+func (r *DeviceRepo) FindByHardwareIDAndType(ctx context.Context, hwID, hwType string) (model.Device, error) {
+	ctx, cancel := context.WithTimeout(ctx, time.Second*10)
+	defer cancel()
+
+	stmt, err := r.statement(findDeviceByHardwareIDAndType)
+	if err != nil {
+		return model.Device{}, err
+	}
+
+	var device model.Device
+	if err := stmt.QueryRowContext(ctx, hwID, hwType).Scan(
+		&device.ID,
+		&device.HardwareID,
+		&device.HardwareType,
+		&device.CreatedAt,
+	); err != nil {
+		if err == sql.ErrNoRows {
+			return model.Device{}, nil
+		}
+
+		return model.Device{}, err
+	}
+
+	return device, nil
 }
 
 func (r *DeviceRepo) Create(ctx context.Context, device model.Device) error {

@@ -1,7 +1,9 @@
 package rest
 
 import (
+	"errors"
 	"github/charmingruby/pack/internal/device/service"
+	"github/charmingruby/pack/pkg/core/errs"
 	"github/charmingruby/pack/pkg/http/rest"
 	"github/charmingruby/pack/pkg/telemetry/logger"
 	"github/charmingruby/pack/pkg/validator"
@@ -19,12 +21,12 @@ func createDeviceHandler(log *logger.Logger, svc service.UseCase, v *validator.V
 		var req createDeviceRequest
 
 		if err := ctx.ShouldBindJSON(&req); err != nil {
-			rest.SendBadRequestResponse(ctx, err.Error())
+			rest.SendBadRequestErrorResponse(ctx, err.Error())
 			return
 		}
 
 		if err := v.Validate(req); err != nil {
-			rest.SendBadRequestResponse(ctx, err.Error())
+			rest.SendBadRequestErrorResponse(ctx, err.Error())
 			return
 		}
 
@@ -32,8 +34,13 @@ func createDeviceHandler(log *logger.Logger, svc service.UseCase, v *validator.V
 			HardwareID:   req.HardwareID,
 			HardwareType: req.HardwareType,
 		})
-
 		if err != nil {
+			var resourceAlreadyExistsErr *errs.ResourceAlreadyExistsError
+			if errors.As(err, &resourceAlreadyExistsErr) {
+				rest.SendConflictErrorResponse(ctx, err.Error())
+				return
+			}
+
 			log.Error("uncaught error", "error", err)
 
 			rest.SendUncaughtErrorResponse(ctx)

@@ -25,8 +25,12 @@ func SendCreatedResponse(c *gin.Context, msg, id, resource string) {
 	)
 }
 
-func SendBadRequestResponse(c *gin.Context, msg string) {
+func SendBadRequestErrorResponse(c *gin.Context, msg string) {
 	sendResponse(c, http.StatusBadRequest, "", nil, msg)
+}
+
+func SendConflictErrorResponse(c *gin.Context, msg string) {
+	sendResponse(c, http.StatusConflict, "", nil, msg)
 }
 
 func SendUncaughtErrorResponse(c *gin.Context) {
