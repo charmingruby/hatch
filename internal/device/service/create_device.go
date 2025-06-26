@@ -1,7 +1,7 @@
 package service
 
 import (
-	"github/charmingruby/gew/internal/device/model"
+	"github/charmingruby/pack/internal/device/model"
 )
 
 func (s *Service) CreateDevice(in CreateDeviceInput) error {

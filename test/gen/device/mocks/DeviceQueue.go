@@ -3,7 +3,7 @@
 package mocks
 
 import (
-	queue "github/charmingruby/gew/internal/device/delivery/queue"
+	queue "github/charmingruby/pack/internal/device/delivery/queue"
 
 	mock "github.com/stretchr/testify/mock"
 )

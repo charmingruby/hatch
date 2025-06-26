@@ -1,7 +1,7 @@
 package service
 
 import (
-	"github/charmingruby/gew/internal/device/repository"
+	"github/charmingruby/pack/internal/device/repository"
 )
 
 type CreateDeviceInput struct {

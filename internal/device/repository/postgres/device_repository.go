@@ -1,6 +1,6 @@
 package postgres
 
-import "github/charmingruby/gew/internal/device/model"
+import "github/charmingruby/pack/internal/device/model"
 
 const ()
 

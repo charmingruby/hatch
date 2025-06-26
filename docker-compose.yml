@@ -7,7 +7,7 @@ services:
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=gew
+      - POSTGRES_DB=pack
     volumes:
       - ./db/seeder:/docker-entrypoint-initdb.d
     

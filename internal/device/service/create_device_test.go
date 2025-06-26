@@ -2,7 +2,7 @@ package service_test
 
 import (
 	"errors"
-	"github/charmingruby/gew/internal/device/service"
+	"github/charmingruby/pack/internal/device/service"
 	"testing"
 
 	"github.com/stretchr/testify/assert"

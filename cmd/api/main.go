@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github/charmingruby/gew/config"
-	"github/charmingruby/gew/pkg/http/rest"
-	"github/charmingruby/gew/pkg/telemetry/logger"
+	"github/charmingruby/pack/config"
+	"github/charmingruby/pack/pkg/http/rest"
+	"github/charmingruby/pack/pkg/telemetry/logger"
 	"os"
 	"os/signal"
 

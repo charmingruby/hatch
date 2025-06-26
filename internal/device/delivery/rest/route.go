@@ -1,7 +1,7 @@
 package rest
 
 import (
-	"github/charmingruby/gew/internal/device/service"
+	"github/charmingruby/pack/internal/device/service"
 
 	"github.com/gin-gonic/gin"
 )

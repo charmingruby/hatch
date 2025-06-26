@@ -1,4 +1,4 @@
-module github/charmingruby/gew
+module github/charmingruby/pack
 
 go 1.24.3
 

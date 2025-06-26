@@ -3,7 +3,7 @@
 package mocks
 
 import (
-	model "github/charmingruby/gew/internal/device/model"
+	model "github/charmingruby/pack/internal/device/model"
 
 	mock "github.com/stretchr/testify/mock"
 )
