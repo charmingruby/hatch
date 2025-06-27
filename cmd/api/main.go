@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"github/charmingruby/pack/config"
 	"github/charmingruby/pack/internal/device"
+	"github/charmingruby/pack/pkg/broker/mqtt"
 	"github/charmingruby/pack/pkg/database/postgres"
 	"github/charmingruby/pack/pkg/http/rest"
-	"github/charmingruby/pack/pkg/queue/mqtt"
 	"github/charmingruby/pack/pkg/telemetry/logger"
 	"github/charmingruby/pack/pkg/validator"
 	"os"
@@ -60,7 +60,7 @@ func main() {
 
 	val := validator.New()
 
-	if err := device.New(log, r, db.Conn, val); err != nil {
+	if err := device.New(log, broker.Conn, r, db.Conn, val); err != nil {
 		log.Error("failed to start device module", "error", err)
 		failAndExit(log, broker, db, nil)
 	}
@@ -91,12 +91,12 @@ func main() {
 	os.Exit(signal)
 }
 
-func failAndExit(log *logger.Logger, broker *mqtt.MQTT, db *postgres.Client, srv *rest.Server) {
+func failAndExit(log *logger.Logger, broker *mqtt.Client, db *postgres.Client, srv *rest.Server) {
 	gracefulShutdown(log, broker, db, srv)
 	os.Exit(1)
 }
 
-func gracefulShutdown(log *logger.Logger, broker *mqtt.MQTT, db *postgres.Client, srv *rest.Server) int {
+func gracefulShutdown(log *logger.Logger, broker *mqtt.Client, db *postgres.Client, srv *rest.Server) int {
 	parentCtx := context.Background()
 
 	var hasError bool

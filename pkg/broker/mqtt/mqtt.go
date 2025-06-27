@@ -1,14 +1,12 @@
 package mqtt
 
-import (
-	mqtt "github.com/eclipse/paho.mqtt.golang"
-)
+import mqtt "github.com/eclipse/paho.mqtt.golang"
 
-type MQTT struct {
-	Client mqtt.Client
+type Client struct {
+	Conn mqtt.Client
 }
 
-func New(url string) (*MQTT, error) {
+func New(url string) (*Client, error) {
 	opts := mqtt.NewClientOptions().
 		AddBroker(url)
 
@@ -17,13 +15,13 @@ func New(url string) (*MQTT, error) {
 		return nil, token.Error()
 	}
 
-	return &MQTT{
-		Client: client,
+	return &Client{
+		Conn: client,
 	}, nil
 }
 
-func (m *MQTT) Disconnect() {
+func (c *Client) Disconnect() {
 	delay := uint(10000) // 10 seconds
 
-	m.Client.Disconnect(delay)
+	c.Conn.Disconnect(delay)
 }
