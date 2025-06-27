@@ -7,6 +7,7 @@ import (
 	"github/charmingruby/pack/internal/device"
 	"github/charmingruby/pack/pkg/database/postgres"
 	"github/charmingruby/pack/pkg/http/rest"
+	"github/charmingruby/pack/pkg/queue/mqtt"
 	"github/charmingruby/pack/pkg/telemetry/logger"
 	"github/charmingruby/pack/pkg/validator"
 	"os"
@@ -28,17 +29,27 @@ func main() {
 	cfg, err := config.New()
 	if err != nil {
 		log.Error("failed to loading environment variables", "error", err)
-		failAndExit(log, nil, nil)
+		failAndExit(log, nil, nil, nil)
 	}
 
 	log.Info("environment variables loaded")
+
+	log.Info("connecting to MQTT...")
+
+	broker, err := mqtt.New(cfg.MQTTURL)
+	if err != nil {
+		log.Error("failed to connect to MQTT", "error", err)
+		failAndExit(log, nil, nil, nil)
+	}
+
+	log.Info("connected to MQTT")
 
 	log.Info("connecting to Postgres...")
 
 	db, err := postgres.New(cfg.PostgresURL)
 	if err != nil {
 		log.Error("failed to connect to Postgres", "error", err)
-		failAndExit(log, nil, nil)
+		failAndExit(log, broker, nil, nil)
 	}
 
 	log.Info("connected to Postgres")
@@ -51,7 +62,7 @@ func main() {
 
 	if err := device.New(log, r, db.Conn, val); err != nil {
 		log.Error("failed to start device module", "error", err)
-		failAndExit(log, db, nil)
+		failAndExit(log, broker, db, nil)
 	}
 
 	log.Info("device module started")
@@ -61,7 +72,7 @@ func main() {
 
 		if err := srv.Start(); err != nil {
 			log.Error("failed starting rest server", "error", err)
-			failAndExit(log, db, srv)
+			failAndExit(log, broker, db, srv)
 		}
 	}()
 
@@ -73,22 +84,26 @@ func main() {
 
 	log.Info("starting graceful shutdown...")
 
-	signal := gracefulShutdown(log, db, srv)
+	signal := gracefulShutdown(log, broker, db, srv)
 
 	log.Info(fmt.Sprintf("gracefully shutdown, with code %d", signal))
 
 	os.Exit(signal)
 }
 
-func failAndExit(log *logger.Logger, db *postgres.Client, srv *rest.Server) {
-	gracefulShutdown(log, db, srv)
+func failAndExit(log *logger.Logger, broker *mqtt.MQTT, db *postgres.Client, srv *rest.Server) {
+	gracefulShutdown(log, broker, db, srv)
 	os.Exit(1)
 }
 
-func gracefulShutdown(log *logger.Logger, db *postgres.Client, srv *rest.Server) int {
+func gracefulShutdown(log *logger.Logger, broker *mqtt.MQTT, db *postgres.Client, srv *rest.Server) int {
 	parentCtx := context.Background()
 
 	var hasError bool
+
+	if broker != nil {
+		broker.Disconnect()
+	}
 
 	if db != nil {
 		ctx, cancel := context.WithTimeout(parentCtx, 10*time.Second)

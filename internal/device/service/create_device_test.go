@@ -1,7 +1,6 @@
 package service_test
 
 import (
-	"context"
 	"errors"
 	"github/charmingruby/pack/internal/device/model"
 	"github/charmingruby/pack/internal/device/service"
@@ -21,7 +20,7 @@ func Test_Service_CreateDevice_Success(t *testing.T) {
 
 	repo.On("Create", mock.Anything, mock.Anything).Return(nil)
 
-	_, err := svc.CreateDevice(context.Background(), service.CreateDeviceInput{
+	_, err := svc.CreateDevice(t.Context(), service.CreateDeviceInput{
 		HardwareID:   "1",
 		HardwareType: "Solar",
 	})
@@ -35,7 +34,7 @@ func Test_Service_CreateDevice_DeviceAlreadyExistsErr(t *testing.T) {
 	repo.On("FindByHardwareIDAndType", mock.Anything, "1", "Solar").
 		Return(model.Device{ID: "existing-id"}, nil)
 
-	_, err := svc.CreateDevice(context.Background(), service.CreateDeviceInput{
+	_, err := svc.CreateDevice(t.Context(), service.CreateDeviceInput{
 		HardwareID:   "1",
 		HardwareType: "Solar",
 	})
@@ -54,7 +53,7 @@ func Test_Service_CreateDevice_RepositoryErr(t *testing.T) {
 
 	repo.On("Create", mock.Anything, mock.Anything).Return(errors.New("operation error"))
 
-	_, err := svc.CreateDevice(context.Background(), service.CreateDeviceInput{
+	_, err := svc.CreateDevice(t.Context(), service.CreateDeviceInput{
 		HardwareID:   "1",
 		HardwareType: "Solar",
 	})
