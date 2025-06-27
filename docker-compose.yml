@@ -8,3 +8,11 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=pack
+  mqtt:
+    image: eclipse-mosquitto:2.0
+    container_name: mqtt
+    ports:
+      - "1883:1883" # MQTT
+      # - "9001:9001" # WebSocket
+    volumes:
+      - ./infra/docker/mqtt/config:/mosquitto/config
