@@ -9,7 +9,9 @@ import (
 )
 
 func RegisterRoutes(log *logger.Logger, r *gin.Engine, svc service.UseCase, v *validator.Validator) {
-	v1 := r.Group("/api/v1")
+	api := r.Group("/api")
+
+	v1 := api.Group("/v1")
 
 	v1.POST("/devices", createDeviceHandler(log, svc, v))
 }
