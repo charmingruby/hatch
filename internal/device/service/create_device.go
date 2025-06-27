@@ -6,9 +6,7 @@ import (
 	"github/charmingruby/pack/pkg/core/errs"
 )
 
-func (s *Service) CreateDevice(in CreateDeviceInput) (CreateDeviceOuput, error) {
-	ctx := context.Background()
-
+func (s *Service) CreateDevice(ctx context.Context, in CreateDeviceInput) (CreateDeviceOuput, error) {
 	deviceFound, err := s.deviceRepo.FindByHardwareIDAndType(ctx, in.HardwareID, in.HardwareType)
 
 	if err != nil {

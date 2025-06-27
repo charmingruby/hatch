@@ -1,6 +1,7 @@
 package service
 
 import (
+	"context"
 	"github/charmingruby/pack/internal/device/repository"
 )
 
@@ -14,7 +15,7 @@ type CreateDeviceOuput struct {
 }
 
 type UseCase interface {
-	CreateDevice(in CreateDeviceInput) (CreateDeviceOuput, error)
+	CreateDevice(ctx context.Context, in CreateDeviceInput) (CreateDeviceOuput, error)
 }
 
 type Service struct {

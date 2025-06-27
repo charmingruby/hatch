@@ -30,7 +30,7 @@ func createDeviceHandler(log *logger.Logger, svc service.UseCase, v *validator.V
 			return
 		}
 
-		op, err := svc.CreateDevice(service.CreateDeviceInput{
+		op, err := svc.CreateDevice(ctx.Request.Context(), service.CreateDeviceInput{
 			HardwareID:   req.HardwareID,
 			HardwareType: req.HardwareType,
 		})
