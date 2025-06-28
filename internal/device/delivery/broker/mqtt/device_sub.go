@@ -6,31 +6,27 @@ import (
 	mqtt "github.com/eclipse/paho.mqtt.golang"
 )
 
-const QOS_LEVEL = 1
-
-type HandlerFunc func(msg []byte) error
-
-type DeviceBroker struct {
+type DeviceSubscriber struct {
 	cl       mqtt.Client
 	log      *logger.Logger
 	handlers map[string]HandlerFunc
 }
 
-func NewDeviceBroker(log *logger.Logger, cl mqtt.Client) *DeviceBroker {
-	return &DeviceBroker{
+func NewDeviceSubscriber(log *logger.Logger, cl mqtt.Client) *DeviceSubscriber {
+	return &DeviceSubscriber{
 		cl:       cl,
 		log:      log,
 		handlers: make(map[string]HandlerFunc),
 	}
 }
 
-func (m *DeviceBroker) RegisterHandler(topic string, fn HandlerFunc) {
+func (m *DeviceSubscriber) RegisterHandler(topic string, fn HandlerFunc) {
 	m.handlers[topic] = fn
 }
 
-func (m *DeviceBroker) SubscribeAll() error {
+func (m *DeviceSubscriber) SubscribeAll() error {
 	for topic := range m.handlers {
-		token := m.cl.Subscribe(topic, QOS_LEVEL, m.dispatch)
+		token := m.cl.Subscribe(topic, QOS_LEVEL, m.handleMessage)
 
 		token.Wait()
 
@@ -42,12 +38,13 @@ func (m *DeviceBroker) SubscribeAll() error {
 	return nil
 }
 
-func (m *DeviceBroker) OnDeviceBooted(msg []byte) error {
+func (m *DeviceSubscriber) OnDeviceBooted(msg []byte) error {
 	m.log.Debug("message received", "message", string(msg))
+
 	return nil
 }
 
-func (c *DeviceBroker) dispatch(client mqtt.Client, msg mqtt.Message) {
+func (c *DeviceSubscriber) handleMessage(client mqtt.Client, msg mqtt.Message) {
 	handler, ok := c.handlers[msg.Topic()]
 	if !ok {
 		return

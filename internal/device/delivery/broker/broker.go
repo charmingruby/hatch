@@ -1,5 +1,9 @@
 package broker
 
-type DeviceBroker interface {
+type DeviceSubscriber interface {
 	OnDeviceBooted(msg []byte) error
+}
+
+type DevicePublisher interface {
+	DispatchDeviceRegistered(msg DeviceRegisteredMessage) error
 }

@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"github/charmingruby/pack/internal/device/delivery/broker"
 	"github/charmingruby/pack/internal/device/model"
 	"github/charmingruby/pack/pkg/core/errs"
 )
@@ -23,6 +24,12 @@ func (s *Service) CreateDevice(ctx context.Context, in CreateDeviceInput) (Creat
 	})
 
 	if err := s.deviceRepo.Create(ctx, device); err != nil {
+		return CreateDeviceOuput{}, err
+	}
+
+	if err := s.devicePub.DispatchDeviceRegistered(broker.DeviceRegisteredMessage{
+		DeviceID: device.ID,
+	}); err != nil {
 		return CreateDeviceOuput{}, err
 	}
 

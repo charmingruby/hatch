@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"github/charmingruby/pack/internal/device/delivery/broker"
 	"github/charmingruby/pack/internal/device/repository"
 )
 
@@ -20,10 +21,12 @@ type UseCase interface {
 
 type Service struct {
 	deviceRepo repository.DeviceRepository
+	devicePub  broker.DevicePublisher
 }
 
-func New(deviceRepo repository.DeviceRepository) *Service {
+func New(deviceRepo repository.DeviceRepository, devicePub broker.DevicePublisher) *Service {
 	return &Service{
 		deviceRepo: deviceRepo,
+		devicePub:  devicePub,
 	}
 }

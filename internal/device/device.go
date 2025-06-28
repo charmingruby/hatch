@@ -21,15 +21,17 @@ func New(log *logger.Logger, mqttCl mqttLib.Client, r *gin.Engine, db *sqlx.DB, 
 		return err
 	}
 
-	deviceBroker := mqtt.NewDeviceBroker(log, mqttCl)
+	deviceSub := mqtt.NewDeviceSubscriber(log, mqttCl)
 
-	deviceBroker.RegisterHandler("topic/test", deviceBroker.OnDeviceBooted)
+	deviceSub.RegisterHandler("topic/test", deviceSub.OnDeviceBooted)
 
-	if err := deviceBroker.SubscribeAll(); err != nil {
+	if err := deviceSub.SubscribeAll(); err != nil {
 		return err
 	}
 
-	svc := service.New(deviceRepo)
+	devicePub := mqtt.NewDevicePublisher(log, mqttCl)
+
+	svc := service.New(deviceRepo, devicePub)
 
 	rest.RegisterRoutes(log, r, svc, val)
 
