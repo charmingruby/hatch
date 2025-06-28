@@ -23,8 +23,6 @@ func New(log *logger.Logger, mqttCl mqttLib.Client, r *gin.Engine, db *sqlx.DB, 
 
 	deviceSub := mqtt.NewDeviceSubscriber(log, mqttCl)
 
-	deviceSub.RegisterHandler("topic/test", deviceSub.OnDeviceBooted)
-
 	if err := deviceSub.SubscribeAll(); err != nil {
 		return err
 	}
