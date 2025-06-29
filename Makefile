@@ -23,13 +23,12 @@ new-mig:
 	migrate create -ext sql -dir ${MIGRATIONS_PATH} -seq $(NAME)
 
 ###################
-# Mocks           #
+# Testing         #
 ###################
-gen-mocks:
+.PHONY: mock
+mock:
 	mockery --output test/gen/device/mocks --dir internal/device --all
 
-###################
-# Tests           #
-###################
-tests: gen-mocks
+.PHONY: test
+test: mock
 	go test ./...

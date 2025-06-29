@@ -69,7 +69,7 @@ linters:
     - reassign
     - recvcheck
     # Disables documentation lint, if needed, only enable
-    # - revive
+    - revive
     - rowserrcheck
     - sloglint
     - spancheck
