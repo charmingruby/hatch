@@ -6,51 +6,65 @@ func TopicMatchesFilter(filter, topic string) bool {
 	if filter == "" && topic == "" {
 		return true
 	}
-
 	if filter == "" || topic == "" {
 		return false
 	}
 
 	filterSegments := strings.Split(filter, "/")
+
 	topicSegments := strings.Split(topic, "/")
 
-	filterLen := len(filterSegments)
-	topicLen := len(topicSegments)
+	return matchSegments(filterSegments, topicSegments)
+}
 
-	for i := range filterLen {
-		filterSegment := filterSegments[i]
+func matchSegments(filterSegments, topicSegments []string) bool {
+	fLen, tLen := len(filterSegments), len(topicSegments)
 
-		if filterSegment == "#" {
-			if i == filterLen-1 {
-				return true
-			}
-
-			for j := i; j < topicLen; j++ {
-				if TopicMatchesFilter(strings.Join(filterSegments[i+1:], "/"), strings.Join(topicSegments[j:], "/")) {
-					return true
-				}
-			}
+	for i := range fLen {
+		if i >= tLen {
 			return false
 		}
 
-		if i >= topicLen {
-			return false
+		fSeg := filterSegments[i]
+		tSeg := topicSegments[i]
+
+		if isMultiLevelWildcard(fSeg) {
+			return handleMultiLevelWildcard(filterSegments, topicSegments, i)
 		}
 
-		topicSegment := topicSegments[i]
-
-		if filterSegment == "+" {
-			if topicSegment == "" {
+		if isSingleLevelWildcard(fSeg) {
+			if tSeg == "" {
 				return false
 			}
-
 			continue
 		}
 
-		if filterSegment != topicSegment {
+		if fSeg != tSeg {
 			return false
 		}
 	}
 
-	return filterLen == topicLen
+	return fLen == tLen
+}
+
+func isMultiLevelWildcard(segment string) bool {
+	return segment == "#"
+}
+
+func isSingleLevelWildcard(segment string) bool {
+	return segment == "+"
+}
+
+func handleMultiLevelWildcard(filterSegments, topicSegments []string, index int) bool {
+	if index == len(filterSegments)-1 {
+		return true
+	}
+
+	for j := index; j < len(topicSegments); j++ {
+		if matchSegments(filterSegments[index+1:], topicSegments[j:]) {
+			return true
+		}
+	}
+
+	return false
 }

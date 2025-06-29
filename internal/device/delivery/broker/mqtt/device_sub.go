@@ -7,10 +7,6 @@ import (
 	mqttLib "github.com/eclipse/paho.mqtt.golang"
 )
 
-var (
-	onDeviceBootedTopic = buildTopic("+", "+", SERVER_ORIGIN)
-)
-
 type DeviceSubscriber struct {
 	cl       mqttLib.Client
 	log      *logger.Logger
@@ -29,7 +25,7 @@ func (m *DeviceSubscriber) SubscribeAll() error {
 	m.assignHandlersToTopics()
 
 	for topic := range m.handlers {
-		token := m.cl.Subscribe(topic, DEFAULT_QOS_LEVEL, m.handleMessage)
+		token := m.cl.Subscribe(topic, defaultQOSLevel, m.handleMessage)
 
 		token.Wait()
 
@@ -42,7 +38,7 @@ func (m *DeviceSubscriber) SubscribeAll() error {
 }
 
 func (m *DeviceSubscriber) OnDeviceBooted(msg []byte) error {
-	m.log.Debug("message received", "topic", onDeviceBootedTopic, "message", string(msg))
+	m.log.Debug("message received", "message", string(msg))
 
 	return nil
 }
@@ -64,5 +60,5 @@ func (c *DeviceSubscriber) handleMessage(client mqttLib.Client, msg mqttLib.Mess
 }
 
 func (m *DeviceSubscriber) assignHandlersToTopics() {
-	m.handlers[onDeviceBootedTopic] = m.OnDeviceBooted
+	m.handlers[buildTopic("+", "+", serverOrigin)] = m.OnDeviceBooted
 }

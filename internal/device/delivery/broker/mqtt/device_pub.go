@@ -26,9 +26,9 @@ func (p *DevicePublisher) DispatchDeviceRegistered(msg broker.DeviceRegisteredMe
 		return err
 	}
 
-	topic := buildTopic(msg.DeviceID, "registered", SERVER_ORIGIN)
+	topic := buildTopic(msg.DeviceID, "registered", serverOrigin)
 
-	token := p.cl.Publish(topic, DEFAULT_QOS_LEVEL, true, payload)
+	token := p.cl.Publish(topic, defaultQOSLevel, true, payload)
 
 	if err := token.Error(); err != nil {
 		return err

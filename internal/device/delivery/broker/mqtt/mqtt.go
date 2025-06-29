@@ -3,10 +3,10 @@ package mqtt
 import "fmt"
 
 const (
-	DEFAULT_QOS_LEVEL = 1
+	defaultQOSLevel = 1
 
-	SERVER_ORIGIN   = "api"
-	FIRMWARE_ORIGIN = "firmware"
+	serverOrigin   = "api"
+	firmwareOrigin = "firmware"
 )
 
 type HandlerFunc func(msg []byte) error
