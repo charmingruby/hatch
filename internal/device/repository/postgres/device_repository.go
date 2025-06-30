@@ -17,18 +17,27 @@ const (
 	findDeviceByHardwareIDAndType = "find device by hardware id and type"
 )
 
+// DeviceRepo represents repository for "devices" table, have a default query timeout of 10s.
 type DeviceRepo struct {
 	db    *sqlx.DB
 	stmts map[string]*sqlx.Stmt
 }
 
+// NewDeviceRepo creates a DeviceRepo instance
+//
+// Parameters:
+//   - *sqlx.DB: represents the database client
+//
+// Returns:
+//   - *DeviceRepo: device repository
+//   - error: if there is error on preparing statements
 func NewDeviceRepo(db *sqlx.DB) (*DeviceRepo, error) {
 	stmts := make(map[string]*sqlx.Stmt)
 
 	for queryName, statement := range deviceQueries() {
 		stmt, err := db.Preparex(statement)
 		if err != nil {
-			return nil, postgres.NewPreparationErr(queryName, "blocked source", err)
+			return nil, postgres.NewPreparationError(queryName, "device", err)
 		}
 
 		stmts[queryName] = stmt
@@ -59,12 +68,22 @@ func (r *DeviceRepo) statement(queryName string) (*sqlx.Stmt, error) {
 
 	if !ok {
 		return nil,
-			postgres.NewStatementNotPreparedErr(queryName, "blocked source")
+			postgres.NewStatementNotPreparedError(queryName, "device")
 	}
 
 	return stmt, nil
 }
 
+// FindByHardwareIDAndType selects a device by hardware_id and hardware_type
+//
+// Parameters:
+//   - context.Context: sets the context for the query, should be a timeout
+//   - string: hardware_id
+//   - string: hardware_type
+//
+// Returns:
+//   - model.Device: database row, shoud be empty if does not exists
+//   - error: if there is a query error
 func (r *DeviceRepo) FindByHardwareIDAndType(ctx context.Context, hwID, hwType string) (model.Device, error) {
 	ctx, cancel := context.WithTimeout(ctx, time.Second*10)
 	defer cancel()
@@ -91,10 +110,18 @@ func (r *DeviceRepo) FindByHardwareIDAndType(ctx context.Context, hwID, hwType s
 	return device, nil
 }
 
+// Create creates a new device
+//
+// Parameters:
+//   - context.Context: sets the context for the query, should be a timeout
+//   - model.Device: device to be stored
+//
+// Returns:
+//   - error: if there is a query error
 func (r *DeviceRepo) Create(ctx context.Context, device model.Device) error {
 	stmt, err := r.statement(createDevice)
 	if err != nil {
-		return postgres.NewStatementNotPreparedErr(createDevice, "device")
+		return postgres.NewStatementNotPreparedError(createDevice, "device")
 	}
 
 	ctx, cancel := context.WithTimeout(ctx, defaultQueryTimeout*time.Second)
