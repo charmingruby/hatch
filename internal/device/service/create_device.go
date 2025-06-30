@@ -27,7 +27,7 @@ func (s *Service) CreateDevice(ctx context.Context, in CreateDeviceInput) (Creat
 		return CreateDeviceOuput{}, err
 	}
 
-	if err := s.devicePub.DispatchDeviceRegistered(broker.DeviceRegisteredMessage{
+	if err := s.firmwarePub.DispatchDeviceRegistered(broker.DeviceRegisteredMessage{
 		DeviceID: device.ID,
 	}); err != nil {
 		return CreateDeviceOuput{}, err

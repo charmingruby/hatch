@@ -20,13 +20,13 @@ type UseCase interface {
 }
 
 type Service struct {
-	deviceRepo repository.DeviceRepository
-	devicePub  broker.DevicePublisher
+	deviceRepo  repository.DeviceRepository
+	firmwarePub broker.FirmwarePublisher
 }
 
-func New(deviceRepo repository.DeviceRepository, devicePub broker.DevicePublisher) *Service {
+func New(deviceRepo repository.DeviceRepository, firmwarePub broker.FirmwarePublisher) *Service {
 	return &Service{
-		deviceRepo: deviceRepo,
-		devicePub:  devicePub,
+		deviceRepo:  deviceRepo,
+		firmwarePub: firmwarePub,
 	}
 }

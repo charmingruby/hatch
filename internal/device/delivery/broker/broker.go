@@ -1,9 +1,12 @@
+// Package broker provides contracts for messaging.
 package broker
 
-type DeviceSubscriber interface {
+// FirmwareSubscriber is the contract for consuming menssages from firmware.
+type FirmwareSubscriber interface {
 	OnDeviceBooted(msg []byte) error
 }
 
-type DevicePublisher interface {
+// FirmwarePublisher is the contract for publishing menssages from firmware.
+type FirmwarePublisher interface {
 	DispatchDeviceRegistered(msg DeviceRegisteredMessage) error
 }
