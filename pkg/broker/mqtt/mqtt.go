@@ -8,14 +8,14 @@ type Client struct {
 	Conn mqtt.Client
 }
 
-// New creates a Client instance
+// New creates a Client instance.
 //
 // Parameters:
-//   - string: MQTT url (e.g.:"mqtt://localhost:1883")
+//   - string: MQTT url (e.g.:"mqtt://localhost:1883").
 //
 // Returns :
-//   - *Client: MQTT client wrapper instance
-//   - error: if there is any error on connecting to broker
+//   - *Client: MQTT client wrapper instance.
+//   - error: if there is any error on connecting to broker.
 func New(url string) (*Client, error) {
 	opts := mqtt.NewClientOptions().
 		AddBroker(url)

@@ -3,6 +3,13 @@ package mqtt
 import "strings"
 
 // TopicMatchesFilter compares the topic to a filter, validating wildcards.
+//
+// Parameters:
+//   - string: pattern to validate if matches with the topic (e.g.:"devices/+").
+//   - string: topic to be validated.
+//
+// Returns :
+//   - bool: if matches return true, if not, returns false.
 func TopicMatchesFilter(filter, topic string) bool {
 	if filter == "" && topic == "" {
 		return true

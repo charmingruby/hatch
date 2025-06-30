@@ -7,6 +7,15 @@ import (
 	"github/charmingruby/pack/pkg/errs"
 )
 
+// CreateDevice creates a new device from hardware.
+//
+// Parameters:
+//   - context.Context: shared context.
+//   - CreateDeviceInput: input with hardware informations.
+//
+// Returns:
+//   - CreateDeviceOutput: ouput with the created device id.
+//   - error: if there is any logic error.
 func (s *Service) CreateDevice(ctx context.Context, in CreateDeviceInput) (CreateDeviceOuput, error) {
 	deviceFound, err := s.deviceRepo.FindByHardwareIDAndType(ctx, in.HardwareID, in.HardwareType)
 

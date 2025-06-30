@@ -1,7 +1,7 @@
 package model
 
 import (
-	"github/charmingruby/pack/pkg/core/id"
+	"github/charmingruby/pack/pkg/core"
 	"time"
 )
 
@@ -22,13 +22,13 @@ type DeviceInput struct {
 // NewDevice create an instance of Device
 //
 // Parameters:
-//   - DeviceInput: the input data
+//   - DeviceInput: the input data.
 //
 // Returns:
-//   - Device: built Device structure
+//   - Device: built Device structure.
 func NewDevice(in DeviceInput) Device {
 	return Device{
-		ID:           id.New(),
+		ID:           core.NewID(),
 		HardwareID:   in.HardwareID,
 		HardwareType: in.HardwareType,
 		CreatedAt:    time.Now(),

@@ -23,14 +23,14 @@ type DeviceRepo struct {
 	stmts map[string]*sqlx.Stmt
 }
 
-// NewDeviceRepo creates a DeviceRepo instance
+// NewDeviceRepo creates a DeviceRepo instance.
 //
 // Parameters:
-//   - *sqlx.DB: represents the database client
+//   - *sqlx.DB: represents the database client.
 //
 // Returns:
-//   - *DeviceRepo: device repository
-//   - error: if there is error on preparing statements
+//   - *DeviceRepo: device repository.
+//   - error: if there is error on preparing statements.
 func NewDeviceRepo(db *sqlx.DB) (*DeviceRepo, error) {
 	stmts := make(map[string]*sqlx.Stmt)
 
@@ -74,16 +74,16 @@ func (r *DeviceRepo) statement(queryName string) (*sqlx.Stmt, error) {
 	return stmt, nil
 }
 
-// FindByHardwareIDAndType selects a device by hardware_id and hardware_type
+// FindByHardwareIDAndType selects a device by hardware_id and hardware_type.
 //
 // Parameters:
-//   - context.Context: sets the context for the query, should be a timeout
-//   - string: hardware_id
-//   - string: hardware_type
+//   - context.Context: sets the context for the query, should be a timeout.
+//   - string: hardware_id.
+//   - string: hardware_type.
 //
 // Returns:
-//   - model.Device: database row, shoud be empty if does not exists
-//   - error: if there is a query error
+//   - model.Device: database row, shoud be empty if does not exists.
+//   - error: if there is a query error.
 func (r *DeviceRepo) FindByHardwareIDAndType(ctx context.Context, hwID, hwType string) (model.Device, error) {
 	ctx, cancel := context.WithTimeout(ctx, time.Second*10)
 	defer cancel()
@@ -110,14 +110,14 @@ func (r *DeviceRepo) FindByHardwareIDAndType(ctx context.Context, hwID, hwType s
 	return device, nil
 }
 
-// Create creates a new device
+// Create creates a new device.
 //
 // Parameters:
-//   - context.Context: sets the context for the query, should be a timeout
-//   - model.Device: device to be stored
+//   - context.Context: sets the context for the query, should be a timeout.
+//   - model.Device: device to be stored.
 //
 // Returns:
-//   - error: if there is a query error
+//   - error: if there is a query error.
 func (r *DeviceRepo) Create(ctx context.Context, device model.Device) error {
 	stmt, err := r.statement(createDevice)
 	if err != nil {

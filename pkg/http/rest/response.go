@@ -7,12 +7,12 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// SendOKResponse sends a 200 code response
+// SendOKResponse sends a 200 code response.
 //
 // Parameters:
-//   - *gin.Context: gin context is used to manage the response with the server
-//   - string: a message to indicates what happened
-//   - any: any relevant data for the consumer, will ne ommited if empty
+//   - *gin.Context: gin context is used to manage the response with the server.
+//   - string: a message to indicates what happened.
+//   - any: any relevant data for the consumer, will ne ommited if empty.
 //
 // Example:
 //
@@ -27,13 +27,13 @@ func SendOKResponse(c *gin.Context, msg string, data any) {
 	sendResponse(c, http.StatusOK, msg, data, nil)
 }
 
-// SendCreatedResponse sends a 201 code response
+// SendCreatedResponse sends a 201 code response.
 //
 // Parameters:
-//   - *gin.Context: gin context is used to manage the response with the server
-//   - string: a message to return to the client, if is empty, will create a default creation message: "id created successfully"
-//   - string: created resource id
-//   - string: the resource created (e.g.: "device", "user")
+//   - *gin.Context: gin context is used to manage the response with the server.
+//   - string: a message to return to the client, if is empty, will create a default creation message: "id created successfully".
+//   - string: created resource id.
+//   - string: the resource created (e.g.: "device", "user").
 //
 // Example:
 //
@@ -62,8 +62,8 @@ func SendCreatedResponse(c *gin.Context, msg, id, resource string) {
 // Mostly used for payload validation.
 //
 // Parameters:
-//   - *gin.Context: gin context is used to manage the response with the server
-//   - string: any error message
+//   - *gin.Context: gin context is used to manage the response with the server.
+//   - string: any error message.
 //
 // Example:
 //
@@ -77,8 +77,8 @@ func SendBadRequestErrorResponse(c *gin.Context, msg string) {
 // SendConflictErrorResponse sends a 409 code response.
 //
 // Parameters:
-//   - *gin.Context: gin context is used to manage the response with the server
-//   - string: any error message
+//   - *gin.Context: gin context is used to manage the response with the server.
+//   - string: any error message.
 //
 // Example:
 //
@@ -94,8 +94,8 @@ func SendConflictErrorResponse(c *gin.Context, msg string) {
 // Mostly used for when error is not validdated.
 //
 // Parameters:
-//   - *gin.Context: gin context is used to manage the response with the server
-//   - string: any error message
+//   - *gin.Context: gin context is used to manage the response with the server.
+//   - string: any error message.
 //
 // Example:
 //

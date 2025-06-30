@@ -8,6 +8,13 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// RegisterRoutes register all the routes with handlers.
+//
+// Parameters:
+//   - *logger.Logger: app logger.
+//   - *gin.Engine: http handler.
+//   - service.UseCase: application core logic.
+//   - *validator.Validate: validator for payloads.
 func RegisterRoutes(log *logger.Logger, r *gin.Engine, svc service.UseCase, v *validator.Validator) {
 	api := r.Group("/api")
 

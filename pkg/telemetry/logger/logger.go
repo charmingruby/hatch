@@ -25,7 +25,7 @@ var logger *Logger
 // This should be called at the start of the application, before loading config.
 //
 // Returns:
-//   - *Logger: the configured logger instance
+//   - *Logger: the configured logger instance.
 func New() *Logger {
 	log := slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
 		Level: slog.LevelDebug,
@@ -44,10 +44,10 @@ func New() *Logger {
 // Defaults to "info" if an unrecognized value is passed.
 //
 // Parameters:
-//   - level: log level
+//   - string: log level.
 //
 // Returns:
-//   - log level: the log level configured
+//   - string: the log level configured.
 func ChangeLevel(level string) string {
 	var slogLevel slog.Level
 

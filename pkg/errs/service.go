@@ -14,6 +14,12 @@ func (e *ResourceAlreadyExistsError) Error() string {
 }
 
 // NewResourceAlreadyExistsError creates the ResourceAlreadyExistsError.
+//
+// Parameters:
+//   - string: resource conflicting (e.g.:"devices", "users").
+//
+// Returns:
+//   - error: an error if formatted message.
 func NewResourceAlreadyExistsError(resource string) error {
 	return &ResourceAlreadyExistsError{resource: resource}
 }

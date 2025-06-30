@@ -17,11 +17,11 @@ type FirmwarePublisher struct {
 // NewFirmwarePublisher creates a FirmwarePublisher instance.
 //
 // Parameters:
-//   - *logger.Logger: logger instance
-//   - mqttLib.Cllient: MQTT client connection
+//   - *logger.Logger: logger instance.
+//   - mqttLib.Cllient: MQTT client connection.
 //
 // Returns
-//   - *FirmwarePublisher: instance to start publishing to events
+//   - *FirmwarePublisher: instance to start publishing to events.
 func NewFirmwarePublisher(log *logger.Logger, cl mqtt.Client) *FirmwarePublisher {
 	return &FirmwarePublisher{
 		cl:  cl,
@@ -32,10 +32,10 @@ func NewFirmwarePublisher(log *logger.Logger, cl mqtt.Client) *FirmwarePublisher
 // DispatchDeviceRegistered publishes a message to the device topic: "devices/{device_id}/event/registered/from/api".
 //
 // Parameters:
-//   - broker.DeviceRegisteredMessage: message for the respective event
+//   - broker.DeviceRegisteredMessage: message for the respective event.
 //
 // Returns
-//   - error: if there is an error on serializing or on publishing
+//   - error: if there is an error on serializing or on publishing.
 func (p *FirmwarePublisher) DispatchDeviceRegistered(msg broker.DeviceRegisteredMessage) error {
 	payload, err := json.Marshal(msg)
 	if err != nil {

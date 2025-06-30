@@ -16,6 +16,9 @@ type Validator struct {
 }
 
 // New creates and returns a new Validator instance.
+//
+// Returns:
+//   - *Validator: validator instance.
 func New() *Validator {
 	val := validator.New()
 
@@ -24,8 +27,11 @@ func New() *Validator {
 
 // Validate validates the given struct based on `validate` struct tags.
 //
-// If validation passes, it returns nil.
-// If validation fails, it returns a formatted error listing all fields  and their respective failed validation tags.
+// Parameters:
+//   - any: struct to be validated.
+//
+// Returns:
+//   - error: if there is any validation error, with formatted string message.
 //
 // Example struct:
 //

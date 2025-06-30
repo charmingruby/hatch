@@ -8,11 +8,33 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=pack
+    volumes:
+      - ./db/migration:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      retries: 5
+      timeout: 5s
+
   mqtt:
     image: eclipse-mosquitto:2.0
     container_name: mqtt
     ports:
-      - "1883:1883" # MQTT
-      # - "9001:9001" # WebSocket
+      - "1883:1883"
     volumes:
       - ./infra/docker/mqtt/config:/mosquitto/config
+
+  api:
+    container_name: api
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      postgres:
+        condition: service_healthy
+      mqtt:
+        condition: service_started
+    env_file:
+      - .env
+    ports:
+      - "3000:3000"
