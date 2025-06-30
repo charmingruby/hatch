@@ -34,6 +34,10 @@ func main() {
 
 	log.Info("environment variables loaded")
 
+	logLevel := logger.ChangeLevel(cfg.LogLevel)
+
+	log.Info("log level configured", "level", logLevel)
+
 	log.Info("connecting to MQTT...")
 
 	broker, err := mqtt.New(cfg.MQTTURL)
