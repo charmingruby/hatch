@@ -15,7 +15,7 @@ func (s *Service) CreateDevice(ctx context.Context, in CreateDeviceInput) (Creat
 	}
 
 	if deviceFound.ID != "" {
-		return CreateDeviceOuput{}, errs.NewErrResourceAlreadyExists("device")
+		return CreateDeviceOuput{}, errs.NewResourceAlreadyExistsError("device")
 	}
 
 	device := model.NewDevice(model.DeviceInput{
