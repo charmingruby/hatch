@@ -2,6 +2,7 @@ package mqtt
 
 import "strings"
 
+// TopicMatchesFilter compares the topic to a filter, validating wildcards.
 func TopicMatchesFilter(filter, topic string) bool {
 	if filter == "" && topic == "" {
 		return true
