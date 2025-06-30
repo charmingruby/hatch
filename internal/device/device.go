@@ -1,3 +1,4 @@
+// Package device builds the device module components.
 package device
 
 import (
@@ -15,6 +16,17 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
+// New creates all components of the device module, e.g.:  Broker, database, etc.
+//
+// Parameters:
+//   - *logger.Logger: app logger
+//   - mqttLib.Client: mqtt client connection
+//   - *gin.Engine: router
+//   - *sqlx.DB: database connection
+//   - *validator.Validator: validator
+//
+// Returns:
+//   - error: if there is any component creation failure
 func New(log *logger.Logger, mqttCl mqttLib.Client, r *gin.Engine, db *sqlx.DB, val *validator.Validator) error {
 	deviceRepo, err := postgres.NewDeviceRepo(db)
 	if err != nil {
