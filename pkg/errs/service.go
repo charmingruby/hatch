@@ -13,7 +13,7 @@ func (e *ResourceAlreadyExistsError) Error() string {
 	return fmt.Sprintf("%s already exists", e.resource)
 }
 
-// NewErrResourceAlreadyExists creates the ResourceAlreadyExistsError,
+// NewResourceAlreadyExistsError creates the ResourceAlreadyExistsError.
 func NewResourceAlreadyExistsError(resource string) error {
 	return &ResourceAlreadyExistsError{resource: resource}
 }
