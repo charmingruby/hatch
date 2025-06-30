@@ -28,4 +28,4 @@ jobs:
           echo "${HOME}/go/bin" >> $GITHUB_PATH
 
       - name: Run tests
-        run: make tests
+        run: make test
