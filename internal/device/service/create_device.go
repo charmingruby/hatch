@@ -4,7 +4,7 @@ import (
 	"context"
 	"github/charmingruby/pack/internal/device/delivery/broker"
 	"github/charmingruby/pack/internal/device/model"
-	"github/charmingruby/pack/pkg/core/errs"
+	"github/charmingruby/pack/pkg/errs"
 )
 
 func (s *Service) CreateDevice(ctx context.Context, in CreateDeviceInput) (CreateDeviceOuput, error) {

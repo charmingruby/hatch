@@ -3,7 +3,7 @@ package rest
 import (
 	"errors"
 	"github/charmingruby/pack/internal/device/service"
-	"github/charmingruby/pack/pkg/core/errs"
+	"github/charmingruby/pack/pkg/errs"
 	"github/charmingruby/pack/pkg/http/rest"
 	"github/charmingruby/pack/pkg/telemetry/logger"
 	"github/charmingruby/pack/pkg/validator"

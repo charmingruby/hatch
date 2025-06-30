@@ -4,7 +4,7 @@ import (
 	"errors"
 	"github/charmingruby/pack/internal/device/model"
 	"github/charmingruby/pack/internal/device/service"
-	"github/charmingruby/pack/pkg/core/errs"
+	"github/charmingruby/pack/pkg/errs"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
