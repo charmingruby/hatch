@@ -6,9 +6,9 @@ import (
 	"testing"
 )
 
-func setupTest(t *testing.T) (*service.Service, *mocks.DeviceRepository, *mocks.DevicePublisher) {
+func setupTest(t *testing.T) (*service.Service, *mocks.DeviceRepository, *mocks.FirmwarePublisher) {
 	repo := mocks.NewDeviceRepository(t)
-	pub := mocks.NewDevicePublisher(t)
+	pub := mocks.NewFirmwarePublisher(t)
 	svc := service.New(repo, pub)
 
 	return svc, repo, pub
