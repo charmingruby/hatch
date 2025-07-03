@@ -63,6 +63,13 @@
 
 - Modules are located under internal/{module}.
 
+> **Note:** If your project consists of a single domain or module, you don't need to create a dedicated subdirectory under `internal/`. In this case:
+> - Place the code directly under `internal/`
+> - Store mocks directly under `test/gen/`
+> - You may omit a module-level barrel file (e.g., `device.go`)
+>
+> This simplifies the structure while keeping it consistent with the modular design principles.
+
 - For example, the device module is responsible for all device-related logic and is structured as follows:
   - `delivery/` – Entry points to the module (e.g., REST and MQTT):
     - `rest/`: Exposes HTTP endpoints.
