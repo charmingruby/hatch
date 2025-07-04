@@ -7,6 +7,7 @@
 - Code should be as simple as possible for its context, avoiding unnecessary abstractions.
 - Documentation is critical to ensure clarity for both humans and LLMs.
 - Testing is essential. Components must expose interfaces to enable mocking, which is the preferred testing strategy.
+- While the structure is designed to scale across large systems with multiple modules and teams, it can be simplified in smaller applications or prototypes — as long as cohesion and separation of concerns are not compromised.
 
 ---
 
