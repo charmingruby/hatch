@@ -3,8 +3,8 @@ package rest
 import (
 	"errors"
 	"github/charmingruby/pack/internal/device/service"
-	"github/charmingruby/pack/pkg/errs"
-	"github/charmingruby/pack/pkg/http/rest"
+	"github/charmingruby/pack/pkg/core/errs"
+	"github/charmingruby/pack/pkg/delivery/http/rest"
 	"github/charmingruby/pack/pkg/telemetry/logger"
 	"github/charmingruby/pack/pkg/validator"
 
@@ -16,7 +16,7 @@ type createDeviceRequest struct {
 	HardwareType string `json:"hardware_type" validate:"required,min=1"`
 }
 
-func createDeviceHandler(log *logger.Logger, svc service.UseCase, v *validator.Validator) gin.HandlerFunc {
+func makeCreateDeviceHandler(log *logger.Logger, svc service.UseCase, v *validator.Validator) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		var req createDeviceRequest
 

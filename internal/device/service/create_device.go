@@ -2,29 +2,19 @@ package service
 
 import (
 	"context"
-	"github/charmingruby/pack/internal/device/delivery/broker"
 	"github/charmingruby/pack/internal/device/model"
-	"github/charmingruby/pack/pkg/errs"
+	"github/charmingruby/pack/pkg/core/errs"
 )
 
-// CreateDevice creates a new device from hardware.
-//
-// Parameters:
-//   - context.Context: shared context.
-//   - CreateDeviceInput: input with hardware informations.
-//
-// Returns:
-//   - CreateDeviceOutput: ouput with the created device id.
-//   - error: if there is any logic error.
-func (s *Service) CreateDevice(ctx context.Context, in CreateDeviceInput) (CreateDeviceOuput, error) {
+func (s *Service) CreateDevice(ctx context.Context, in CreateDeviceInput) (CreateDeviceOutput, error) {
 	deviceFound, err := s.deviceRepo.FindByHardwareIDAndType(ctx, in.HardwareID, in.HardwareType)
 
 	if err != nil {
-		return CreateDeviceOuput{}, err
+		return CreateDeviceOutput{}, err
 	}
 
 	if deviceFound.ID != "" {
-		return CreateDeviceOuput{}, errs.NewResourceAlreadyExistsError("device")
+		return CreateDeviceOutput{}, errs.NewResourceAlreadyExistsError("device")
 	}
 
 	device := model.NewDevice(model.DeviceInput{
@@ -33,16 +23,10 @@ func (s *Service) CreateDevice(ctx context.Context, in CreateDeviceInput) (Creat
 	})
 
 	if err := s.deviceRepo.Create(ctx, device); err != nil {
-		return CreateDeviceOuput{}, err
+		return CreateDeviceOutput{}, err
 	}
 
-	if err := s.firmwarePub.DispatchDeviceRegistered(broker.DeviceRegisteredMessage{
-		DeviceID: device.ID,
-	}); err != nil {
-		return CreateDeviceOuput{}, err
-	}
-
-	return CreateDeviceOuput{
+	return CreateDeviceOutput{
 		DeviceID: device.ID,
 	}, nil
 }

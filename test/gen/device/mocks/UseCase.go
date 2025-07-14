@@ -15,22 +15,22 @@ type UseCase struct {
 }
 
 // CreateDevice provides a mock function with given fields: ctx, in
-func (_m *UseCase) CreateDevice(ctx context.Context, in service.CreateDeviceInput) (service.CreateDeviceOuput, error) {
+func (_m *UseCase) CreateDevice(ctx context.Context, in service.CreateDeviceInput) (service.CreateDeviceOutput, error) {
 	ret := _m.Called(ctx, in)
 
 	if len(ret) == 0 {
 		panic("no return value specified for CreateDevice")
 	}
 
-	var r0 service.CreateDeviceOuput
+	var r0 service.CreateDeviceOutput
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, service.CreateDeviceInput) (service.CreateDeviceOuput, error)); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, service.CreateDeviceInput) (service.CreateDeviceOutput, error)); ok {
 		return rf(ctx, in)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, service.CreateDeviceInput) service.CreateDeviceOuput); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, service.CreateDeviceInput) service.CreateDeviceOutput); ok {
 		r0 = rf(ctx, in)
 	} else {
-		r0 = ret.Get(0).(service.CreateDeviceOuput)
+		r0 = ret.Get(0).(service.CreateDeviceOutput)
 	}
 
 	if rf, ok := ret.Get(1).(func(context.Context, service.CreateDeviceInput) error); ok {
