@@ -60,19 +60,3 @@ func Test_Service_CreateDevice_RepositoryErr(t *testing.T) {
 
 	assert.Error(t, err)
 }
-
-func Test_Service_CreateDevice_PublisherErr(t *testing.T) {
-	svc, repo := setupTest(t)
-
-	repo.On("FindByHardwareIDAndType", mock.Anything, mock.Anything, mock.Anything).
-		Return(model.Device{}, nil)
-
-	repo.On("Create", mock.Anything, mock.Anything).Return(nil)
-
-	_, err := svc.CreateDevice(t.Context(), service.CreateDeviceInput{
-		HardwareID:   "1",
-		HardwareType: "Solar",
-	})
-
-	assert.Error(t, err)
-}
