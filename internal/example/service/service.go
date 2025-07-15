@@ -2,7 +2,7 @@ package service
 
 import (
 	"context"
-	"github/charmingruby/pack/internal/device/repository"
+	"github/charmingruby/pack/internal/example/repository"
 )
 
 type CreateDeviceInput struct {

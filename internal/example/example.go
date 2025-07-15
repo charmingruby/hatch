@@ -1,9 +1,9 @@
-package device
+package example
 
 import (
-	"github/charmingruby/pack/internal/device/delivery/rest"
-	"github/charmingruby/pack/internal/device/repository/memory"
-	"github/charmingruby/pack/internal/device/service"
+	"github/charmingruby/pack/internal/example/delivery/http/rest"
+	"github/charmingruby/pack/internal/example/repository/memory"
+	"github/charmingruby/pack/internal/example/service"
 
 	"github/charmingruby/pack/pkg/telemetry/logger"
 	"github/charmingruby/pack/pkg/validator"

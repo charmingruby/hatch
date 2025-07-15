@@ -2,7 +2,7 @@ package service
 
 import (
 	"context"
-	"github/charmingruby/pack/internal/device/model"
+	"github/charmingruby/pack/internal/example/model"
 	"github/charmingruby/pack/pkg/core/errs"
 )
 

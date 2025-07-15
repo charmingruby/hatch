@@ -2,8 +2,8 @@ package service_test
 
 import (
 	"errors"
-	"github/charmingruby/pack/internal/device/model"
-	"github/charmingruby/pack/internal/device/service"
+	"github/charmingruby/pack/internal/example/model"
+	"github/charmingruby/pack/internal/example/service"
 	"github/charmingruby/pack/pkg/core/errs"
 	"testing"
 

@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github/charmingruby/pack/config"
-	"github/charmingruby/pack/internal/device"
+	"github/charmingruby/pack/internal/example"
 	"github/charmingruby/pack/internal/platform"
 	"github/charmingruby/pack/pkg/delivery/http/rest"
 	"github/charmingruby/pack/pkg/telemetry/logger"
@@ -41,7 +41,7 @@ func main() {
 
 	val := validator.New()
 
-	if err := device.New(log, r, val); err != nil {
+	if err := example.New(log, r, val); err != nil {
 		log.Error("failed to start device module", "error", err)
 		failAndExit(log, nil)
 	}

@@ -4,7 +4,7 @@ package mocks
 
 import (
 	context "context"
-	service "github/charmingruby/pack/internal/device/service"
+	service "github/charmingruby/pack/internal/example/service"
 
 	mock "github.com/stretchr/testify/mock"
 )

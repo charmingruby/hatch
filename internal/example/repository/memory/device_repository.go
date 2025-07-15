@@ -2,7 +2,7 @@ package memory
 
 import (
 	"context"
-	"github/charmingruby/pack/internal/device/model"
+	"github/charmingruby/pack/internal/example/model"
 )
 
 type DeviceRepository struct {

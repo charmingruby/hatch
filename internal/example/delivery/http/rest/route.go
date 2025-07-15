@@ -1,7 +1,7 @@
 package rest
 
 import (
-	"github/charmingruby/pack/internal/device/service"
+	"github/charmingruby/pack/internal/example/service"
 	"github/charmingruby/pack/pkg/telemetry/logger"
 	"github/charmingruby/pack/pkg/validator"
 
