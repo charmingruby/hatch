@@ -10,7 +10,7 @@ github.com/charmingruby/pack
 
 # 2 - Initialize Your Modules
 
-- Inside the internal/ folder, you’ll find an example module structure.
+- Inside the internal/ folder, you’ll find a suggestion of an example module structure.
 - Use it as a reference to start building your own modules.
 
 # 3 - Testing
