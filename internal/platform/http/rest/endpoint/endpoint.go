@@ -1,8 +1,8 @@
-package platform
+package endpoint
 
 import "github.com/gin-gonic/gin"
 
-func RegisterRoutes(r *gin.Engine) {
+func New(r *gin.Engine) {
 	api := r.Group("/api")
 
 	v1 := api.Group("/v1")

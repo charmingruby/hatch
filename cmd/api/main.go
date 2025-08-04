@@ -4,11 +4,9 @@ import (
 	"context"
 	"fmt"
 	"github/charmingruby/pack/config"
-	"github/charmingruby/pack/internal/example"
 	"github/charmingruby/pack/internal/platform"
 	"github/charmingruby/pack/pkg/delivery/http/rest"
 	"github/charmingruby/pack/pkg/telemetry/logger"
-	"github/charmingruby/pack/pkg/validator"
 	"os"
 	"os/signal"
 	"time"
@@ -38,13 +36,6 @@ func main() {
 	log.Info("log level configured", "level", logLevel)
 
 	srv, r := rest.New(cfg.RestServerPort)
-
-	val := validator.New()
-
-	if err := example.New(log, r, val); err != nil {
-		log.Error("failed to start device module", "error", err)
-		failAndExit(log, nil)
-	}
 
 	platform.New(r)
 
