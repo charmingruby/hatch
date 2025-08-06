@@ -25,3 +25,7 @@ mock:
 .PHONY: test
 test: mock
 	go test ./...
+
+###################
+# Linting         #
+###################
