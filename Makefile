@@ -1,9 +1,26 @@
+MIGRATIONS_PATH="db/migration"
+
+###################
+# Database        #
+###################
+.PHONY: mig-up
+mig-up: ## Runs the migrations up
+	migrate -path $(MIGRATIONS_PATH) -database "$(URL)" up
+
+.PHONY: mig-down
+mig-down: ## Runs the migrations down
+	migrate -path ${MIGRATIONS_PATH} -database "$(URL)" down
+
+.PHONY: new-mig
+new-mig:
+	migrate create -ext sql -dir ${MIGRATIONS_PATH} -seq $(NAME)
+
 ###################
 # Testing         #
 ###################
 .PHONY: mock
 mock:
-	mockery --output test/gen/CHANGE_BY_YOUR_MODULE/mocks --dir internal/CHANGE_BY_YOUR_MODULE --all
+	mockery --output test/gen/example/mocks --dir internal/example --all\
 
 .PHONY: test
 test: mock

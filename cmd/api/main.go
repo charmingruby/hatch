@@ -3,13 +3,15 @@ package main
 import (
 	"context"
 	"fmt"
-	"github/charmingruby/pack/config"
-	"github/charmingruby/pack/internal/platform"
-	"github/charmingruby/pack/pkg/delivery/http/rest"
-	"github/charmingruby/pack/pkg/telemetry/logger"
 	"os"
 	"os/signal"
 	"time"
+
+	"github.com/charmingruby/pack/config"
+	"github.com/charmingruby/pack/internal/platform"
+	"github.com/charmingruby/pack/pkg/database/postgres"
+	"github.com/charmingruby/pack/pkg/delivery/http/rest"
+	"github.com/charmingruby/pack/pkg/telemetry/logger"
 
 	"github.com/joho/godotenv"
 )
@@ -26,7 +28,7 @@ func main() {
 	cfg, err := config.New()
 	if err != nil {
 		log.Error("failed to loading environment variables", "error", err)
-		failAndExit(log, nil)
+		failAndExit(log, nil, nil)
 	}
 
 	log.Info("environment variables loaded")
@@ -35,16 +37,22 @@ func main() {
 
 	log.Info("log level configured", "level", logLevel)
 
+	db, err := postgres.New(log, cfg.PostgresURL)
+	if err != nil {
+		log.Error("failed to loading environment variables", "error", err)
+		failAndExit(log, nil, nil)
+	}
+
 	srv, r := rest.New(cfg.RestServerPort)
 
-	platform.New(r)
+	platform.New(r, db)
 
 	go func() {
-		log.Info("rest server is running...")
+		log.Info("REST server is running...", "port", cfg.RestServerPort)
 
 		if err := srv.Start(); err != nil {
-			log.Error("failed starting rest server", "error", err)
-			failAndExit(log, srv)
+			log.Error("failed starting REST server", "error", err)
+			failAndExit(log, srv, db)
 		}
 	}()
 
@@ -56,19 +64,19 @@ func main() {
 
 	log.Info("starting graceful shutdown...")
 
-	signal := gracefulShutdown(log, srv)
+	signal := gracefulShutdown(log, srv, db)
 
 	log.Info(fmt.Sprintf("gracefully shutdown, with code %d", signal))
 
 	os.Exit(signal)
 }
 
-func failAndExit(log *logger.Logger, srv *rest.Server) {
-	gracefulShutdown(log, srv)
+func failAndExit(log *logger.Logger, srv *rest.Server, db *postgres.Client) {
+	gracefulShutdown(log, srv, db)
 	os.Exit(1)
 }
 
-func gracefulShutdown(log *logger.Logger, srv *rest.Server) int {
+func gracefulShutdown(log *logger.Logger, srv *rest.Server, db *postgres.Client) int {
 	parentCtx := context.Background()
 
 	var hasError bool
@@ -78,7 +86,14 @@ func gracefulShutdown(log *logger.Logger, srv *rest.Server) int {
 		defer cancel()
 
 		if err := srv.Stop(ctx); err != nil {
-			log.Error("error closing rest server", "error", err)
+			log.Error("error closing REST server", "error", err)
+			hasError = true
+		}
+	}
+
+	if db != nil {
+		if err := db.Close(); err != nil {
+			log.Error("error closing Postgres connection", "error", err)
 			hasError = true
 		}
 	}
