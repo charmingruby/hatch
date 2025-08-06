@@ -13,6 +13,7 @@ func NewPreparationErr(queryName string, repository string, err error) *Persiste
 		repository,
 		err.Error(),
 	)
+
 	return newPersistenceError(preparationErr, "prepare", "postgres")
 }
 
