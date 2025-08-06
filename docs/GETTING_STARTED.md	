@@ -1,18 +1,24 @@
 # Getting Started
 
-## 1 - Update Module Reference
+## 1 - Update Module Path
 
-- Replace all occurrences of the following placeholder with your actual module path:
+- Replace all instances of the placeholder module path with your own:
 
 ```bash
 github.com/charmingruby/pack
 ```
 
-# 2 - Initialize Your Modules
+2 - Modules
+- The internal/ directory contains a sample module structure.
+- Use it as a starting point to organize and develop your own modules.
 
-- Inside the internal/ folder, you’ll find a suggestion of an example module structure.
-- Use it as a reference to start building your own modules.
+3 - Testing
+- Ensure test support is properly configured, including usage of mockery.
+- Refer to the Makefile for available test commands and setup instructions.
 
-# 3 - Testing
-- Make sure to configure test support for mockery.
-- Refer to the Makefile for details on how to run and set up the tests.
+4 - Persistence Layer
+- PostgreSQL is configured as the default database.
+- You’ll find ready-to-use assets including:
+    - SQL migration files;
+    - Database setup scripts;
+    - Sample repository pattern implementation;
