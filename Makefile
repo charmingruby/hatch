@@ -1,15 +1,16 @@
 MIGRATIONS_PATH="db/migration"
+DATABASE_URL=postgres://postgres:postgres@localhost:5432/pack?sslmode=disable
 
 ###################
 # Database        #
 ###################
 .PHONY: mig-up
 mig-up: ## Runs the migrations up
-	migrate -path $(MIGRATIONS_PATH) -database "$(URL)" up
+	migrate -path $(MIGRATIONS_PATH) -database "$(DATABASE_URL)" up
 
 .PHONY: mig-down
 mig-down: ## Runs the migrations down
-	migrate -path ${MIGRATIONS_PATH} -database "$(URL)" down
+	migrate -path ${MIGRATIONS_PATH} -database "$(DATABASE_URL)" down
 
 .PHONY: new-mig
 new-mig:

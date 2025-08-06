@@ -8,6 +8,13 @@
 github.com/charmingruby/pack
 ```
 
+- You’ll also find additional references to pack in the following files:
+    - docker-compose.yml
+    - .env and .env.example
+    - Makefile
+
+- Make sure to update them accordingly to reflect your project name.
+
 2 - Modules
 - The internal/ directory contains a sample module structure.
 - Use it as a starting point to organize and develop your own modules.
