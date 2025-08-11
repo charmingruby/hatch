@@ -13,6 +13,10 @@ github.com/charmingruby/pack
     - .env and .env.example
     - Makefile
 
+- On Github Actions, there is a workflow to push container image to DockerHub, but some actions is needed:
+    - Change image name;
+    - Configure repo secrets;
+
 - Make sure to update them accordingly to reflect your project name.
 
 ## 2 - Modules
