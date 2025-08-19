@@ -11,11 +11,11 @@ import (
 )
 
 type ExampleRepo struct {
-	db    postgres.Client
+	db    *postgres.Client
 	stmts map[string]*sqlx.Stmt
 }
 
-func NewExampleRepo(db postgres.Client) (*ExampleRepo, error) {
+func NewExampleRepo(db *postgres.Client) (*ExampleRepo, error) {
 	stmts := make(map[string]*sqlx.Stmt)
 
 	for queryName, statement := range exampleQueries() {
