@@ -34,21 +34,27 @@ github.com/charmingruby/pack
     - Database setup scripts;
     - Sample repository pattern implementation;
 
-## 5 - Communication Layer
+## 5 - Communication Layer  
 
-The `delivery/` directory defines how the application communicates externally.
+The `delivery/` directory defines how the application interacts with the outside world.  
 
-### **`delivery/http/`**
-Synchronous HTTP-based communication:
-- `rest/` — REST APIs
-- `grpc/` — gRPC services
-- `gql/` — GraphQL APIs
+### HTTP Communication  
 
-### **`delivery/event/`**
-Asynchronous, event-driven communication via brokers:
-- `rabbitmq/`
-- `nats/`
-- `kafka/`
+Synchronous communication over HTTP:  
+
+- **`delivery/http/rest/`** — REST APIs  
+- **`delivery/http/grpc/`** — gRPC services  
+- **`delivery/http/gql/`** — GraphQL APIs  
+
+### Event Communication  
+
+Asynchronous, event-driven communication:  
+
+- **Within a Module**  
+  - `internal/MODULE/delivery/event/` — Message definitions specific to that module.  
+
+- **Shared Library**  
+  - `pkg/delivery/messaging/` — Shared contracts and broker implementations.  
 
 **Guidelines:**
 - Avoid deep nesting unless necessary.

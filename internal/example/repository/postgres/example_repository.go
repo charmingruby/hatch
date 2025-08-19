@@ -11,15 +11,15 @@ import (
 )
 
 type ExampleRepo struct {
-	db    *postgres.Client
+	db    *sqlx.DB
 	stmts map[string]*sqlx.Stmt
 }
 
-func NewExampleRepo(db *postgres.Client) (*ExampleRepo, error) {
+func NewExampleRepo(db *sqlx.DB) (*ExampleRepo, error) {
 	stmts := make(map[string]*sqlx.Stmt)
 
 	for queryName, statement := range exampleQueries() {
-		stmt, err := db.Conn.Preparex(statement)
+		stmt, err := db.Preparex(statement)
 		if err != nil {
 			return nil,
 				postgres.NewPreparationErr(queryName, "example", err)
