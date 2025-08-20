@@ -106,6 +106,32 @@
       - **Shared Library**
         - `pkg/delivery/messaging/` — Shared contracts and broker implementations.
 
+        **Example:**
+
+        ```go
+        package messaging
+
+        type Envelope struct {
+          Key     string
+          Message []byte
+        }
+
+        type Event struct {
+          Topic    string
+          Envelope Envelope
+        }
+
+        type Publisher interface {
+          Publish(evt Event) error
+          Close() error
+        }
+
+        type Subscriber interface {
+          Subscribe(handler func(Envelope) error) error
+          Close() error
+        }
+        ```
+
 ## Libraries
   - The `pkg/` directory contains multiple shared libraries across modules.
 	- For broader reusability or third-party dependencies, consider creating external libraries.
