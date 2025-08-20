@@ -1,12 +1,12 @@
 # Getting Started
 
-## 0 - Keep It Simple
+## Simplicity
   - Avoid deep nesting unless necessary.
   - If you are certain you will only use a single package, you can keep just `http/`
     directly — or even skip the `delivery/` folder entirely — to simplify the
     structure.
 
-## 1 - Update Module Path
+## Project Identity
   - Replace all instances of the placeholder module path with your own:
 
   ```bash
@@ -23,22 +23,23 @@
     - Configure repo secrets;
   - Make sure to update them accordingly to reflect your project name.
 
-## 2 - Modules
+## Modules
   - The `internal/` directory contains a sample module structure.
   - Use it as a starting point to organize and develop your own modules.
+  - At the root of each module, there should be a barrel file (module_name.go) containing the module initialization.
 
-## 3 - Testing
+## Testing
   - Ensure test support is properly configured, including usage of mockery.
   - Refer to the Makefile for available test commands and setup instructions.
 
-## 4 - Persistence Layer
+## Persistence Layer
   - PostgreSQL is configured as the default database.
   - You’ll find ready-to-use assets including:
     - SQL migration files;
     - Database setup scripts;
     - Sample repository pattern implementation;
 
-## 5 - Communication Layer
+## Communication Layer
 
   The `delivery/` directory defines how the application interacts with the outside
   world.
@@ -105,6 +106,6 @@
       - **Shared Library**
         - `pkg/delivery/messaging/` — Shared contracts and broker implementations.
 
-## 6 - Libraries
+## Libraries
   - The `pkg/` directory contains multiple shared libraries across modules.
 	- For broader reusability or third-party dependencies, consider creating external libraries.
