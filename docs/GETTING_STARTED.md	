@@ -1,62 +1,110 @@
 # Getting Started
 
+## 0 - Keep It Simple
+  - Avoid deep nesting unless necessary.
+  - If you are certain you will only use a single package, you can keep just `http/`
+    directly — or even skip the `delivery/` folder entirely — to simplify the
+    structure.
+
 ## 1 - Update Module Path
+  - Replace all instances of the placeholder module path with your own:
 
-- Replace all instances of the placeholder module path with your own:
+  ```bash
+  github.com/charmingruby/pack
+  ```
 
-```bash
-github.com/charmingruby/pack
-```
-
-- You’ll also find additional references to pack in the following files:
+  - You’ll also find additional references to pack in the following files:
     - docker-compose.yml
     - .env and .env.example
     - Makefile
-
-- On Github Actions, there is a workflow to push container image to DockerHub, but some actions is needed:
+  - On Github Actions, there is a workflow to push container image to DockerHub,
+    but some actions is needed:
     - Change image name;
     - Configure repo secrets;
-
-- Make sure to update them accordingly to reflect your project name.
+  - Make sure to update them accordingly to reflect your project name.
 
 ## 2 - Modules
-- The internal/ directory contains a sample module structure.
-- Use it as a starting point to organize and develop your own modules.
+  - The `internal/` directory contains a sample module structure.
+  - Use it as a starting point to organize and develop your own modules.
 
 ## 3 - Testing
-- Ensure test support is properly configured, including usage of mockery.
-- Refer to the Makefile for available test commands and setup instructions.
+  - Ensure test support is properly configured, including usage of mockery.
+  - Refer to the Makefile for available test commands and setup instructions.
 
 ## 4 - Persistence Layer
-- PostgreSQL is configured as the default database.
-- You’ll find ready-to-use assets including:
+  - PostgreSQL is configured as the default database.
+  - You’ll find ready-to-use assets including:
     - SQL migration files;
     - Database setup scripts;
     - Sample repository pattern implementation;
 
-## 5 - Communication Layer  
+## 5 - Communication Layer
 
-The `delivery/` directory defines how the application interacts with the outside world.  
+  The `delivery/` directory defines how the application interacts with the outside
+  world.
 
-### HTTP Communication  
+  ### HTTP Communication
 
-Synchronous communication over HTTP:  
+    Synchronous communication over HTTP:
 
-- **`delivery/http/rest/`** — REST APIs  
-- **`delivery/http/grpc/`** — gRPC services  
-- **`delivery/http/gql/`** — GraphQL APIs  
+    - **`delivery/http/rest/`** — REST APIs
+    - **`delivery/http/grpc/`** — gRPC services
+    - **`delivery/http/gql/`** — GraphQL APIs
 
-### Event Communication  
+    ### Event Communication
+      
+      Asynchronous, event-driven communication:
 
-Asynchronous, event-driven communication:  
+      - **Within a Module**
+        - `internal/MODULE/delivery/event/` — Message definitions specific to that
+          module.
 
-- **Within a Module**  
-  - `internal/MODULE/delivery/event/` — Message definitions specific to that module.  
+        **Example:**
 
-- **Shared Library**  
-  - `pkg/delivery/messaging/` — Shared contracts and broker implementations.  
+        ```go
+        package event
 
-**Guidelines:**
-- Avoid deep nesting unless necessary.
-- If you are certain you will only use a single package, you can keep just `http/` directly — or even skip the `delivery/` folder entirely — to simplify the structure.
-- The same separation exists in `pkg/` for clarity and reusability.
+        import (
+          "encoding/json"
+          "time"
+
+          "github.com/charmingruby/gox/pkg/core"
+          "github.com/charmingruby/gox/pkg/delivery/messaging"
+        )
+
+        const transactionCreatedTopic = "transaction.created"
+
+        type TransactionCreatedMessage struct {
+          ID        string    `json:"id"`
+          From      string    `json:"from"`
+          To        string    `json:"to"`
+          Amount    int       `json:"amount"`
+          SourcedAt time.Time `json:"sourced_at"`
+        }
+
+        func (m *TransactionCreatedMessage) serialize() ([]byte, error) {
+          return json.Marshal(m)
+        }
+
+        func NewTransactionCreatedEvent(msg TransactionCreatedMessage) (messaging.Event, error) {
+          serializedMsg, err := msg.serialize()
+          if err != nil {
+            return messaging.Event{}, core.NewSerializationError(err, true, core.JSONFormat)
+          }
+
+          return messaging.Event{
+            Topic: transactionCreatedTopic,
+            Envelope: messaging.Envelope{
+              Key:     core.NewID(),
+              Message: serializedMsg,
+            },
+          }, nil
+        }
+        ```
+
+      - **Shared Library**
+        - `pkg/delivery/messaging/` — Shared contracts and broker implementations.
+
+## 6 - Libraries
+  - The `pkg/` directory contains multiple shared libraries across modules.
+	- For broader reusability or third-party dependencies, consider creating external libraries.
