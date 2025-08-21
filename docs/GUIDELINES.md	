@@ -1,11 +1,5 @@
 # Getting Started
 
-## Simplicity
-  - Avoid deep nesting unless necessary.
-  - If you are certain you will only use a single package, you can keep just `http/`
-    directly — or even skip the `delivery/` folder entirely — to simplify the
-    structure.
-
 ## Project Identity
   - Replace all instances of the placeholder module path with your own:
 
@@ -136,3 +130,10 @@
 ## Libraries
   - The `pkg/` directory contains multiple shared libraries across modules.
 	- For broader reusability or third-party dependencies, consider creating external libraries.
+
+## Opinative Guidelines
+  - Avoid deep nesting unless necessary.
+  - If you are certain you will only use a single package, you can keep just `http/`
+    directly — or even skip the `delivery/` folder entirely — to simplify the
+    structure.
+  - If a package contains multiple components that need to be exposed externally, create a barrel file to orchestrate these setups.
