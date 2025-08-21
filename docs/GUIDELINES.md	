@@ -70,28 +70,42 @@
           "github.com/charmingruby/gox/pkg/delivery/messaging"
         )
 
-        const transactionCreatedTopic = "transaction.created"
+        const TransactionCreatedTopic = "transaction.created"
 
         type TransactionCreatedMessage struct {
+          SourcedAt time.Time `json:"sourced_at"`
           ID        string    `json:"id"`
           From      string    `json:"from"`
           To        string    `json:"to"`
           Amount    int       `json:"amount"`
-          SourcedAt time.Time `json:"sourced_at"`
         }
 
-        func (m *TransactionCreatedMessage) serialize() ([]byte, error) {
-          return json.Marshal(m)
+        func (m *TransactionCreatedMessage) Serialize() ([]byte, error) {
+          payload, err := json.Marshal(m)
+          if err != nil {
+            return nil, core.NewSerializationError(err, true, core.JSONFormat)
+          }
+
+          return payload, nil
+        }
+
+        func (m *TransactionCreatedMessage) Deserialize(payload []byte) error {
+          if err := json.Unmarshal(payload, m); err != nil {
+            return core.NewSerializationError(err, false, core.JSONFormat)
+          }
+
+          return nil
         }
 
         func NewTransactionCreatedEvent(msg TransactionCreatedMessage) (messaging.Event, error) {
-          serializedMsg, err := msg.serialize()
+          serializedMsg, err := msg.Serialize()
+
           if err != nil {
-            return messaging.Event{}, core.NewSerializationError(err, true, core.JSONFormat)
+            return messaging.Event{}, err
           }
 
           return messaging.Event{
-            Topic: transactionCreatedTopic,
+            Topic: TransactionCreatedTopic,
             Envelope: messaging.Envelope{
               Key:     core.NewID(),
               Message: serializedMsg,
