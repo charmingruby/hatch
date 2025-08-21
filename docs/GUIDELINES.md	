@@ -57,8 +57,9 @@
       Asynchronous, event-driven communication:
 
       - **Within a Module**
-        - `internal/MODULE/delivery/event/` — Message definitions specific to that
-          module.
+        - `internal/MODULE/delivery/messaging/listener/` — Event listeners, can contain infra stuff.
+        - `internal/MODULE/delivery/messaging/event/` — Message definitions specific to that
+          module, must contain only contracts and serializations, so it can be used on UseCases.
 
         **Example:**
 
