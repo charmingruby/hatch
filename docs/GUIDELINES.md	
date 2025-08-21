@@ -51,9 +51,11 @@
       Asynchronous, event-driven communication:
 
       - **Within a Module**
-        - `internal/MODULE/delivery/messaging/listener/` — Event listeners, can contain infra stuff.
-        - `internal/MODULE/delivery/messaging/event/` — Message definitions specific to that
-          module, must contain only contracts and serializations, so it can be used on UseCases.
+        - `internal/MODULE/delivery/messaging/listener/` — Contains **event listeners**.  
+          - Convention: if the event is named `transaction.created`, the listener function should be `onTransactionCreated`.
+
+        - `internal/MODULE/delivery/messaging/event/` — Defines the **module-specific events**.  
+          - Must include only **contracts and serializations**, so they can be reused in **UseCases** without depending on the delivery layer.
 
         **Example:**
 
