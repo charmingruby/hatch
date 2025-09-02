@@ -37,11 +37,15 @@ func main() {
 
 	log.Info("log level configured", "level", logLevel)
 
+	log.Info("connecting to Postgres...")
+
 	db, err := postgres.New(log, cfg.PostgresURL)
 	if err != nil {
-		log.Error("failed to loading environment variables", "error", err)
+		log.Error("failed connect to Postgres", "error", err)
 		failAndExit(log, nil, nil)
 	}
+
+	log.Info("connected to Postgres successfully")
 
 	srv, r := rest.New(cfg.RestServerPort)
 
