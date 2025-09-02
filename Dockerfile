@@ -15,7 +15,6 @@ WORKDIR /app
 COPY --from=deps /go/pkg /go/pkg
 COPY . .
 
-
 RUN go build -ldflags="-w -s" -o main ./cmd/api/main.go
 
 # Final stage: Run the application
@@ -36,5 +35,7 @@ RUN chown appuser:appuser /app/main
 
 # Switch to the non-root user
 USER appuser
+
+EXPOSE 3000
 
 CMD ["./main"]
