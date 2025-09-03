@@ -283,7 +283,7 @@
         ```
 
 ## Libraries
-  - The `pkg/` directory contains multiple shared libraries across modules.
+  - The `pkg/` directory contains multiple shared libraries and infrastructure implementations across modules.
 	- For broader reusability or third-party dependencies, consider creating external libraries.
 
 ## Opinative Guidelines
