@@ -51,7 +51,7 @@
       Asynchronous, event-driven communication:
 
       - **Within a Module**
-        - `internal/MODULE/delivery/messaging/listener/` — Contains **event listeners**.  
+        - `internal/MODULE/delivery/messaging/subscriber/` — Contains **event listeners**.  
           - Convention: if the event is named `transaction.created`, the listener function should be `onTransactionCreated`.
 
         - `internal/MODULE/delivery/messaging/event/` — Defines the **module-specific events**.  
