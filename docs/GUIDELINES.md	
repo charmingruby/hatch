@@ -25,6 +25,19 @@
 ## Testing
   - Ensure test support is properly configured, including usage of mockery.
   - Refer to the Makefile for available test commands and setup instructions.
+  
+  ### Test Scenarios Documentation
+  ```
+  <action> <result> when/for/etc <condition>
+  ```
+  
+  **Example**
+  ```
+  should return stash with default values when no options are provided
+  should return ErrExpired when key is expired
+  should store new entry successfully
+  should return ErrInvalidKey when key format is invalid 
+  ```
 
 ## Persistence Layer
   - PostgreSQL is configured as the default database.
