@@ -1,4 +1,4 @@
-# Getting Started
+# Guidelines
 
 ## Project Identity
   - Replace all instances of the placeholder module path with your own:
@@ -286,7 +286,7 @@
   - The `pkg/` directory contains multiple shared libraries and infrastructure implementations across modules.
 	- For broader reusability or third-party dependencies, consider creating external libraries.
 
-## Opinative Guidelines
+## Tips
   - Avoid deep nesting unless necessary.
   - If you are certain you will only use a single package, you can keep just `http/`
     directly — or even skip the `delivery/` folder entirely — to simplify the

@@ -20,6 +20,7 @@ jobs:
           cache: false
 
       - name: Install dependencies
+        working-directory: app
         run: |
           go mod tidy
 
@@ -29,4 +30,5 @@ jobs:
           echo "${HOME}/go/bin" >> $GITHUB_PATH
 
       - name: Run tests
+        working-directory: app
         run: make test
