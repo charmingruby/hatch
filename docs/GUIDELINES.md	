@@ -31,7 +31,7 @@
   <action> <result> when/for/etc <condition>
   ```
   
-  **Example**
+  **Scenario Example**
   ```
   should return stash with default values when no options are provided
   should return ErrExpired when key is expired
