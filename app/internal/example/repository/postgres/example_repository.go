@@ -39,7 +39,7 @@ func (r *ExampleRepo) statement(queryName string) (*sqlx.Stmt, error) {
 
 	if !ok {
 		return nil,
-			postgres.NewStatementNotPreparedErr(queryName, "dummy example")
+			postgres.NewStatementNotPreparedErr(queryName, "example")
 	}
 
 	return stmt, nil
