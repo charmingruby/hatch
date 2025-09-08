@@ -57,13 +57,13 @@ func (s *Server) Start() error {
 	return s.server.ListenAndServe()
 }
 
-// Stop gracefully shuts down the HTTP server with the provided context.
+// Close gracefully shuts down the HTTP server with the provided context.
 //
 // Parameters:
 //   - context.Context: used for controlling shutdown.
 //
 // Returns:
 //   - error: if there is any error on shutting down the server.
-func (s *Server) Stop(ctx context.Context) error {
+func (s *Server) Close(ctx context.Context) error {
 	return s.server.Shutdown(ctx)
 }

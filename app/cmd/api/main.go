@@ -89,7 +89,7 @@ func gracefulShutdown(log *logger.Logger, srv *rest.Server, db *postgres.Client)
 		ctx, cancel := context.WithTimeout(parentCtx, 15*time.Second)
 		defer cancel()
 
-		if err := srv.Stop(ctx); err != nil {
+		if err := srv.Close(ctx); err != nil {
 			log.Error("error closing REST server", "error", err)
 			hasError = true
 		}
