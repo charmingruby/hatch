@@ -11,7 +11,7 @@ import (
 
 const TIMEOUT_IN_SECONDS = 10
 
-func makeReadiness(db *postgres.Client) gin.HandlerFunc {
+func (e *Endpoint) readinessHandler(db *postgres.Client) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx, cancel := context.WithTimeout(context.Background(), TIMEOUT_IN_SECONDS*time.Second)
 		defer cancel()

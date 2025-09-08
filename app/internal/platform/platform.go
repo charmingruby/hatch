@@ -8,5 +8,5 @@ import (
 )
 
 func New(r *gin.Engine, db *postgres.Client) {
-	endpoint.New(r, db)
+	endpoint.New(r, db).Register()
 }

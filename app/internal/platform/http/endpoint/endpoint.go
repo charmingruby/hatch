@@ -5,11 +5,23 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func New(r *gin.Engine, db *postgres.Client) {
-	api := r.Group("/api")
+type Endpoint struct {
+	router *gin.Engine
+	db     *postgres.Client
+}
+
+func New(r *gin.Engine, db *postgres.Client) *Endpoint {
+	return &Endpoint{
+		router: r,
+		db:     db,
+	}
+}
+
+func (e *Endpoint) Register() {
+	api := e.router.Group("/api")
 
 	v1 := api.Group("/v1")
 
-	v1.GET("/health/live", makeLiveness())
-	v1.GET("/health/ready", makeReadiness(db))
+	v1.GET("/health/live", e.livenessHandler())
+	v1.GET("/health/ready", e.readinessHandler(e.db))
 }
