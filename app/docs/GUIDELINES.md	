@@ -1,0 +1,294 @@
+# Guidelines
+
+## Project Identity
+  - Replace all instances of the placeholder module path with your own:
+
+  ```bash
+  github.com/charmingruby/pack
+  ```
+
+  - You’ll also find additional references to pack in the following files:
+    - docker-compose.yml
+    - .env and .env.example
+    - Makefile
+  - On Github Actions, there is a workflow to push container image to DockerHub,
+    but some actions is needed:
+    - Change image name;
+    - Configure repo secrets;
+  - Make sure to update them accordingly to reflect your project name.
+
+## Modules
+  - The `internal/` directory contains a sample module structure.
+  - Use it as a starting point to organize and develop your own modules.
+  - At the root of each module, there should be a barrel file (module_name.go) containing the module initialization.
+
+## Testing
+  - Ensure test support is properly configured, including usage of mockery.
+  - Refer to the Makefile for available test commands and setup instructions.
+  
+  ### Test Scenarios Documentation
+  ```
+  <action> <result> when/for/etc <condition>
+  ```
+  
+  **Scenario Example**
+  ```
+  should return stash with default values when no options are provided
+  should return ErrExpired when key is expired
+  should store new entry successfully
+  should return ErrInvalidKey when key format is invalid 
+  ```
+
+  **Code Example**
+  ```
+  func Test_SignUp(t *testing.T) {
+    ctx := context.Background()
+    dummyNickname := "gustavo"
+    dummyPassword := "123456"
+    dummyHash := "hashed-pass"
+    dummyExistingID := "existing-id"
+
+    t.Run("should return database error when FindByNickname fails", func(t *testing.T) {
+      s := setupTest(t)
+
+      s.repo.
+        On("FindByNickname", ctx, dummyNickname).
+        Return(model.User{}, errors.New("db error")).
+        Once()
+
+      err := s.usecase.SignUp(ctx, usecase.SignUpInput{
+        Nickname: dummyNickname,
+        Password: dummyPassword,
+      })
+
+      assert.Error(t, err)
+
+      var targetErr *core.DatabaseError
+      assert.ErrorAs(t, err, &targetErr)
+    })
+
+    t.Run("should return conflict error when user already exists", func(t *testing.T) {
+      s := setupTest(t)
+
+      s.repo.
+        On("FindByNickname", ctx, dummyNickname).
+        Return(model.User{ID: dummyExistingID}, nil).
+        Once()
+
+      err := s.usecase.SignUp(ctx, usecase.SignUpInput{
+        Nickname: dummyNickname,
+        Password: dummyPassword,
+      })
+
+      assert.Error(t, err)
+
+      var targetErr *core.ConflictError
+      assert.ErrorAs(t, err, &targetErr)
+    })
+
+    t.Run("should return error when hasher fails", func(t *testing.T) {
+      s := setupTest(t)
+
+      s.repo.
+        On("FindByNickname", ctx, dummyNickname).
+        Return(model.User{}, nil).
+        Once()
+
+      s.hasher.
+        On("Hash", dummyPassword).
+        Return("", errors.New("hash error")).
+        Once()
+
+      err := s.usecase.SignUp(ctx, usecase.SignUpInput{
+        Nickname: dummyNickname,
+        Password: dummyPassword,
+      })
+
+      assert.Error(t, err)
+      assert.EqualError(t, err, "hash error")
+    })
+
+    t.Run("should return database error when Create fails", func(t *testing.T) {
+      s := setupTest(t)
+
+      s.repo.
+        On("FindByNickname", ctx, dummyNickname).
+        Return(model.User{}, nil).
+        Once()
+
+      s.hasher.
+        On("Hash", dummyPassword).
+        Return(dummyHash, nil).
+        Once()
+
+      s.repo.
+        On("Create", ctx, mock.AnythingOfType("model.User")).
+        Return(errors.New("db error")).
+        Once()
+
+      err := s.usecase.SignUp(ctx, usecase.SignUpInput{
+        Nickname: dummyNickname,
+        Password: dummyPassword,
+      })
+
+      assert.Error(t, err)
+
+      var targetErr *core.DatabaseError
+      assert.ErrorAs(t, err, &targetErr)
+    })
+
+    t.Run("should sign up successfully", func(t *testing.T) {
+      s := setupTest(t)
+
+      s.repo.
+        On("FindByNickname", ctx, dummyNickname).
+        Return(model.User{}, nil).
+        Once()
+
+      s.hasher.
+        On("Hash", dummyPassword).
+        Return(dummyHash, nil).
+        Once()
+
+      s.repo.
+        On("Create", ctx, mock.AnythingOfType("model.User")).
+        Return(nil).
+        Once()
+
+      err := s.usecase.SignUp(ctx, usecase.SignUpInput{
+        Nickname: dummyNickname,
+        Password: dummyPassword,
+      })
+
+      assert.NoError(t, err)
+    })
+  }
+  ```
+
+## Persistence Layer
+  - PostgreSQL is configured as the default database.
+  - You’ll find ready-to-use assets including:
+    - SQL migration files;
+    - Database setup scripts;
+    - Sample repository pattern implementation;
+
+## Communication Layer
+
+  The `delivery/` directory defines how the application interacts with the outside
+  world.
+
+  ### HTTP Communication
+
+    Synchronous communication over HTTP:
+
+    - **`delivery/http/rest/`** — REST APIs
+    - **`delivery/http/grpc/`** — gRPC services
+    - **`delivery/http/gql/`** — GraphQL APIs
+
+    ### Event Communication
+      
+      Asynchronous, event-driven communication:
+
+      - **Within a Module**
+        - `internal/MODULE/delivery/messaging/subscriber/` — Contains **event listeners**.  
+          - Convention: if the event is named `transaction.created`, the listener function should be `onTransactionCreated`.
+
+        - `internal/MODULE/delivery/messaging/event/` — Defines the **module-specific events**.  
+          - Must include only **contracts and serializations**, so they can be reused in **UseCases** without depending on the delivery layer.
+
+        **Example:**
+
+        ```go
+        package event
+
+        import (
+          "encoding/json"
+          "time"
+
+          "github.com/charmingruby/gox/pkg/core"
+          "github.com/charmingruby/gox/pkg/delivery/messaging"
+        )
+
+        const TransactionCreatedTopic = "transaction.created"
+
+        type TransactionCreatedMessage struct {
+          SourcedAt time.Time `json:"sourced_at"`
+          ID        string    `json:"id"`
+          From      string    `json:"from"`
+          To        string    `json:"to"`
+          Amount    int       `json:"amount"`
+        }
+
+        func (m *TransactionCreatedMessage) Serialize() ([]byte, error) {
+          payload, err := json.Marshal(m)
+          if err != nil {
+            return nil, core.NewSerializationError(err, true, core.JSONFormat)
+          }
+
+          return payload, nil
+        }
+
+        func (m *TransactionCreatedMessage) Deserialize(payload []byte) error {
+          if err := json.Unmarshal(payload, m); err != nil {
+            return core.NewSerializationError(err, false, core.JSONFormat)
+          }
+
+          return nil
+        }
+
+        func NewTransactionCreatedEvent(msg TransactionCreatedMessage) (messaging.Event, error) {
+          serializedMsg, err := msg.Serialize()
+
+          if err != nil {
+            return messaging.Event{}, err
+          }
+
+          return messaging.Event{
+            Topic: TransactionCreatedTopic,
+            Envelope: messaging.Envelope{
+              Key:     core.NewID(),
+              Message: serializedMsg,
+            },
+          }, nil
+        }
+        ```
+
+      - **Shared Library**
+        - `pkg/delivery/messaging/` — Shared contracts and broker implementations.
+
+        **Example:**
+
+        ```go
+        package messaging
+
+        type Envelope struct {
+          Key     string
+          Message []byte
+        }
+
+        type Event struct {
+          Topic    string
+          Envelope Envelope
+        }
+
+        type Publisher interface {
+          Publish(evt Event) error
+          Close() error
+        }
+
+        type Subscriber interface {
+          Subscribe(handler func(Envelope) error) error
+          Close() error
+        }
+        ```
+
+## Libraries
+  - The `pkg/` directory contains multiple shared libraries and infrastructure implementations across modules.
+	- For broader reusability or third-party dependencies, consider creating external libraries.
+
+## Tips
+  - Avoid deep nesting unless necessary.
+  - If you are certain you will only use a single package, you can keep just `http/`
+    directly — or even skip the `delivery/` folder entirely — to simplify the
+    structure.
+  - If a package contains multiple components that need to be exposed externally, create a barrel file to orchestrate these setups.
