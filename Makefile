@@ -17,3 +17,9 @@ teardown-cluster:
 	else \
 		echo " Cluster '${CLUSTER_NAME}' does not exists"; \
 	fi
+
+.PHONY: bootstrap
+bootstrap: setup-cluster
+
+.PHONY: cleanup
+cleanup: teardown-cluster
