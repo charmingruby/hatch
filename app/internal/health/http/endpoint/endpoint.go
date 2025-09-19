@@ -1,7 +1,8 @@
 package endpoint
 
 import (
-	"github.com/charmingruby/pack/pkg/database/postgres"
+	"PACK_APP/pkg/database/postgres"
+
 	"github.com/gin-gonic/gin"
 )
 

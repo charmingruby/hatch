@@ -1,9 +1,10 @@
 package endpoint
 
 import (
-	"github.com/charmingruby/pack/internal/note/usecase"
-	"github.com/charmingruby/pack/pkg/logger"
-	"github.com/charmingruby/pack/pkg/validator"
+	"PACK_APP/internal/note/usecase"
+	"PACK_APP/pkg/logger"
+	"PACK_APP/pkg/validator"
+
 	"github.com/gin-gonic/gin"
 )
 

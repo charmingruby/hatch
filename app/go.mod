@@ -1,4 +1,4 @@
-module github.com/charmingruby/pack
+module PACK_APP
 
 go 1.24.3
 

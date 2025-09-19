@@ -3,7 +3,7 @@ package usecase
 import (
 	"context"
 
-	"github.com/charmingruby/pack/internal/note/repository"
+	"PACK_APP/internal/note/repository"
 )
 
 type Service interface {

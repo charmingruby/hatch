@@ -1,8 +1,8 @@
 package health
 
 import (
-	"github.com/charmingruby/pack/internal/health/http/endpoint"
-	"github.com/charmingruby/pack/pkg/database/postgres"
+	"PACK_APP/internal/health/http/endpoint"
+	"PACK_APP/pkg/database/postgres"
 
 	"github.com/gin-gonic/gin"
 )

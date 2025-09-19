@@ -4,9 +4,10 @@ import (
 	"context"
 	"errors"
 
-	"github.com/charmingruby/pack/internal/note/usecase"
-	"github.com/charmingruby/pack/internal/shared/customerr"
-	"github.com/charmingruby/pack/internal/shared/http/rest"
+	"PACK_APP/internal/note/usecase"
+	"PACK_APP/internal/shared/customerr"
+	"PACK_APP/internal/shared/http/rest"
+
 	"github.com/gin-gonic/gin"
 )
 

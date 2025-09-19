@@ -3,8 +3,8 @@ package usecase_test
 import (
 	"testing"
 
-	"github.com/charmingruby/pack/internal/note/usecase"
-	"github.com/charmingruby/pack/test/gen/note/mocks"
+	"PACK_APP/internal/note/usecase"
+	"PACK_APP/test/gen/note/mocks"
 )
 
 type suite struct {

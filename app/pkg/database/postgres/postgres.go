@@ -3,7 +3,8 @@ package postgres
 import (
 	"context"
 
-	"github.com/charmingruby/pack/pkg/logger"
+	"PACK_APP/pkg/logger"
+
 	"github.com/jmoiron/sqlx"
 
 	_ "github.com/lib/pq"

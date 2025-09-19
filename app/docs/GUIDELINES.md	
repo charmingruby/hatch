@@ -4,14 +4,10 @@
   - Replace all instances of the placeholder module path with your own:
 
   ```bash
-  github.com/charmingruby/pack
+  PACK_APP
   ```
 
-  - You’ll also find additional references to pack in the following files:
-    - docker-compose.yml
-    - .env and .env.example
-    - Makefile
-  - On Github Actions, there is a workflow to push container image to DockerHub,
+- On Github Actions, there is a workflow to push container image to DockerHub,
     but some actions is needed:
     - Change image name;
     - Configure repo secrets;

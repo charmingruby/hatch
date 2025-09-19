@@ -5,9 +5,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/charmingruby/pack/internal/note/model"
-	"github.com/charmingruby/pack/internal/note/usecase"
-	"github.com/charmingruby/pack/internal/shared/customerr"
+	"PACK_APP/internal/note/model"
+	"PACK_APP/internal/note/usecase"
+	"PACK_APP/internal/shared/customerr"
+
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"

@@ -3,7 +3,7 @@ package repository
 import (
 	"context"
 
-	"github.com/charmingruby/pack/internal/note/model"
+	"PACK_APP/internal/note/model"
 )
 
 type NoteRepository interface {

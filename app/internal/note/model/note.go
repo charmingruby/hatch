@@ -3,7 +3,7 @@ package model
 import (
 	"time"
 
-	"github.com/charmingruby/pack/pkg/id"
+	"PACK_APP/pkg/id"
 )
 
 type Note struct {

@@ -4,7 +4,8 @@ import (
 	"context"
 	"time"
 
-	"github.com/charmingruby/pack/internal/shared/http/rest"
+	"PACK_APP/internal/shared/http/rest"
+
 	"github.com/gin-gonic/gin"
 )
 

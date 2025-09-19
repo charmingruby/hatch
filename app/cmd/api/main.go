@@ -7,12 +7,12 @@ import (
 	"os/signal"
 	"time"
 
-	"github.com/charmingruby/pack/config"
-	"github.com/charmingruby/pack/internal/health"
-	"github.com/charmingruby/pack/internal/note"
-	"github.com/charmingruby/pack/internal/shared/http/rest"
-	"github.com/charmingruby/pack/pkg/database/postgres"
-	"github.com/charmingruby/pack/pkg/logger"
+	"PACK_APP/config"
+	"PACK_APP/internal/health"
+	"PACK_APP/internal/note"
+	"PACK_APP/internal/shared/http/rest"
+	"PACK_APP/pkg/database/postgres"
+	"PACK_APP/pkg/logger"
 
 	"github.com/joho/godotenv"
 )

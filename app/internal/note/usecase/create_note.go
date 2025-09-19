@@ -3,8 +3,8 @@ package usecase
 import (
 	"context"
 
-	"github.com/charmingruby/pack/internal/note/model"
-	"github.com/charmingruby/pack/internal/shared/customerr"
+	"PACK_APP/internal/note/model"
+	"PACK_APP/internal/shared/customerr"
 )
 
 type CreateNoteInput struct {
