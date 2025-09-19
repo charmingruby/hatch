@@ -8,10 +8,11 @@ import (
 	"time"
 
 	"github.com/charmingruby/pack/config"
-	"github.com/charmingruby/pack/internal/platform"
+	"github.com/charmingruby/pack/internal/health"
+	"github.com/charmingruby/pack/internal/note"
+	"github.com/charmingruby/pack/internal/shared/http/rest"
 	"github.com/charmingruby/pack/pkg/database/postgres"
-	"github.com/charmingruby/pack/pkg/delivery/http/rest"
-	"github.com/charmingruby/pack/pkg/telemetry/logger"
+	"github.com/charmingruby/pack/pkg/logger"
 
 	"github.com/joho/godotenv"
 )
@@ -49,7 +50,12 @@ func main() {
 
 	srv, r := rest.New(cfg.RestServerPort)
 
-	platform.New(r, db)
+	health.New(r, db)
+
+	if err := note.New(log, r, db.Conn); err != nil {
+		log.Error("failed to create Note module", "error", err)
+		failAndExit(log, nil, db)
+	}
 
 	go func() {
 		log.Info("REST server is running...", "port", cfg.RestServerPort)
