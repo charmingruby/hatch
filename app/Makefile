@@ -25,7 +25,7 @@ mock:
 
 .PHONY: test
 test: mock
-	go test ./...
+	go test ./... -race
 
 ###################
 # Linting         #
