@@ -10,10 +10,10 @@
 
 * GitHub Actions includes a workflow to push container images to DockerHub.
   You must:
-
-  * Change the image name;
+  * Change the image name.
   * Configure repository secrets.
-    Update them to match your project identity.
+    
+* Replace docker compose api image.
 
 ## Modules
 

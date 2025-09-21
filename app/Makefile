@@ -2,6 +2,13 @@ MIGRATIONS_PATH="db/migration"
 DATABASE_URL=postgres://postgres:postgres@localhost:5432/pack?sslmode=disable
 
 ###################
+# Build           #
+###################
+.PHONY: build
+build:
+	CGO_ENABLED=0 GOOS=linux go build -ldflags="-w -s" -o main ./cmd/api/main.go
+
+###################
 # Database        #
 ###################
 .PHONY: mig-up

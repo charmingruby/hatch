@@ -32,7 +32,8 @@ jobs:
           SHA=$(echo $GITHUB_SHA | head -c7)
           TAGS="${IMAGE_NAME}:latest,${IMAGE_NAME}:${SHA}"
           echo "tags=${TAGS}" >> $GITHUB_OUTPUT
-
+      
+      # should optimize, uses multi arch only in dev
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
@@ -40,5 +41,10 @@ jobs:
           file: ./app/Dockerfile
           push: true
           tags: ${{ steps.generate_tag.outputs.tags }}
-          cache-from: type=registry,ref=${{ env.IMAGE_NAME }}:buildcache
-          cache-to: type=registry,ref=${{ env.IMAGE_NAME }}:buildcache,mode=max
+          platforms: linux/amd64,linux/arm64
+          cache-from: |
+            type=registry,ref=${{ env.IMAGE_NAME }}:buildcache-amd64
+            type=registry,ref=${{ env.IMAGE_NAME }}:buildcache-arm64
+          cache-to: |
+            type=registry,ref=${{ env.IMAGE_NAME }}:buildcache-amd64,mode=max
+            type=registry,ref=${{ env.IMAGE_NAME }}:buildcache-arm64,mode=max

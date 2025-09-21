@@ -16,10 +16,10 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version: 1.24.3
+          go-version: stable
           cache: false
 
       - name: Build
         working-directory: app
         run: |
-          go build -o ../../bin/api ./cmd/api/main.go
+          make build
