@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"os"
 	"os/signal"
 	"time"
@@ -21,47 +20,42 @@ func main() {
 	log := logger.New()
 
 	if err := godotenv.Load(); err != nil {
-		log.Warn("failed to find .env file", "error", err)
+		log.Warn("env: missing", "err", err)
 	}
 
-	log.Info("loading environment variables...")
-
+	log.Info("config: loading")
 	cfg, err := config.New()
 	if err != nil {
-		log.Error("failed to loading environment variables", "error", err)
+		log.Error("config: error", "err", err)
 		failAndExit(log, nil, nil)
 	}
-
-	log.Info("environment variables loaded")
+	log.Info("config: loaded")
 
 	logLevel := logger.ChangeLevel(cfg.LogLevel)
+	log.Info("logger: set", "level", logLevel)
 
-	log.Info("log level configured", "level", logLevel)
-
-	log.Info("connecting to Postgres...")
-
+	log.Info("postgres: connecting")
 	db, err := postgres.New(log, cfg.PostgresURL)
 	if err != nil {
-		log.Error("failed connect to Postgres", "error", err)
+		log.Error("postgres: error", "err", err)
 		failAndExit(log, nil, nil)
 	}
-
-	log.Info("connected to Postgres successfully")
+	log.Info("postgres: ready")
 
 	srv, r := rest.New(cfg.RestServerPort)
 
 	health.New(r, db)
 
 	if err := note.New(log, r, db.Conn); err != nil {
-		log.Error("failed to create Note module", "error", err)
+		log.Error("note: error", "err", err)
 		failAndExit(log, nil, db)
 	}
+	log.Info("note: ready")
 
 	go func() {
-		log.Info("REST server is running...", "port", cfg.RestServerPort)
-
+		log.Info("server: starting", "port", cfg.RestServerPort)
 		if err := srv.Start(); err != nil {
-			log.Error("failed starting REST server", "error", err)
+			log.Error("server: error", "err", err)
 			failAndExit(log, srv, db)
 		}
 	}()
@@ -70,15 +64,13 @@ func main() {
 	signal.Notify(quit, os.Interrupt)
 	<-quit
 
-	log.Info("received an interrupt signal")
+	log.Info("signal: received")
+	log.Info("shutdown: starting")
 
-	log.Info("starting graceful shutdown...")
+	code := gracefulShutdown(log, srv, db)
 
-	signal := gracefulShutdown(log, srv, db)
-
-	log.Info(fmt.Sprintf("gracefully shutdown, with code %d", signal))
-
-	os.Exit(signal)
+	log.Info("shutdown: complete", "code", code)
+	os.Exit(code)
 }
 
 func failAndExit(log *logger.Logger, srv *rest.Server, db *postgres.Client) {
@@ -88,7 +80,6 @@ func failAndExit(log *logger.Logger, srv *rest.Server, db *postgres.Client) {
 
 func gracefulShutdown(log *logger.Logger, srv *rest.Server, db *postgres.Client) int {
 	parentCtx := context.Background()
-
 	var hasError bool
 
 	if srv != nil {
@@ -96,15 +87,19 @@ func gracefulShutdown(log *logger.Logger, srv *rest.Server, db *postgres.Client)
 		defer cancel()
 
 		if err := srv.Close(ctx); err != nil {
-			log.Error("error closing REST server", "error", err)
+			log.Error("server: error", "err", err)
 			hasError = true
+		} else {
+			log.Info("server: stopped")
 		}
 	}
 
 	if db != nil {
 		if err := db.Close(); err != nil {
-			log.Error("error closing Postgres connection", "error", err)
+			log.Error("postgres: error", "err", err)
 			hasError = true
+		} else {
+			log.Info("postgres: stopped")
 		}
 	}
 
