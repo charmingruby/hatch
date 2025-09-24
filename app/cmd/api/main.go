@@ -20,13 +20,13 @@ func main() {
 	log := logger.New()
 
 	if err := godotenv.Load(); err != nil {
-		log.Warn("env: missing", "err", err)
+		log.Warn("env: missing", "error", err)
 	}
 
 	log.Info("config: loading")
 	cfg, err := config.New()
 	if err != nil {
-		log.Error("config: error", "err", err)
+		log.Error("config: error", "error", err)
 		failAndExit(log, nil, nil)
 	}
 	log.Info("config: loaded")
@@ -37,7 +37,7 @@ func main() {
 	log.Info("postgres: connecting")
 	db, err := postgres.New(log, cfg.PostgresURL)
 	if err != nil {
-		log.Error("postgres: error", "err", err)
+		log.Error("postgres: error", "error", err)
 		failAndExit(log, nil, nil)
 	}
 	log.Info("postgres: ready")
@@ -47,7 +47,7 @@ func main() {
 	health.New(r, db)
 
 	if err := note.New(log, r, db.Conn); err != nil {
-		log.Error("note: error", "err", err)
+		log.Error("note: error", "error", err)
 		failAndExit(log, nil, db)
 	}
 	log.Info("note: ready")
@@ -55,7 +55,7 @@ func main() {
 	go func() {
 		log.Info("server: starting", "port", cfg.RestServerPort)
 		if err := srv.Start(); err != nil {
-			log.Error("server: error", "err", err)
+			log.Error("server: error", "error", err)
 			failAndExit(log, srv, db)
 		}
 	}()
@@ -87,7 +87,7 @@ func gracefulShutdown(log *logger.Logger, srv *rest.Server, db *postgres.Client)
 		defer cancel()
 
 		if err := srv.Close(ctx); err != nil {
-			log.Error("server: error", "err", err)
+			log.Error("server: error", "error", err)
 			hasError = true
 		} else {
 			log.Info("server: stopped")
@@ -96,7 +96,7 @@ func gracefulShutdown(log *logger.Logger, srv *rest.Server, db *postgres.Client)
 
 	if db != nil {
 		if err := db.Close(); err != nil {
-			log.Error("postgres: error", "err", err)
+			log.Error("postgres: error", "error", err)
 			hasError = true
 		} else {
 			log.Info("postgres: stopped")
