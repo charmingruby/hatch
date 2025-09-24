@@ -1,7 +1,6 @@
 package endpoint
 
 import (
-	"context"
 	"errors"
 
 	"PACK_APP/internal/shared/customerr"
@@ -11,7 +10,7 @@ import (
 )
 
 func (e *Endpoint) ListNotes(c *gin.Context) {
-	ctx := context.Background()
+	ctx := c.Request.Context()
 
 	op, err := e.service.ListNotes(ctx)
 	if err != nil {

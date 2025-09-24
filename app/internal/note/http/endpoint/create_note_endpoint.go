@@ -1,7 +1,6 @@
 package endpoint
 
 import (
-	"context"
 	"errors"
 
 	"PACK_APP/internal/note/dto"
@@ -12,13 +11,14 @@ import (
 )
 
 func (e *Endpoint) CreateNote(c *gin.Context) {
-	ctx := context.Background()
+	ctx := c.Request.Context()
 
 	var req dto.CreateNoteInput
 	if err := c.BindJSON(&req); err != nil {
 		rest.SendBadRequestResponse(c, err.Error())
 		return
 	}
+
 	if err := e.val.Validate(req); err != nil {
 		rest.SendBadRequestResponse(c, err.Error())
 		return

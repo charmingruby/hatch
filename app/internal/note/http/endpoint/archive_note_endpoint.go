@@ -1,7 +1,6 @@
 package endpoint
 
 import (
-	"context"
 	"errors"
 
 	"PACK_APP/internal/note/dto"
@@ -12,7 +11,7 @@ import (
 )
 
 func (e *Endpoint) ArchiveNote(c *gin.Context) {
-	ctx := context.Background()
+	ctx := c.Request.Context()
 
 	id := c.Param("id")
 
