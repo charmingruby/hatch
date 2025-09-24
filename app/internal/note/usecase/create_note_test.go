@@ -4,8 +4,8 @@ import (
 	"errors"
 	"testing"
 
+	"PACK_APP/internal/note/dto"
 	"PACK_APP/internal/note/model"
-	"PACK_APP/internal/note/usecase"
 	"PACK_APP/internal/shared/customerr"
 
 	"github.com/stretchr/testify/assert"
@@ -27,7 +27,7 @@ func Test_CreateNote(t *testing.T) {
 			Return(nil).
 			Once()
 
-		op, err := s.usecase.CreateNote(t.Context(), usecase.CreateNoteInput{
+		op, err := s.usecase.CreateNote(t.Context(), dto.CreateNoteInput{
 			Title:   title,
 			Content: content,
 		})
@@ -43,7 +43,7 @@ func Test_CreateNote(t *testing.T) {
 			Return(errors.New("unhealthy repo")).
 			Once()
 
-		op, err := s.usecase.CreateNote(t.Context(), usecase.CreateNoteInput{
+		op, err := s.usecase.CreateNote(t.Context(), dto.CreateNoteInput{
 			Title:   title,
 			Content: content,
 		})

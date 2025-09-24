@@ -4,22 +4,17 @@ import (
 	"context"
 	"errors"
 
-	"PACK_APP/internal/note/usecase"
+	"PACK_APP/internal/note/dto"
 	"PACK_APP/internal/shared/customerr"
 	"PACK_APP/internal/shared/http/rest"
 
 	"github.com/gin-gonic/gin"
 )
 
-type CreateNoteRequest struct {
-	Title   string `json:"title"   binding:"required" validate:"required,gt=0"`
-	Content string `json:"content" binding:"required" validate:"required,gt=0"`
-}
-
 func (e *Endpoint) CreateNote(c *gin.Context) {
 	ctx := context.Background()
 
-	var req CreateNoteRequest
+	var req dto.CreateNoteInput
 	if err := c.BindJSON(&req); err != nil {
 		rest.SendBadRequestResponse(c, err.Error())
 		return
@@ -29,7 +24,7 @@ func (e *Endpoint) CreateNote(c *gin.Context) {
 		return
 	}
 
-	op, err := e.service.CreateNote(ctx, usecase.CreateNoteInput{
+	op, err := e.service.CreateNote(ctx, dto.CreateNoteInput{
 		Title:   req.Title,
 		Content: req.Content,
 	})

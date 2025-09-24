@@ -3,9 +3,8 @@
 package mocks
 
 import (
-	context "context"
-
 	model "PACK_APP/internal/note/model"
+	context "context"
 
 	mock "github.com/stretchr/testify/mock"
 )

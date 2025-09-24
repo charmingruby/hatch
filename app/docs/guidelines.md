@@ -92,6 +92,14 @@ pkg/
 
 This ensures modules depend only on **contracts**, not directly on third-party SDKs.
 
+### DTOs (Data Transfer Objects)
+
+* For use case inputs/outputs, centralize contracts using DTOs.
+* This avoids having to change parameters in multiple layers (handler, use case, service).
+* Where to place:
+
+internal/MODULE/dto/ — if the contract is specific to a single module.
+
 ## External & Shared Guidelines
 
 ### External

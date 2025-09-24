@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 
-	"PACK_APP/internal/note/usecase"
+	"PACK_APP/internal/note/dto"
 	"PACK_APP/internal/shared/customerr"
 	"PACK_APP/internal/shared/http/rest"
 
@@ -16,7 +16,7 @@ func (e *Endpoint) ArchiveNote(c *gin.Context) {
 
 	id := c.Param("id")
 
-	if err := e.service.ArchiveNote(ctx, usecase.ArchiveNoteInput{
+	if err := e.service.ArchiveNote(ctx, dto.ArchiveNoteInput{
 		ID: id,
 	}); err != nil {
 		var notFoundErr *customerr.NotFoundError

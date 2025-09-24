@@ -3,9 +3,8 @@
 package mocks
 
 import (
+	dto "PACK_APP/internal/note/dto"
 	context "context"
-
-	usecase "PACK_APP/internal/note/usecase"
 
 	mock "github.com/stretchr/testify/mock"
 )
@@ -16,7 +15,7 @@ type Service struct {
 }
 
 // ArchiveNote provides a mock function with given fields: ctx, input
-func (_m *Service) ArchiveNote(ctx context.Context, input usecase.ArchiveNoteInput) error {
+func (_m *Service) ArchiveNote(ctx context.Context, input dto.ArchiveNoteInput) error {
 	ret := _m.Called(ctx, input)
 
 	if len(ret) == 0 {
@@ -24,7 +23,7 @@ func (_m *Service) ArchiveNote(ctx context.Context, input usecase.ArchiveNoteInp
 	}
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, usecase.ArchiveNoteInput) error); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, dto.ArchiveNoteInput) error); ok {
 		r0 = rf(ctx, input)
 	} else {
 		r0 = ret.Error(0)
@@ -34,25 +33,25 @@ func (_m *Service) ArchiveNote(ctx context.Context, input usecase.ArchiveNoteInp
 }
 
 // CreateNote provides a mock function with given fields: ctx, input
-func (_m *Service) CreateNote(ctx context.Context, input usecase.CreateNoteInput) (usecase.CreateNoteOutput, error) {
+func (_m *Service) CreateNote(ctx context.Context, input dto.CreateNoteInput) (dto.CreateNoteOutput, error) {
 	ret := _m.Called(ctx, input)
 
 	if len(ret) == 0 {
 		panic("no return value specified for CreateNote")
 	}
 
-	var r0 usecase.CreateNoteOutput
+	var r0 dto.CreateNoteOutput
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, usecase.CreateNoteInput) (usecase.CreateNoteOutput, error)); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, dto.CreateNoteInput) (dto.CreateNoteOutput, error)); ok {
 		return rf(ctx, input)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, usecase.CreateNoteInput) usecase.CreateNoteOutput); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, dto.CreateNoteInput) dto.CreateNoteOutput); ok {
 		r0 = rf(ctx, input)
 	} else {
-		r0 = ret.Get(0).(usecase.CreateNoteOutput)
+		r0 = ret.Get(0).(dto.CreateNoteOutput)
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, usecase.CreateNoteInput) error); ok {
+	if rf, ok := ret.Get(1).(func(context.Context, dto.CreateNoteInput) error); ok {
 		r1 = rf(ctx, input)
 	} else {
 		r1 = ret.Error(1)
@@ -62,22 +61,22 @@ func (_m *Service) CreateNote(ctx context.Context, input usecase.CreateNoteInput
 }
 
 // ListNotes provides a mock function with given fields: ctx
-func (_m *Service) ListNotes(ctx context.Context) (usecase.ListNotesOutput, error) {
+func (_m *Service) ListNotes(ctx context.Context) (dto.ListNotesOutput, error) {
 	ret := _m.Called(ctx)
 
 	if len(ret) == 0 {
 		panic("no return value specified for ListNotes")
 	}
 
-	var r0 usecase.ListNotesOutput
+	var r0 dto.ListNotesOutput
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context) (usecase.ListNotesOutput, error)); ok {
+	if rf, ok := ret.Get(0).(func(context.Context) (dto.ListNotesOutput, error)); ok {
 		return rf(ctx)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context) usecase.ListNotesOutput); ok {
+	if rf, ok := ret.Get(0).(func(context.Context) dto.ListNotesOutput); ok {
 		r0 = rf(ctx)
 	} else {
-		r0 = ret.Get(0).(usecase.ListNotesOutput)
+		r0 = ret.Get(0).(dto.ListNotesOutput)
 	}
 
 	if rf, ok := ret.Get(1).(func(context.Context) error); ok {

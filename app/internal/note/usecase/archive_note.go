@@ -4,14 +4,11 @@ import (
 	"context"
 	"time"
 
+	"PACK_APP/internal/note/dto"
 	"PACK_APP/internal/shared/customerr"
 )
 
-type ArchiveNoteInput struct {
-	ID string
-}
-
-func (u UseCase) ArchiveNote(ctx context.Context, input ArchiveNoteInput) error {
+func (u UseCase) ArchiveNote(ctx context.Context, input dto.ArchiveNoteInput) error {
 	note, err := u.noteRepo.FindByID(ctx, input.ID)
 
 	if err != nil {

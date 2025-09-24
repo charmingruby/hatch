@@ -5,8 +5,8 @@ import (
 	"testing"
 	"time"
 
+	"PACK_APP/internal/note/dto"
 	"PACK_APP/internal/note/model"
-	"PACK_APP/internal/note/usecase"
 	"PACK_APP/internal/shared/customerr"
 
 	"github.com/stretchr/testify/assert"
@@ -32,7 +32,7 @@ func Test_ArchiveNote(t *testing.T) {
 			Return(nil).
 			Once()
 
-		err := s.usecase.ArchiveNote(t.Context(), usecase.ArchiveNoteInput{
+		err := s.usecase.ArchiveNote(t.Context(), dto.ArchiveNoteInput{
 			ID: n.ID,
 		})
 
@@ -46,7 +46,7 @@ func Test_ArchiveNote(t *testing.T) {
 			Return(model.Note{}, errors.New("repo down")).
 			Once()
 
-		err := s.usecase.ArchiveNote(t.Context(), usecase.ArchiveNoteInput{
+		err := s.usecase.ArchiveNote(t.Context(), dto.ArchiveNoteInput{
 			ID: "nonexistent",
 		})
 
@@ -68,7 +68,7 @@ func Test_ArchiveNote(t *testing.T) {
 			Return(errors.New("save error")).
 			Once()
 
-		err := s.usecase.ArchiveNote(t.Context(), usecase.ArchiveNoteInput{
+		err := s.usecase.ArchiveNote(t.Context(), dto.ArchiveNoteInput{
 			ID: n.ID,
 		})
 
