@@ -1,4 +1,4 @@
-CLUSTER_NAME ?= pack-cluster
+CLUSTER_NAME ?= hatch-cluster
 
 .PHONY: setup-cluster
 setup-cluster:

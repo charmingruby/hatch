@@ -3,8 +3,8 @@ package usecase
 import (
 	"context"
 
-	"PACK_APP/internal/note/dto"
-	"PACK_APP/internal/note/repository"
+	"HATCH_APP/internal/note/dto"
+	"HATCH_APP/internal/note/repository"
 )
 
 type Service interface {

@@ -5,8 +5,8 @@ import (
 	"database/sql"
 	"time"
 
-	"PACK_APP/internal/note/model"
-	"PACK_APP/pkg/database/postgres"
+	"HATCH_APP/internal/note/model"
+	"HATCH_APP/pkg/database/postgres"
 
 	"github.com/jmoiron/sqlx"
 )

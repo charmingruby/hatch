@@ -3,8 +3,8 @@ package usecase
 import (
 	"context"
 
-	"PACK_APP/internal/note/dto"
-	"PACK_APP/internal/shared/customerr"
+	"HATCH_APP/internal/note/dto"
+	"HATCH_APP/internal/shared/customerr"
 )
 
 func (u UseCase) ListNotes(ctx context.Context) (dto.ListNotesOutput, error) {

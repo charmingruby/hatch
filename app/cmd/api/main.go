@@ -6,12 +6,12 @@ import (
 	"os/signal"
 	"time"
 
-	"PACK_APP/config"
-	"PACK_APP/internal/health"
-	"PACK_APP/internal/note"
-	"PACK_APP/internal/shared/http/rest"
-	"PACK_APP/pkg/database/postgres"
-	"PACK_APP/pkg/logger"
+	"HATCH_APP/config"
+	"HATCH_APP/internal/health"
+	"HATCH_APP/internal/note"
+	"HATCH_APP/internal/shared/http/rest"
+	"HATCH_APP/pkg/database/postgres"
+	"HATCH_APP/pkg/logger"
 
 	"github.com/joho/godotenv"
 )

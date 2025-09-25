@@ -3,7 +3,7 @@
 package mocks
 
 import (
-	dto "PACK_APP/internal/note/dto"
+	dto "HATCH_APP/internal/note/dto"
 	context "context"
 
 	mock "github.com/stretchr/testify/mock"

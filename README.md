@@ -1,6 +1,6 @@
-# Pack
+# Hatch
 
-Pack is a Go project template with a clear structure and tooling to accelerate development from day one. Battle-tested and suitable for corporate products, production-grade systems, and quick PoCs.  
+Hatch is a Go project template with a clear structure and tooling to accelerate development from day one. Battle-tested and suitable for corporate products, production-grade systems, and quick PoCs.  
 
 It’s designed to cover nearly all scenarios you’ll face, providing flexibility, maintainability, testability, and scalability across different project styles.  
 

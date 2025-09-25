@@ -1,7 +1,7 @@
 package endpoint
 
 import (
-	"PACK_APP/pkg/database/postgres"
+	"HATCH_APP/pkg/database/postgres"
 
 	"github.com/gin-gonic/gin"
 )

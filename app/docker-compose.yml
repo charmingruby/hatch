@@ -7,9 +7,9 @@ services:
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=pack
+      - POSTGRES_DB=hatch
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d pack"]
+      test: ["CMD-SHELL", "pg_isready -U postgres -d hatch"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -24,7 +24,7 @@ services:
         "-path",
         "/migrations",
         "-database",
-        "postgres://postgres:postgres@db:5432/pack?sslmode=disable",
+        "postgres://postgres:postgres@db:5432/hatch?sslmode=disable",
         "up",
       ]
     depends_on:
@@ -40,6 +40,6 @@ services:
       - "3000:3000"
     environment:
       REST_SERVER_PORT: 3000
-      POSTGRES_URL: "postgres://postgres:postgres@db:5432/pack?sslmode=disable"
+      POSTGRES_URL: "postgres://postgres:postgres@db:5432/hatch?sslmode=disable"
     depends_on:
       - migrate

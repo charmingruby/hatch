@@ -1,8 +1,8 @@
 package health
 
 import (
-	"PACK_APP/internal/health/http/endpoint"
-	"PACK_APP/pkg/database/postgres"
+	"HATCH_APP/internal/health/http/endpoint"
+	"HATCH_APP/pkg/database/postgres"
 
 	"github.com/gin-gonic/gin"
 )

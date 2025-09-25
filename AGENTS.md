@@ -1,6 +1,6 @@
-# Pack Project Guidelines
+# Hatch Project Guidelines
 
-Pack is a **Go project template** with clear structure and tooling to accelerate development from day one. It's **battle-tested** and suitable for different contexts, from **corporate environments** and **production-grade products** to **quick PoCs**.
+Hatch is a **Go project template** with clear structure and tooling to accelerate development from day one. It's **battle-tested** and suitable for different contexts, from **corporate environments** and **production-grade products** to **quick PoCs**.
 
 ## Project Structure
 
@@ -22,7 +22,7 @@ Pack is a **Go project template** with clear structure and tooling to accelerate
 - Support multiple components or services under a single repository
 
 ### Project Identity
-- Replace all instances of the placeholder `PACK_APP` with the actual project module path
+- Replace all instances of the placeholder `HATCH_APP` with the actual project module path
 - Update Docker image names in GitHub Actions and docker compose files
 - Configure repository secrets for automated workflows
 - GitHub Actions includes a workflow to push container images to DockerHub

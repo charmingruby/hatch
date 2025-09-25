@@ -5,7 +5,7 @@ on:
   pull_request:
 
 env:
-  IMAGE_NAME: charmingruby/pack
+  IMAGE_NAME: charmingruby/hatch
 
 jobs:
   release-image:
@@ -32,7 +32,7 @@ jobs:
           SHA=$(echo $GITHUB_SHA | head -c7)
           TAGS="${IMAGE_NAME}:latest,${IMAGE_NAME}:${SHA}"
           echo "tags=${TAGS}" >> $GITHUB_OUTPUT
-      
+
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:

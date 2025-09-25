@@ -1,4 +1,4 @@
-module PACK_APP
+module HATCH_APP
 
 go 1.24.3
 

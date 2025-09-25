@@ -3,7 +3,7 @@ package repository
 import (
 	"context"
 
-	"PACK_APP/internal/note/model"
+	"HATCH_APP/internal/note/model"
 )
 
 type NoteRepository interface {

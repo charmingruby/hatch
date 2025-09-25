@@ -3,8 +3,8 @@ package usecase_test
 import (
 	"testing"
 
-	"PACK_APP/internal/note/usecase"
-	"PACK_APP/test/gen/note/mocks"
+	"HATCH_APP/internal/note/usecase"
+	"HATCH_APP/test/gen/note/mocks"
 )
 
 type suite struct {

@@ -3,9 +3,9 @@ package usecase
 import (
 	"context"
 
-	"PACK_APP/internal/note/dto"
-	"PACK_APP/internal/note/model"
-	"PACK_APP/internal/shared/customerr"
+	"HATCH_APP/internal/note/dto"
+	"HATCH_APP/internal/note/model"
+	"HATCH_APP/internal/shared/customerr"
 )
 
 func (u UseCase) CreateNote(ctx context.Context, input dto.CreateNoteInput) (dto.CreateNoteOutput, error) {

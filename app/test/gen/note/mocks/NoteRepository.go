@@ -3,7 +3,7 @@
 package mocks
 
 import (
-	model "PACK_APP/internal/note/model"
+	model "HATCH_APP/internal/note/model"
 	context "context"
 
 	mock "github.com/stretchr/testify/mock"

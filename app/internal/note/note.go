@@ -1,11 +1,11 @@
 package note
 
 import (
-	"PACK_APP/internal/note/http/endpoint"
-	"PACK_APP/internal/note/repository/postgres"
-	"PACK_APP/internal/note/usecase"
-	"PACK_APP/pkg/logger"
-	"PACK_APP/pkg/validator"
+	"HATCH_APP/internal/note/http/endpoint"
+	"HATCH_APP/internal/note/repository/postgres"
+	"HATCH_APP/internal/note/usecase"
+	"HATCH_APP/pkg/logger"
+	"HATCH_APP/pkg/validator"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jmoiron/sqlx"

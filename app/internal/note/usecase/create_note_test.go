@@ -4,9 +4,9 @@ import (
 	"errors"
 	"testing"
 
-	"PACK_APP/internal/note/dto"
-	"PACK_APP/internal/note/model"
-	"PACK_APP/internal/shared/customerr"
+	"HATCH_APP/internal/note/dto"
+	"HATCH_APP/internal/note/model"
+	"HATCH_APP/internal/shared/customerr"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -14,7 +14,7 @@ import (
 )
 
 func Test_CreateNote(t *testing.T) {
-	title := "Pack"
+	title := "Hatch"
 	content := "Template"
 
 	t.Run("should create successfully", func(t *testing.T) {

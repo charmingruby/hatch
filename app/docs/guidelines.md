@@ -5,7 +5,7 @@
 * Replace all instances of the placeholder module path with your own:
 
   ```bash
-  PACK_APP
+  HATCH_APP
   ```
 
 * GitHub Actions includes a workflow to push container images to DockerHub.
@@ -83,7 +83,7 @@ Asynchronous, event-driven communication.
 ```
 pkg/
   messaging/
-    messaging.go     # Publisher, Subscriber, Event
+    messaging.go # Publisher, Subscriber, Event
     nats/
       broker.go
     kafka/

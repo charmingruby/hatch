@@ -3,7 +3,7 @@ package model
 import (
 	"time"
 
-	"PACK_APP/pkg/id"
+	"HATCH_APP/pkg/id"
 )
 
 type Note struct {

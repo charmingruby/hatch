@@ -1,5 +1,5 @@
 MIGRATIONS_PATH="db/migration"
-DATABASE_URL=postgres://postgres:postgres@localhost:5432/pack?sslmode=disable
+DATABASE_URL=postgres://postgres:postgres@localhost:5432/hatch?sslmode=disable
 
 ###################
 # Build           #

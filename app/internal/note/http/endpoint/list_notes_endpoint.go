@@ -3,8 +3,8 @@ package endpoint
 import (
 	"errors"
 
-	"PACK_APP/internal/shared/customerr"
-	"PACK_APP/internal/shared/http/rest"
+	"HATCH_APP/internal/shared/customerr"
+	"HATCH_APP/internal/shared/http/rest"
 
 	"github.com/gin-gonic/gin"
 )

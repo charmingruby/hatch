@@ -5,9 +5,9 @@ import (
 	"testing"
 	"time"
 
-	"PACK_APP/internal/note/dto"
-	"PACK_APP/internal/note/model"
-	"PACK_APP/internal/shared/customerr"
+	"HATCH_APP/internal/note/dto"
+	"HATCH_APP/internal/note/model"
+	"HATCH_APP/internal/shared/customerr"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"

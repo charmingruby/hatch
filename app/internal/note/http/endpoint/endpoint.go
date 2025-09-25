@@ -1,9 +1,9 @@
 package endpoint
 
 import (
-	"PACK_APP/internal/note/usecase"
-	"PACK_APP/pkg/logger"
-	"PACK_APP/pkg/validator"
+	"HATCH_APP/internal/note/usecase"
+	"HATCH_APP/pkg/logger"
+	"HATCH_APP/pkg/validator"
 
 	"github.com/gin-gonic/gin"
 )
