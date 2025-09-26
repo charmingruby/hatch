@@ -1,26 +1,43 @@
 package endpoint
 
 import (
-	"errors"
-	"log/slog"
-
 	"HATCH_APP/internal/note/dto"
 	"HATCH_APP/internal/shared/customerr"
 	"HATCH_APP/internal/shared/http/rest"
+	"errors"
+	"log/slog"
 
 	"github.com/gin-gonic/gin"
 )
 
+type CreateNoteRequest struct {
+	Title   string `json:"title"   binding:"required" validate:"required,gt=0"`
+	Content string `json:"content" binding:"required" validate:"required,gt=0"`
+}
+
 func (e *Endpoint) CreateNote(c *gin.Context) {
 	ctx := c.Request.Context()
 
-	var req dto.CreateNoteInput
+	slog.InfoContext(ctx, "endpoint/CreateNote: request received")
+
+	var req CreateNoteRequest
 	if err := c.BindJSON(&req); err != nil {
+		slog.ErrorContext(
+			ctx,
+			"endpoint/CreateNote: unable to parse payload",
+			"error", err.Error(),
+		)
+
 		rest.SendBadRequestResponse(c, err.Error())
 		return
 	}
-
 	if err := e.val.Validate(req); err != nil {
+		slog.ErrorContext(
+			ctx,
+			"endpoint/CreateNote: invalid payload",
+			"error", err.Error(),
+		)
+
 		rest.SendBadRequestResponse(c, err.Error())
 		return
 	}
@@ -32,17 +49,29 @@ func (e *Endpoint) CreateNote(c *gin.Context) {
 	if err != nil {
 		var databaseErr *customerr.DatabaseError
 		if errors.As(err, &databaseErr) {
-			slog.Error("database error", "error", databaseErr.Unwrap().Error(), "request", c.Request)
+			slog.ErrorContext(
+				ctx,
+				"endpoint/CreateNote: database error",
+				"error", databaseErr.Unwrap().Error(),
+			)
 
 			rest.SendInternalServerErrorResponse(c)
 			return
 		}
 
-		slog.Error("unknown error", "error", err.Error(), "request", c.Request)
+		slog.ErrorContext(
+			ctx,
+			"endpoint/CreateNote: unknown error", "error", err.Error(),
+		)
 
 		rest.SendInternalServerErrorResponse(c)
 		return
 	}
+
+	slog.InfoContext(
+		ctx,
+		"endpoint/CreateNote: finished successfully",
+	)
 
 	rest.SendCreatedResponse(c, op.ID, "note")
 }
