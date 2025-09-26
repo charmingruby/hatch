@@ -53,7 +53,7 @@ func main() {
 	log.Info("note: ready")
 
 	go func() {
-		log.Info("server: starting", "port", cfg.RestServerPort)
+		log.Info("server: runnig", "port", cfg.RestServerPort)
 		if err := srv.Start(); err != nil {
 			log.Error("server: error", "error", err)
 			failAndExit(log, srv, db)
