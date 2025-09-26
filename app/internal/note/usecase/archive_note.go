@@ -15,6 +15,10 @@ func (u UseCase) ArchiveNote(ctx context.Context, input dto.ArchiveNoteInput) er
 		return customerr.NewDatabaseError(err)
 	}
 
+	if note.ID == "" {
+		return customerr.NewNotFoundError("note")
+	}
+
 	now := time.Now()
 	note.Archived = true
 	note.UpdatedAt = &now
