@@ -4,7 +4,6 @@ import (
 	"HATCH_APP/internal/note/http/endpoint"
 	"HATCH_APP/internal/note/repository/postgres"
 	"HATCH_APP/internal/note/usecase"
-	"HATCH_APP/pkg/logger"
 	"HATCH_APP/pkg/validator"
 
 	"github.com/gin-gonic/gin"
@@ -12,7 +11,6 @@ import (
 )
 
 func New(
-	log *logger.Logger,
 	r *gin.Engine,
 	db *sqlx.DB,
 ) error {
@@ -25,7 +23,7 @@ func New(
 
 	val := validator.New()
 
-	endpoint.New(r, log, val, uc).Register()
+	endpoint.New(r, val, uc).Register()
 
 	return nil
 }

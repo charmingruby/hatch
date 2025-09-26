@@ -2,7 +2,6 @@ package endpoint
 
 import (
 	"HATCH_APP/internal/note/usecase"
-	"HATCH_APP/pkg/logger"
 	"HATCH_APP/pkg/validator"
 
 	"github.com/gin-gonic/gin"
@@ -10,20 +9,17 @@ import (
 
 type Endpoint struct {
 	router  *gin.Engine
-	log     *logger.Logger
 	val     *validator.Validator
 	service usecase.Service
 }
 
 func New(
 	router *gin.Engine,
-	log *logger.Logger,
 	validator *validator.Validator,
 	service usecase.Service,
 ) *Endpoint {
 	return &Endpoint{
 		router:  router,
-		log:     log,
 		val:     validator,
 		service: service,
 	}

@@ -2,6 +2,7 @@ package endpoint
 
 import (
 	"errors"
+	"log/slog"
 
 	"HATCH_APP/internal/note/dto"
 	"HATCH_APP/internal/shared/customerr"
@@ -31,13 +32,13 @@ func (e *Endpoint) CreateNote(c *gin.Context) {
 	if err != nil {
 		var databaseErr *customerr.DatabaseError
 		if errors.As(err, &databaseErr) {
-			e.log.Error("database error", "error", databaseErr.Unwrap().Error(), "request", c.Request)
+			slog.Error("database error", "error", databaseErr.Unwrap().Error(), "request", c.Request)
 
 			rest.SendInternalServerErrorResponse(c)
 			return
 		}
 
-		e.log.Error("unknown error", "error", err.Error(), "request", c.Request)
+		slog.Error("unknown error", "error", err.Error(), "request", c.Request)
 
 		rest.SendInternalServerErrorResponse(c)
 		return

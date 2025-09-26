@@ -3,8 +3,6 @@ package postgres
 import (
 	"context"
 
-	"HATCH_APP/pkg/logger"
-
 	"github.com/jmoiron/sqlx"
 
 	_ "github.com/lib/pq"
@@ -14,11 +12,9 @@ const driver = "postgres"
 
 type Client struct {
 	Conn *sqlx.DB
-
-	log *logger.Logger
 }
 
-func New(log *logger.Logger, url string) (*Client, error) {
+func New(url string) (*Client, error) {
 	db, err := sqlx.Connect(driver, url)
 	if err != nil {
 		return nil, err
@@ -28,7 +24,7 @@ func New(log *logger.Logger, url string) (*Client, error) {
 		return nil, err
 	}
 
-	return &Client{Conn: db, log: log}, nil
+	return &Client{Conn: db}, nil
 }
 
 func (c *Client) Ping(ctx context.Context) error {
@@ -37,11 +33,8 @@ func (c *Client) Ping(ctx context.Context) error {
 
 func (c *Client) Close() error {
 	if err := c.Conn.Close(); err != nil {
-		c.log.Error("failed to close postgres connection", "error", err)
 		return err
 	}
-
-	c.log.Info("postgres connection closed")
 
 	return nil
 }

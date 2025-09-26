@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"log/slog"
 	"os"
 	"os/signal"
 	"time"
@@ -17,46 +18,43 @@ import (
 )
 
 func main() {
-	log := logger.New()
+	logger.New()
 
 	if err := godotenv.Load(); err != nil {
-		log.Warn("env: missing", "error", err)
+		slog.Warn("env: missing", "error", err)
 	}
 
-	log.Info("config: loading")
+	slog.Info("config: loading")
 	cfg, err := config.New()
 	if err != nil {
-		log.Error("config: error", "error", err)
-		failAndExit(log, nil, nil)
+		slog.Error("config: error", "error", err)
+		failAndExit(nil, nil)
 	}
-	log.Info("config: loaded")
+	slog.Info("config: loaded")
 
-	logLevel := logger.ChangeLevel(cfg.LogLevel)
-	log.Info("logger: set", "level", logLevel)
-
-	log.Info("postgres: connecting")
-	db, err := postgres.New(log, cfg.PostgresURL)
+	slog.Info("postgres: connecting")
+	db, err := postgres.New(cfg.PostgresURL)
 	if err != nil {
-		log.Error("postgres: error", "error", err)
-		failAndExit(log, nil, nil)
+		slog.Error("postgres: error", "error", err)
+		failAndExit(nil, nil)
 	}
-	log.Info("postgres: ready")
+	slog.Info("postgres: ready")
 
 	srv, r := rest.New(cfg.RestServerPort)
 
 	health.New(r, db)
 
-	if err := note.New(log, r, db.Conn); err != nil {
-		log.Error("note: error", "error", err)
-		failAndExit(log, nil, db)
+	if err := note.New(r, db.Conn); err != nil {
+		slog.Error("note: error", "error", err)
+		failAndExit(nil, db)
 	}
-	log.Info("note: ready")
+	slog.Info("note: ready")
 
 	go func() {
-		log.Info("server: runnig", "port", cfg.RestServerPort)
+		slog.Info("server: runnig", "port", cfg.RestServerPort)
 		if err := srv.Start(); err != nil {
-			log.Error("server: error", "error", err)
-			failAndExit(log, srv, db)
+			slog.Error("server: error", "error", err)
+			failAndExit(srv, db)
 		}
 	}()
 
@@ -64,21 +62,21 @@ func main() {
 	signal.Notify(quit, os.Interrupt)
 	<-quit
 
-	log.Info("signal: received")
-	log.Info("shutdown: starting")
+	slog.Info("signal: received")
+	slog.Info("shutdown: starting")
 
-	code := gracefulShutdown(log, srv, db)
+	code := gracefulShutdown(srv, db)
 
-	log.Info("shutdown: complete", "code", code)
+	slog.Info("shutdown: complete", "code", code)
 	os.Exit(code)
 }
 
-func failAndExit(log *logger.Logger, srv *rest.Server, db *postgres.Client) {
-	gracefulShutdown(log, srv, db)
+func failAndExit(srv *rest.Server, db *postgres.Client) {
+	gracefulShutdown(srv, db)
 	os.Exit(1)
 }
 
-func gracefulShutdown(log *logger.Logger, srv *rest.Server, db *postgres.Client) int {
+func gracefulShutdown(srv *rest.Server, db *postgres.Client) int {
 	parentCtx := context.Background()
 	var hasError bool
 
@@ -87,19 +85,19 @@ func gracefulShutdown(log *logger.Logger, srv *rest.Server, db *postgres.Client)
 		defer cancel()
 
 		if err := srv.Close(ctx); err != nil {
-			log.Error("server: error", "error", err)
+			slog.Error("server: error", "error", err)
 			hasError = true
 		} else {
-			log.Info("server: stopped")
+			slog.Info("server: stopped")
 		}
 	}
 
 	if db != nil {
 		if err := db.Close(); err != nil {
-			log.Error("postgres: error", "error", err)
+			slog.Error("postgres: error", "error", err)
 			hasError = true
 		} else {
-			log.Info("postgres: stopped")
+			slog.Info("postgres: stopped")
 		}
 	}
 

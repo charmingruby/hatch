@@ -2,6 +2,7 @@ package endpoint
 
 import (
 	"errors"
+	"log/slog"
 
 	"HATCH_APP/internal/note/dto"
 	"HATCH_APP/internal/shared/customerr"
@@ -20,7 +21,7 @@ func (e *Endpoint) ArchiveNote(c *gin.Context) {
 	}); err != nil {
 		var notFoundErr *customerr.NotFoundError
 		if errors.As(err, &notFoundErr) {
-			e.log.Error("not found error", "error", err.Error(), "request", c.Request)
+			slog.Error("not found error", "error", err.Error(), "request", c.Request)
 
 			rest.SendNotFoundResponse(c, err.Error())
 			return
@@ -28,13 +29,13 @@ func (e *Endpoint) ArchiveNote(c *gin.Context) {
 
 		var databaseErr *customerr.DatabaseError
 		if errors.As(err, &databaseErr) {
-			e.log.Error("database error", "error", databaseErr.Unwrap().Error(), "request", c.Request)
+			slog.Error("database error", "error", databaseErr.Unwrap().Error(), "request", c.Request)
 
 			rest.SendInternalServerErrorResponse(c)
 			return
 		}
 
-		e.log.Error("unknown error", "error", err.Error(), "request", c.Request)
+		slog.Error("unknown error", "error", err.Error(), "request", c.Request)
 
 		rest.SendInternalServerErrorResponse(c)
 		return

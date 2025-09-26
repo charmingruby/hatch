@@ -5,7 +5,6 @@ import "github.com/caarlos0/env"
 type Config struct {
 	RestServerPort string `env:"REST_SERVER_PORT,required"`
 	PostgresURL    string `env:"POSTGRES_URL,required"`
-	LogLevel       string `env:"LOG_LEVEL"`
 }
 
 func New() (*Config, error) {
