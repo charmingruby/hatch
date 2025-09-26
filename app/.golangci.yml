@@ -98,6 +98,7 @@ linters:
       - path: '.*/main\.go$'
         linters:
           - revive
+          - funlen
 
   settings:
     cyclop:
