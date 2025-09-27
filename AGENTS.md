@@ -4,12 +4,6 @@ Hatch is a **Go project template** with clear structure and tooling to accelerat
 
 ## Project Structure
 
-### Bootstrap & Environment
-- The project includes a `.bootstrap` directory with everything needed to set up the development environment
-- Use `make bootstrap` to prepare and configure the environment
-- Use `make cleanup` to remove all setup and reset the environment
-- Ensure dependencies, tools, and environment variables are properly configured
-
 ### Infrastructure
 - When the project requires infrastructure management, create an `infra/` directory at the root
 - Organize by resource type in subdirectories: `charts/`, `terraform/`, `manifests/`
@@ -96,8 +90,8 @@ Hatch is a **Go project template** with clear structure and tooling to accelerat
 ## Commands & Automation
 
 ### Makefile
-- `make bootstrap` — Sets up development environment
-- `make cleanup` — Resets environment
+- `make up` — Sets up development environment
+- `make down` — Resets environment
 - Integrated test commands
 - Other utility commands for development
 

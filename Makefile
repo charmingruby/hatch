@@ -1,5 +1,3 @@
-# Serves as the primary orchestrator for environment lifecycle operations
-
 CLUSTER_NAME ?= hatch-cluster
 
 .PHONY: setup-cluster

@@ -21,3 +21,13 @@ Hatch supports multiple components or services under a single repository.
     ├── web     
     └── worker  # Background jobs or consumers
 ```
+
+## Orchestration & Scripts
+
+All project orchestration and environment lifecycle scripts are centralized in the `Makefile` at the root of the repository.  
+This includes tasks such as:  
+
+- Provisioning and tearing down local clusters (`kind`)  
+- Running setup, cleanup, restart, and log commands for development environments  
+
+Centralizing these scripts in a single `Makefile` provides a consistent, documented entry point for developers to manage the entire environment.
