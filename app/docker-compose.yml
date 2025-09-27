@@ -37,9 +37,11 @@ services:
       context: .
       dockerfile: ./Dockerfile
     ports:
-      - "3000:3000"
-    environment:
-      REST_SERVER_PORT: 3000
-      POSTGRES_URL: "postgres://postgres:postgres@db:5432/hatch?sslmode=disable"
+      - "3333:3333"
+    env_file:
+      - .env
+      # environment:
+      #   REST_SERVER_PORT: 3333
+      #   POSTGRES_URL: "postgres://postgres:postgres@db:5432/hatch?sslmode=disable"
     depends_on:
       - migrate

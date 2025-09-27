@@ -1,13 +1,5 @@
 # Structure
 
-## Bootstrap
-
-Hatch includes a `.bootstrap` directory with everything needed to set up the development environment.  
-The project Makefile provides two main commands:  
-
-- **bootstrap**: prepares and configures the environment.  
-- **cleanup**: removes all setup and resets the environment.  
-
 ## Infrastructure
 
 If your project requires infrastructure management, create an `infra/` directory at the root.  

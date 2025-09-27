@@ -1,3 +1,5 @@
+# Serves as the primary orchestrator for environment lifecycle operations
+
 CLUSTER_NAME ?= hatch-cluster
 
 .PHONY: setup-cluster
@@ -6,7 +8,7 @@ setup-cluster:
 	@if kind get clusters | grep -q "^${CLUSTER_NAME}$$"; then \
 		echo "Cluster '${CLUSTER_NAME}' already exists. Skipping..."; \
 	else \
-		kind create cluster --name ${CLUSTER_NAME} --config ./.bootstrap/cluster/manifests/kind.yaml; \
+		kind create cluster --name ${CLUSTER_NAME} --config ./infra/k8s/cluster/kind.yaml; \
 	fi
 
 .PHONY: teardown-cluster
@@ -18,8 +20,11 @@ teardown-cluster:
 		echo " Cluster '${CLUSTER_NAME}' does not exists"; \
 	fi
 
-.PHONY: bootstrap
-bootstrap: setup-cluster
+.PHONY: up
+up: setup-cluster
 
-.PHONY: cleanup
-cleanup: teardown-cluster
+.PHONY: down
+down: teardown-cluster
+
+.PHONY: restart
+restart: down up
