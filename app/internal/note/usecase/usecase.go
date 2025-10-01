@@ -14,10 +14,10 @@ type Service interface {
 }
 
 type UseCase struct {
-	noteRepo repository.NoteRepository
+	noteRepo repository.NoteRepo
 }
 
-func New(noteRepo repository.NoteRepository) Service {
+func New(noteRepo repository.NoteRepo) Service {
 	return UseCase{
 		noteRepo: noteRepo,
 	}

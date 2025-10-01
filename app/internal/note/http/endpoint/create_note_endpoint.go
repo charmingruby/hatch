@@ -5,7 +5,6 @@ import (
 	"HATCH_APP/internal/shared/customerr"
 	"HATCH_APP/internal/shared/http/rest"
 	"errors"
-	"log/slog"
 
 	"github.com/gin-gonic/gin"
 )
@@ -18,11 +17,11 @@ type CreateNoteRequest struct {
 func (e *Endpoint) CreateNote(c *gin.Context) {
 	ctx := c.Request.Context()
 
-	slog.InfoContext(ctx, "endpoint/CreateNote: request received")
+	e.log.InfoContext(ctx, "endpoint/CreateNote: request received")
 
 	var req CreateNoteRequest
 	if err := c.BindJSON(&req); err != nil {
-		slog.ErrorContext(
+		e.log.ErrorContext(
 			ctx,
 			"endpoint/CreateNote: unable to parse payload",
 			"error", err.Error(),
@@ -32,7 +31,7 @@ func (e *Endpoint) CreateNote(c *gin.Context) {
 		return
 	}
 	if err := e.val.Validate(req); err != nil {
-		slog.ErrorContext(
+		e.log.ErrorContext(
 			ctx,
 			"endpoint/CreateNote: invalid payload",
 			"error", err.Error(),
@@ -49,7 +48,7 @@ func (e *Endpoint) CreateNote(c *gin.Context) {
 	if err != nil {
 		var databaseErr *customerr.DatabaseError
 		if errors.As(err, &databaseErr) {
-			slog.ErrorContext(
+			e.log.ErrorContext(
 				ctx,
 				"endpoint/CreateNote: database error",
 				"error", databaseErr.Unwrap().Error(),
@@ -59,7 +58,7 @@ func (e *Endpoint) CreateNote(c *gin.Context) {
 			return
 		}
 
-		slog.ErrorContext(
+		e.log.ErrorContext(
 			ctx,
 			"endpoint/CreateNote: unknown error", "error", err.Error(),
 		)
@@ -68,7 +67,7 @@ func (e *Endpoint) CreateNote(c *gin.Context) {
 		return
 	}
 
-	slog.InfoContext(
+	e.log.InfoContext(
 		ctx,
 		"endpoint/CreateNote: finished successfully",
 	)

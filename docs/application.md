@@ -1,10 +1,29 @@
-# Application
+**# Application
 
 ## Quick Start
 
 1. Replace `HATCH_APP` with your Go module path (e.g., `github.com/yourorg/project`)
 2. Update Docker image name in `.github/workflows/*.yml` and configure secrets
 3. Copy `.env.example` → `.env` and fill required values
+
+## Dependency Injection
+
+Hatch uses **[Uber Fx](https://uber-go.github.io/fx/)** for dependency injection and application lifecycle management.
+
+### Key Concepts
+
+- **Modules** - Self-contained units that provide and/or invoke dependencies
+- **Providers** (`fx.Provide`) - Functions that create and return dependencies
+- **Invocations** (`fx.Invoke`) - Functions that consume dependencies to perform initialization
+- **Lifecycle Hooks** - Startup and shutdown hooks for managing resources
+
+### Module Types
+
+**Provider Modules** - Export dependencies for other modules to consume (e.g., `config.Module`, `postgres.Module`)
+**Invoke Modules** - Consume dependencies to perform initialization (e.g., `note.Module`, `health.Module`)
+**Lifecycle Modules** - Manage resource lifecycle with startup/shutdown hooks (e.g., `rest.Module`, `postgres.Module`)
+
+See [cmd/api/main.go](../app/cmd/api/main.go), [config/config.go](../app/config/config.go), [internal/note/note.go](../app/internal/note/note.go), and [pkg/database/postgres/postgres.go](../app/pkg/database/postgres/postgres.go) for reference implementations.
 
 ## Architecture
 
@@ -39,10 +58,11 @@ internal/
 
 The `internal/note/` module is fully implemented and serves as a reference example.
 
-**Barrel file** (`MODULE.go`): Only public API, initializes dependencies, registers routes.
-```go
-func New(r *gin.Engine, db *sqlx.DB) error
-```
+**Barrel file** (`MODULE.go`): Exports an Fx module with dependency injection:
+- Constructor function (`New`) receives dependencies via Fx
+- Wires internal components (repository → use case → endpoints)
+- Registers HTTP routes
+- Exports `Module` variable for main.go registration
 
 ### Directory Principles
 
@@ -103,4 +123,13 @@ type CreateNoteInput struct {
 1. Create `internal/newmodule/` with barrel file `newmodule.go`
 2. Add `model/`, `dto/`, `usecase/`, `repository/`, `http/` subdirs
 3. Implement layers: model → DTO → use case → repository → handlers
-4. Wire in barrel file and register in `main.go` via `newmodule.New(router, db)`
+4. Create Fx module in barrel file:
+   ```go
+   func New(log *logger.Logger, r *gin.Engine, db *sqlx.DB) error {
+       // Wire dependencies
+       return nil
+   }
+
+   var Module = fx.Module("newmodule", fx.Invoke(New))
+   ```
+5. Register module in `cmd/api/main.go` by adding `newmodule.Module` to `fx.New()`**

@@ -50,48 +50,11 @@ Application
 
 - **Module Independence** - Each module is self-contained and can be removed or extracted
 - **Clear Boundaries** - Modules communicate through well-defined interfaces
-- **Minimal Coupling** - Shared code lives in `pkg/` and `internal/shared/`
+- **Minimal Coupling** - Shared code lives in common packages
 - **Service Ready** - Any module can become a microservice without refactoring
-
-## Project Structure
-
-### Repository Layout
-
-```
-├── cmd/api/            # Application entry point (main.go)
-├── config/             # Configuration management
-├── internal/           # Private application code
-│   ├── note/           # Example feature module
-│   └── shared/         # Cross-cutting concerns
-├── pkg/                # Public reusable libraries
-├── test/               # Test utilities and mocks
-├── db/                 # Database migrations
-└── Makefile            # Development commands
-```
-
-### Feature Module Layout
-
-Each feature inside `internal/` follows this structure:
-
-```
-internal/MODULE/
-  MODULE.go              # Barrel file - dependency wiring
-  model/                 # Domain entities
-  dto/                   # Data Transfer Objects
-  usecase/               # Business logic + tests
-  repository/            # Data access contracts + implementations
-  http/endpoint/         # HTTP handlers
-  messaging/             # Event publishers/subscribers (optional)
-  external/              # Third-party integrations (optional)
-```
-
-**Example:** See `app/internal/note/` for a complete reference implementation.
 
 ## Documentation
 
-### For Developers
 - **[Application Guidelines](docs/application.md)** - Complete development guide with Go best practices
-- **[Layout Documentation](docs/layout.md)** - Repository organization.
-
-### For AI Agents
-- **[AGENTS.md](AGENTS.md)** - Comprehensive context about architecture, patterns, and code modification guidelines
+- **[Layout Documentation](docs/layout.md)** - Repository organization and structure details
+- **[AGENTS.md](AGENTS.md)** - Comprehensive context for AI agents about architecture and patterns

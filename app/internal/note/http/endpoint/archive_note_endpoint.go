@@ -5,7 +5,6 @@ import (
 	"HATCH_APP/internal/shared/customerr"
 	"HATCH_APP/internal/shared/http/rest"
 	"errors"
-	"log/slog"
 
 	"github.com/gin-gonic/gin"
 )
@@ -13,7 +12,7 @@ import (
 func (e *Endpoint) ArchiveNote(c *gin.Context) {
 	ctx := c.Request.Context()
 
-	slog.InfoContext(ctx, "endpoint/ArchiveNote: request received")
+	e.log.InfoContext(ctx, "endpoint/ArchiveNote: request received")
 
 	id := c.Param("id")
 
@@ -22,7 +21,7 @@ func (e *Endpoint) ArchiveNote(c *gin.Context) {
 	}); err != nil {
 		var notFoundErr *customerr.NotFoundError
 		if errors.As(err, &notFoundErr) {
-			slog.ErrorContext(
+			e.log.ErrorContext(
 				ctx,
 				"endpoint/ArchiveNote: not found error",
 				"error", err.Error(),
@@ -34,7 +33,7 @@ func (e *Endpoint) ArchiveNote(c *gin.Context) {
 
 		var databaseErr *customerr.DatabaseError
 		if errors.As(err, &databaseErr) {
-			slog.ErrorContext(
+			e.log.ErrorContext(
 				ctx,
 				"endpoint/ArchiveNote: database error",
 				"error", databaseErr.Unwrap().Error(),
@@ -44,7 +43,7 @@ func (e *Endpoint) ArchiveNote(c *gin.Context) {
 			return
 		}
 
-		slog.ErrorContext(
+		e.log.ErrorContext(
 			ctx,
 			"endpoint/ArchiveNote: unknown error", "error", err.Error(),
 		)
@@ -53,7 +52,7 @@ func (e *Endpoint) ArchiveNote(c *gin.Context) {
 		return
 	}
 
-	slog.InfoContext(
+	e.log.InfoContext(
 		ctx,
 		"endpoint/ArchiveNote: finished successfully",
 	)

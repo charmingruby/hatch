@@ -6,6 +6,10 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func (e *Endpoint) livenessHandler(c *gin.Context) {
+func (e *Endpoint) Liveness(c *gin.Context) {
+	ctx := c.Request.Context()
+	e.log.InfoContext(ctx, "endpoint/Liveness: request received")
+	e.log.InfoContext(ctx, "endpoint/Liveness: finished successfully")
+
 	rest.SendOKResponse(c, "", nil)
 }

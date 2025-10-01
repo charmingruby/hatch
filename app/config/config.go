@@ -1,6 +1,9 @@
 package config
 
-import "github.com/caarlos0/env"
+import (
+	"github.com/caarlos0/env"
+	"go.uber.org/fx"
+)
 
 type Config struct {
 	RestServerPort string `env:"REST_SERVER_PORT,required"`
@@ -16,3 +19,7 @@ func New() (*Config, error) {
 
 	return &cfg, nil
 }
+
+var Module = fx.Module("config",
+	fx.Provide(New),
+)

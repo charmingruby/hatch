@@ -4,7 +4,6 @@ import (
 	"HATCH_APP/internal/shared/customerr"
 	"HATCH_APP/internal/shared/http/rest"
 	"errors"
-	"log/slog"
 
 	"github.com/gin-gonic/gin"
 )
@@ -12,13 +11,13 @@ import (
 func (e *Endpoint) ListNotes(c *gin.Context) {
 	ctx := c.Request.Context()
 
-	slog.InfoContext(ctx, "endpoint/ListNotes: request received")
+	e.log.InfoContext(ctx, "endpoint/ListNotes: request received")
 
 	op, err := e.service.ListNotes(ctx)
 	if err != nil {
 		var databaseErr *customerr.DatabaseError
 		if errors.As(err, &databaseErr) {
-			slog.ErrorContext(
+			e.log.ErrorContext(
 				ctx,
 				"endpoint/ListNotes: database error",
 				"error", databaseErr.Unwrap().Error(),
@@ -28,7 +27,7 @@ func (e *Endpoint) ListNotes(c *gin.Context) {
 			return
 		}
 
-		slog.ErrorContext(
+		e.log.ErrorContext(
 			ctx,
 			"endpoint/ListNotes: unknown error", "error", err.Error(),
 		)
@@ -37,7 +36,7 @@ func (e *Endpoint) ListNotes(c *gin.Context) {
 		return
 	}
 
-	slog.InfoContext(
+	e.log.InfoContext(
 		ctx,
 		"endpoint/ListNotes: finished successfully",
 	)

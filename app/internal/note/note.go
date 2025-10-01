@@ -4,13 +4,16 @@ import (
 	"HATCH_APP/internal/note/http/endpoint"
 	"HATCH_APP/internal/note/repository/postgres"
 	"HATCH_APP/internal/note/usecase"
+	"HATCH_APP/pkg/logger"
 	"HATCH_APP/pkg/validator"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jmoiron/sqlx"
+	"go.uber.org/fx"
 )
 
 func New(
+	log *logger.Logger,
 	r *gin.Engine,
 	db *sqlx.DB,
 ) error {
@@ -23,7 +26,11 @@ func New(
 
 	val := validator.New()
 
-	endpoint.New(r, val, uc).Register()
+	endpoint.New(log, r, val, uc).Register()
 
 	return nil
 }
+
+var Module = fx.Module("note",
+	fx.Invoke(New),
+)
