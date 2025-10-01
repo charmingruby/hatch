@@ -5,6 +5,8 @@
 1. Replace `HATCH_APP` with your Go module path (e.g., `github.com/yourorg/project`)
 2. Update Docker image name in `.github/workflows/*.yml` and configure secrets
 3. Copy `.env.example` → `.env` and fill required values
+4. Adapt for your IDE (optional):
+   - **Claude Code**: Run `bash scripts/setup-claude-code.sh` (auto-updates all links)
 
 ## Architecture
 
