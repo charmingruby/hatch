@@ -1,122 +1,166 @@
-# Hatch Project Guidelines
+# Hatch - AI Agent Context
 
-Hatch is a **Go project template** with clear structure and tooling to accelerate development from day one. It's **battle-tested** and suitable for different contexts, from **corporate environments** and **production-grade products** to **quick PoCs**.
+## Project Overview
 
-## Project Structure
+**Hatch** is a production-ready Go template implementing Clean Architecture with modular design and Go best practices.
 
-### Infrastructure
-- When the project requires infrastructure management, create an `infra/` directory at the root
-- Organize by resource type in subdirectories: `charts/`, `terraform/`, `manifests/`
-- Maintain consistency between local, staging, and production setups
+### Architecture
+- **Domain**: Entities (`internal/*/model/`)
+- **Use Case**: Business logic (`internal/*/usecase/`)
+- **Interface Adapters**: Handlers, repositories (`internal/*/http/`, `internal/*/repository/`)
+- **External**: Third-party integrations (`internal/*/external/`)
 
-### Monorepo & Multiple Apps
-- Place all apps under the root-level `apps/` directory (e.g., `api/`, `web/`, `worker/`)
-- Each app should be self-contained with its own code, configurations, and tests
-- For Go projects, use Go workspace (`go.work`) to manage dependencies across apps
-- Support multiple components or services under a single repository
+### Principles
+- Modular, interface-driven, explicit contracts via DTOs
+- Fail-fast validation, dependency inversion
 
-### Project Identity
-- Replace all instances of the placeholder `HATCH_APP` with the actual project module path
-- Update Docker image names in GitHub Actions and docker compose files
-- Configure repository secrets for automated workflows
-- GitHub Actions includes a workflow to push container images to DockerHub
+## Directory Structure
 
-## Module Organization
+```
+├── app/                     # Main application
+│   ├── cmd/api/             # Entry point
+│   ├── config/               # Configuration
+│   ├── internal/            # Private code
+│   │   ├── MODULE/          # Feature module (note, user, billing)
+│   │   │   ├── model/       # Domain entities
+│   │   │   ├── dto/         # Shared contract between use case and delivery Layer I/O
+│   │   │   ├── usecase/     # Business logic
+│   │   │   ├── repository/  # Data access
+│   │   │   ├── http/        # HTTP handlers
+│   │   │   ├── messaging/   # Events
+│   │   │   └── external/    # Third-party contracts
+│   │   └── shared/          # Cross-cutting concerns
+│   ├── pkg/                 # Public libraries
+│   ├── test/                # Mocks & test utils
+│   └── db/                  # Migrations
+├── apps/                    # Monorepo 
+└── infra/                   # Infrastructure (k8s, helm, terraform) 
+```
 
-### Base Structure
-- Use `internal/` as the main module root
-- Create a barrel file (`module_name.go`) for initialization at each module root
-- Keep modules cohesive with clear separation of concerns
-- Use the example module structure as a base
+### Bootstrap
+1. Replace `HATCH_APP` with your Go module path
+2. Update Docker images in **workflows**
+3. Configure CI/CD secrets
+4. Replace `internal/note` with your features
 
-### Shared Contracts
-- **Internal Shared**: For contracts reused across modules but private to the repo, use `internal/shared/`
-- **Public API**: For libraries reusable across projects, use `pkg/`
-- Ensure modules depend only on contracts, not directly on third-party SDKs
+## Module Structure
 
-### External Integrations
-- Within each module, use `external/` for contracts unique to that module
-- Maintain clean separation between contracts and third-party implementations
-- Example:
-  ```
-  internal/
-    billing/
-      external/
-        payment_gateway.go    # Contract
-        stripe/
-          gateway.go         # Implementation
-        paypal/
-          gateway.go         # Implementation
-  ```
+```go
+internal/note/
+  note.go               # Barrel file: wires deps, public API
+  model/note.go         # Domain entity
+  dto/*.go              # Input/Output contracts
+  usecase/
+    usecase.go          # Service interface
+    create_note.go      # Implementation
+  repository/
+    repository.go       # Interface
+    postgres/note_repository.go
+  http/endpoint/*.go    # HTTP handlers
+```
 
-## Communication Patterns
+**Dependency Flow:**
+```
+main.go → module.New(router, db)
+  → creates repository
+  → creates use case
+  → creates endpoints
+  → registers routes
+```
 
-### HTTP (Synchronous)
-- **REST APIs**: `http/rest/`
-- **gRPC Services**: `http/grpc/`
-- **GraphQL APIs**: `http/gql/`
+**Shared Code:**
+- `internal/shared/` - HTTP utils, errors, storage, messaging
+- `pkg/` - Logger, database, validator, ID gen
 
-### Messaging (Asynchronous)
-- **Per-Module Events**:
-  - `internal/MODULE/messaging/event/` — Defines module-specific events
-  - `internal/MODULE/messaging/subscriber/` — Event listeners
-  - Convention: event `transaction.created` → handler `onTransactionCreated`
+**External Services:**
+```go
+internal/billing/external/
+  payment_gateway.go         // Interface
+  stripe/payment_gateway.go  // Implementation
+```
 
-- **Shared Contracts**:
-  - `pkg/messaging/` — If reusable outside this repo
-  - `internal/shared/messaging/` — If private to this repo
+## Patterns
 
-- **Implementations**: NATS, Kafka, etc. live in the same directory as contracts
+### HTTP Layer
+- REST APIs: `http/rest/`
+- gRPC Services: `http/grpc/`
+- GraphQL APIs: `http/gql/`
 
-## Persistence & Data
+### Messaging
+- Events in `MODULE/messaging/event/`
+- Handlers in `MODULE/messaging/subscriber/`
+- Convention: `order.created` → `onOrderCreated()`
 
 ### Database
-- PostgreSQL configured as the default database
-- Includes SQL migrations and database setup scripts
-- Implement repository patterns for data access
+- PostgreSQL with sqlx
+- Migrations in `app/db/migrations/`
+- Repository pattern: interface + postgres implementation
+- SQL queries in `*_query.go` files
 
 ### Testing
-- Test setup is integrated, including support for **mockery**
-- Use Makefile test commands
-- Follow the test scenario convention:
-  ```
-  <action> <result> when <condition>
-  ```
-- Examples:
-  - `should return stash with default values when no options are provided`
-  - `should return ErrExpired when key is expired`
-  - `should store new entry successfully`
+- Unit tests next to code
+- Mocks via mockery in `test/gen/MODULE/mocks/`
+- Naming: `should <result> when <condition>`
+- Commands: `make test`, `make test-coverage`, `make mock`
 
-## Commands & Automation
+### Error Handling
+- Return errors, never panic
+- Custom domain errors in `internal/shared/customerr/`
+- Wrap with context: `fmt.Errorf("msg: %w", err)`
 
-### Makefile
-- `make up` — Sets up development environment
-- `make down` — Resets environment
-- Integrated test commands
-- Other utility commands for development
+## Go Conventions
 
-### CI/CD
-- GitHub Actions configured with Docker workflow
-- Configuration for different environments (local, staging, production)
-- Repository secrets must be properly configured
+### Naming
+- **Interfaces**: `NoteRepository`, `Service`
+- **Files**: snake_case (`create_note_dto.go`)
+- **Packages**: lowercase, single word (`note`, `usecase`)
 
-## Architectural Principles
+### Dependency Injection
+- Constructor pattern: `New()` functions
+- Pass interfaces as parameters
+- Wire in `main.go` and barrel files
 
-### Modularity
-- Each module should have well-defined responsibilities
-- Avoid circular dependencies between modules
-- Use interfaces to decouple implementations
+### Context
+- First parameter in use cases
+- Propagate through layers
 
-### Separation of Concerns
-- Presentation layer (HTTP, gRPC, GraphQL)
-- Business layer (domain, use cases)
-- Persistence layer (repositories, migrations)
-- Integration layer (external services)
+## AI Agent Guidelines
 
-### Testability
-- All modules must be testable
-- Use mocks for external dependencies
-- Maintain adequate test coverage
-- Tests should  be fast and reliable
+### Adding New Module
+1. Create `internal/MODULE/`
+2. Add barrel file: `MODULE.go` with `New()`
+3. Define model, DTOs, use case interface
+4. Implement use cases, repository, endpoints
+5. Wire in barrel file
+6. Register in `main.go`
 
-This template is designed to grow with your project, from quick prototypes to enterprise-scale systems, always maintaining organization, scalability, and code quality. 
+### Modifying Code
+- Preserve interface signatures
+- Follow existing patterns
+- Update tests
+- Respect layer boundaries
+
+### Adding Dependencies
+- Third-party in `external/` or `pkg/`
+- Interface first, implementation second
+- Use dependency injection
+
+## Quick Reference
+
+### File Locations
+- Entry: `app/cmd/api/main.go`
+- Config: `app/config/config.go`
+- Example: `app/internal/note/`
+- Shared: `app/internal/shared/`
+- Packages: `app/pkg/`
+- Migrations: `app/db/migrations/`
+- Mocks: `app/test/gen/*/mocks/`
+
+### What NOT to Do
+- ❌ Global variables for dependencies
+- ❌ Skip layers (handler → repository)
+- ❌ Business logic in handlers
+- ❌ `panic()` for errors
+- ❌ Ignore context cancellation
+- ❌ SQL in use cases
+- ❌ Cross-module `internal/` imports (use `shared/`) 
