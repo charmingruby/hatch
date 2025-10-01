@@ -3,7 +3,7 @@
 ## Infrastructure
 
 If your project requires infrastructure management, create an `infra/` directory at the root.  
-Each type of resource should have its own subdirectory, for example: `charts`, `terraform`, `manifests`.  
+Each type of resource should have its own subdirectory, for example: `helm`, `terraform`, `k8s`.  
 
 ## Monorepo & Multiple Apps
 
@@ -27,7 +27,7 @@ Hatch supports multiple components or services under a single repository.
 All project orchestration and environment lifecycle scripts are centralized in the `Makefile` at the root of the repository.  
 This includes tasks such as:  
 
-- Provisioning and tearing down local clusters (`kind`)  
+- Provisioning and tearing down local clusters
 - Running setup, cleanup, restart, and log commands for development environments  
 
 Centralizing these scripts in a single `Makefile` provides a consistent, documented entry point for developers to manage the entire environment.
