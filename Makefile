@@ -2,6 +2,10 @@
 
 # CLUSTER_NAME ?= hatch-cluster
 
+.PHONY: setup-claude-code
+setup-claude-code:
+	bash ./scripts/setup-claude-code.sh
+
 # .PHONY: setup-cluster
 # setup-cluster:
 # 	@echo "Setting up cluster..."
