@@ -1,4 +1,4 @@
-# Application Guidelines
+# Application
 
 ## Getting Started
 

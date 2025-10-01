@@ -26,11 +26,11 @@ Application
 │   Module A      │   Module B      │   Module C      │
 │                 │                 │                 │
 │  ┌───────────┐  │  ┌───────────┐  │  ┌───────────┐  │
-│  │    HTTP   │  │  │    HTTP   │  │  │    HTTP   │  │
+│  │   REST    │  │  │   gRPC    │  │  │   Event   │  │
 │  └─────┬─────┘  │  └─────┬─────┘  │  └─────┬─────┘  │
 │        │        │        │        │        │        │
 │  ┌─────▼─────┐  │  ┌─────▼─────┐  │  ┌─────▼─────┐  │
-│  │  Use Case │  │  │  Use Case │  │  │  Use Case │  │
+│  │ Use Case  │  │  │ Use Case  │  │  │ Use Case  │  │
 │  └─────┬─────┘  │  └─────┬─────┘  │  └─────┬─────┘  │
 │        │        │        │        │        │        │
 │  ┌─────▼─────┐  │  ┌─────▼─────┐  │  ┌─────▼─────┐  │
@@ -90,8 +90,8 @@ internal/MODULE/
 ## Documentation
 
 ### For Developers
-- **[Application Guidelines](app/docs/guidelines.md)** - Complete development guide with Go best practices
-- **[Structure Documentation](docs/structure.md)** - Repository organization for single-app and monorepo setups
+- **[Application Guidelines](docs/application.md)** - Complete development guide with Go best practices
+- **[Layout Documentation](docs/layout.md)** - Repository organization.
 
 ### For AI Agents
 - **[AGENTS.md](AGENTS.md)** - Comprehensive context about architecture, patterns, and code modification guidelines
