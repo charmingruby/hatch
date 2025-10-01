@@ -1,29 +1,10 @@
-**# Application
+# Application
 
 ## Quick Start
 
 1. Replace `HATCH_APP` with your Go module path (e.g., `github.com/yourorg/project`)
 2. Update Docker image name in `.github/workflows/*.yml` and configure secrets
 3. Copy `.env.example` → `.env` and fill required values
-
-## Dependency Injection
-
-Hatch uses **[Uber Fx](https://uber-go.github.io/fx/)** for dependency injection and application lifecycle management.
-
-### Key Concepts
-
-- **Modules** - Self-contained units that provide and/or invoke dependencies
-- **Providers** (`fx.Provide`) - Functions that create and return dependencies
-- **Invocations** (`fx.Invoke`) - Functions that consume dependencies to perform initialization
-- **Lifecycle Hooks** - Startup and shutdown hooks for managing resources
-
-### Module Types
-
-**Provider Modules** - Export dependencies for other modules to consume (e.g., `config.Module`, `postgres.Module`)
-**Invoke Modules** - Consume dependencies to perform initialization (e.g., `note.Module`, `health.Module`)
-**Lifecycle Modules** - Manage resource lifecycle with startup/shutdown hooks (e.g., `rest.Module`, `postgres.Module`)
-
-See [cmd/api/main.go](../app/cmd/api/main.go), [config/config.go](../app/config/config.go), [internal/note/note.go](../app/internal/note/note.go), and [pkg/database/postgres/postgres.go](../app/pkg/database/postgres/postgres.go) for reference implementations.
 
 ## Architecture
 
@@ -58,11 +39,22 @@ internal/
 
 The `internal/note/` module is fully implemented and serves as a reference example.
 
-**Barrel file** (`MODULE.go`): Exports an Fx module with dependency injection:
-- Constructor function (`New`) receives dependencies via Fx
-- Wires internal components (repository → use case → endpoints)
-- Registers HTTP routes
-- Exports `Module` variable for main.go registration
+### Dependency Injection
+
+Hatch uses **[Uber Fx](https://uber-go.github.io/fx/)** for dependency injection and application lifecycle management.
+
+#### Key Concepts
+- **Modules** - Self-contained units that provide and/or invoke dependencies
+- **Providers** (`fx.Provide`) - Functions that create and return dependencies
+- **Invocations** (`fx.Invoke`) - Functions that consume dependencies to perform initialization
+- **Lifecycle Hooks** - Startup and shutdown hooks for managing resources
+
+#### Module Types
+**Provider Modules** - Export dependencies for other modules to consume (e.g., `config.Module`, `postgres.Module`)
+**Invoke Modules** - Consume dependencies to perform initialization (e.g., `note.Module`, `health.Module`)
+**Lifecycle Modules** - Manage resource lifecycle with startup/shutdown hooks (e.g., `rest.Module`, `postgres.Module`)
+
+See [cmd/api/main.go](../app/cmd/api/main.go), [config/config.go](../app/config/config.go), [internal/note/note.go](../app/internal/note/note.go), and [pkg/database/postgres/postgres.go](../app/pkg/database/postgres/postgres.go) for reference implementations.
 
 ### Directory Principles
 
@@ -70,34 +62,79 @@ The `internal/note/` module is fully implemented and serves as a reference examp
 - **`internal/shared/`** - Cross-cutting concerns (middleware, errors, helpers)
 - **`pkg/`** - Reusable libraries (public API, no `internal/` deps)
 
-**External services:** Use interfaces. Place in `MODULE/external/` (single module) or `shared/SERVICE/` (multiple modules).
-
 ## Layers
 
+Request flow (outside → inside):
+
 ### HTTP
-- REST (`http/rest/`), gRPC, GraphQL supported
-- Handlers: parse → call use case → map errors → respond
+Entry point for synchronous requests.
+- Handlers parse input, call use cases, map errors, and respond
+- Supports REST, gRPC, GraphQL
+
+**Implementation(REST example):**
+- Routes: `MODULE/http/endpoint/endpoint.go`
+- Handlers: `MODULE/http/endpoint/*.go`
 
 ### Messaging
-- Event-driven via NATS/Kafka/RabbitMQ
-- Events: `MODULE/messaging/event/`
-- Handlers: `MODULE/messaging/subscriber/`
+Entry point for asynchronous events.
+- Event-driven communication via NATS/Kafka/RabbitMQ
+- Subscribers handle events and trigger use cases
 
-### DTOs
-- Location: `internal/MODULE/dto/operation_name_dto.go`
-- Define contracts between layers
-- Used for validation in handlers
+**Implementation:**
+- Events: `MODULE/messaging/event/*.go` (parsing and mapping logic, e.g., protobuf → model)
+- Subscribers: `MODULE/messaging/subscriber/*.go` (consume events, invoke use cases)
 
-```go
-type CreateNoteInput struct {
-    Title string `json:"title" binding:"required"`
-}
-```
+### DTO
+Contracts between presentation and business layers.
+- Define input/output structures
+- Enable validation at boundaries
+
+**Implementation:**
+- Location: `MODULE/dto/operation_name_dto.go`
+
+### Use Case
+Business logic and orchestration.
+- Coordinates repositories, external services, and domain models
+- Implements application workflows
+- Returns domain entities or DTOs
+
+**Implementation:**
+- Interface: `MODULE/usecase/usecase.go`
+- Implementations: `MODULE/usecase/*.go`
+- Tests: `MODULE/usecase/*_test.go`
 
 ### Repository
-- Interface: `repository/repository.go`
-- Implementation: `repository/postgres/MODULE_repository.go`
-- SQL queries: Separate `*_query.go` files
+Data access abstraction.
+- Interfaces hide implementation details
+- Implementations handle database operations
+- Queries separated for clarity
+
+**Implementation:**
+- Interface: `MODULE/repository/repository.go`
+- PostgreSQL: `MODULE/repository/postgres/MODULE_repository.go`
+- SQL queries: `MODULE/repository/postgres/*_query.go`
+
+### External
+Third-party service integrations.
+- Defines contracts for external APIs and services
+- Multiple implementations per contract (e.g., Stripe, PayPal for payment)
+- Called by use cases when external communication is needed
+
+**Implementation:**
+- Contract: `MODULE/external/service_name.go`
+- Implementations: `MODULE/external/PROVIDER/client.go`
+
+Example:
+```
+internal/
+  billing/
+    external/
+      payment_gateway.go    # Interface contract
+      stripe/
+        payment_gateway.go          # Stripe implementation
+      paypal/
+        payment_gateway.go          # PayPal implementation
+```
 
 ## Testing
 
@@ -132,4 +169,4 @@ type CreateNoteInput struct {
 
    var Module = fx.Module("newmodule", fx.Invoke(New))
    ```
-5. Register module in `cmd/api/main.go` by adding `newmodule.Module` to `fx.New()`**
+5. Register module in `cmd/api/main.go` by adding `newmodule.Module` to `fx.New()`
