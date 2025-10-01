@@ -46,12 +46,12 @@ func main() {
 
 	if err := note.New(r, db.Conn); err != nil {
 		slog.Error("note: error", "error", err)
-		failAndExit(nil, db)
+		failAndExit(srv, db)
 	}
 	slog.Info("note: ready")
 
 	go func() {
-		slog.Info("server: runnig", "port", cfg.RestServerPort)
+		slog.Info("server: running", "port", cfg.RestServerPort)
 		if err := srv.Start(); err != nil {
 			slog.Error("server: error", "error", err)
 			failAndExit(srv, db)
@@ -77,13 +77,12 @@ func failAndExit(srv *rest.Server, db *postgres.Client) {
 }
 
 func gracefulShutdown(srv *rest.Server, db *postgres.Client) int {
-	parentCtx := context.Background()
 	var hasError bool
 
-	if srv != nil {
-		ctx, cancel := context.WithTimeout(parentCtx, 15*time.Second)
-		defer cancel()
+	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+	defer cancel()
 
+	if srv != nil {
 		if err := srv.Close(ctx); err != nil {
 			slog.Error("server: error", "error", err)
 			hasError = true
