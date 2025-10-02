@@ -55,6 +55,6 @@ Application
 
 ## Documentation
 
-- **[Application Guidelines](docs/application.md)** - Complete development guide with Go best practices
-- **[Layout Documentation](docs/layout.md)** - Repository organization and structure details
+- **[Application Guidelines](docs/app.md)** - Complete development guide with Go best practices
+- **[Project Structure Documentation](docs/project-structure.md)** - Repository organization and structure details
 - **[AGENTS.md](AGENTS.md)** - Comprehensive context for AI agents about architecture and patterns

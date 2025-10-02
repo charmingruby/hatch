@@ -5,7 +5,7 @@ Complete guide to create a new feature module in Hatch.
 ## Steps
 
 1. Create directory structure
-2. Implement layers in order: model í DTO í use case + **tests** í repository í handlers
+2. Implement layers in order: model ÔøΩ DTO ÔøΩ use case + **tests** ÔøΩ repository ÔøΩ handlers
 3. Wire dependencies in barrel file with Fx module
 4. Register module in `main.go`
 
@@ -445,7 +445,7 @@ import (
 	"time"
 
 	"HATCH_APP/config"
-	"HATCH_APP/internal/billing"  // ê Import new module
+	"HATCH_APP/internal/billing"  // ÔøΩ Import new module
 	"HATCH_APP/internal/health"
 	"HATCH_APP/internal/note"
 	"HATCH_APP/internal/shared/http/rest"
@@ -471,7 +471,7 @@ func main() {
 		rest.Module,
 		health.Module,
 		note.Module,
-		billing.Module,  // ê Add new module here
+		billing.Module,  // ÔøΩ Add new module here
 		fx.WithLogger(func() fxevent.Logger {
 			return log
 		}),
@@ -485,11 +485,10 @@ func main() {
 
 1. **Generate mocks**: `make mock`
 2. **Run tests**: `make test`
-3. **Create migration**: Add SQL files in `db/migrations/`
-   - `000002_creates_subscriptions_table.up.sql`
-   - `000002_creates_subscriptions_table.down.sql`
-4. **Run migration**: `make migrate-up`
-5. **Test endpoint**: `curl -X POST http://localhost:8080/subscriptions -d '{"user_id":"user-123","plan_id":"plan-456"}'`
+3. **Create migration**: `make new-mig name=creates_subscriptions_table`
+4. **Edit migration files** in `db/migrations/` (created automatically with timestamp)
+5. **Run migration**: `make migrate-up`
+6. **Test endpoint**: `curl -X POST http://localhost:8080/subscriptions -d '{"user_id":"user-123","plan_id":"plan-456"}'`
 
 ## Reference
 

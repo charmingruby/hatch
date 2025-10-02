@@ -1,4 +1,4 @@
-# Layout
+# Project Structure
 
 Hatch enforces a clean, standardized directory structure that scales from single applications to complex monorepos.
 
