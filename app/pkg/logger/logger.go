@@ -57,97 +57,97 @@ func (l *Logger) LogEvent(event fxevent.Event) {
 }
 
 func (l *Logger) logOnStartExecuting(e *fxevent.OnStartExecuting) {
-	l.Debug("fx: hook OnStart executing", "callee", e.FunctionName, "caller", e.CallerName)
+	l.Debug("app: starting component lifecycle hook", "component", e.CallerName, "hook", e.FunctionName)
 }
 
 func (l *Logger) logOnStartExecuted(e *fxevent.OnStartExecuted) {
 	if e.Err != nil {
-		l.Error("fx: hook OnStart failed", "callee", e.FunctionName, "caller", e.CallerName, "error", e.Err)
+		l.Error("app: component failed to start", "component", e.CallerName, "hook", e.FunctionName, "error", e.Err)
 	} else {
-		l.Debug("fx: hook OnStart executed", "callee", e.FunctionName, "caller", e.CallerName, "runtime", e.Runtime.String())
+		l.Debug("app: component started successfully", "component", e.CallerName, "duration", e.Runtime.String())
 	}
 }
 
 func (l *Logger) logOnStopExecuting(e *fxevent.OnStopExecuting) {
-	l.Debug("fx: hook OnStop executing", "callee", e.FunctionName, "caller", e.CallerName)
+	l.Debug("app: stopping component", "component", e.CallerName, "hook", e.FunctionName)
 }
 
 func (l *Logger) logOnStopExecuted(e *fxevent.OnStopExecuted) {
 	if e.Err != nil {
-		l.Error("fx: hook OnStop failed", "callee", e.FunctionName, "caller", e.CallerName, "error", e.Err)
+		l.Error("app: component failed to stop gracefully", "component", e.CallerName, "hook", e.FunctionName, "error", e.Err)
 	} else {
-		l.Debug("fx: hook OnStop executed", "callee", e.FunctionName, "caller", e.CallerName, "runtime", e.Runtime.String())
+		l.Debug("app: component stopped successfully", "component", e.CallerName, "duration", e.Runtime.String())
 	}
 }
 
 func (l *Logger) logSupplied(e *fxevent.Supplied) {
 	if e.Err != nil {
-		l.Error("fx: supplied error", "type", e.TypeName, "error", e.Err)
+		l.Error("app: failed to supply dependency", "type", e.TypeName, "error", e.Err)
 	} else {
-		l.Debug("fx: supplied", "type", e.TypeName)
+		l.Debug("app: dependency supplied to container", "type", e.TypeName)
 	}
 }
 
 func (l *Logger) logProvided(e *fxevent.Provided) {
 	if e.Err != nil {
-		l.Error("fx: provided error", "constructor", e.ConstructorName, "error", e.Err)
+		l.Error("app: failed to provide dependency", "constructor", e.ConstructorName, "error", e.Err)
 	} else {
-		l.Debug("fx: provided", "constructor", e.ConstructorName, "outputs", e.OutputTypeNames)
+		l.Debug("app: dependencies registered", "constructor", e.ConstructorName, "provides", e.OutputTypeNames)
 	}
 }
 
 func (l *Logger) logDecorated(e *fxevent.Decorated) {
 	if e.Err != nil {
-		l.Error("fx: decorated error", "decorator", e.DecoratorName, "error", e.Err)
+		l.Error("app: failed to decorate dependency", "decorator", e.DecoratorName, "error", e.Err)
 	} else {
-		l.Debug("fx: decorated", "decorator", e.DecoratorName, "outputs", e.OutputTypeNames)
+		l.Debug("app: dependency decorated", "decorator", e.DecoratorName, "outputs", e.OutputTypeNames)
 	}
 }
 
 func (l *Logger) logInvoking(e *fxevent.Invoking) {
-	l.Debug("fx: invoking", "function", e.FunctionName)
+	l.Debug("app: invoking function", "function", e.FunctionName)
 }
 
 func (l *Logger) logInvoked(e *fxevent.Invoked) {
 	if e.Err != nil {
-		l.Error("fx: invoked error", "function", e.FunctionName, "error", e.Err)
+		l.Error("app: function invocation failed", "function", e.FunctionName, "error", e.Err)
 	} else {
-		l.Debug("fx: invoked", "function", e.FunctionName)
+		l.Debug("app: function invoked successfully", "function", e.FunctionName)
 	}
 }
 
 func (l *Logger) logStopping(e *fxevent.Stopping) {
-	l.Debug("fx: stopping", "signal", e.Signal.String())
+	l.Info("app: shutting down application", "signal", e.Signal.String())
 }
 
 func (l *Logger) logStopped(e *fxevent.Stopped) {
 	if e.Err != nil {
-		l.Error("fx: stopped with error", "error", e.Err)
+		l.Error("app: stopped with errors", "error", e.Err)
 	}
 }
 
 func (l *Logger) logRollingBack(e *fxevent.RollingBack) {
-	l.Error("fx: rolling back", "error", e.StartErr)
+	l.Error("app: rolling back application startup", "error", e.StartErr)
 }
 
 func (l *Logger) logRolledBack(e *fxevent.RolledBack) {
 	if e.Err != nil {
-		l.Error("fx: rollback error", "error", e.Err)
+		l.Error("app: rollback failed", "error", e.Err)
 	}
 }
 
 func (l *Logger) logStarted(e *fxevent.Started) {
 	if e.Err != nil {
-		l.Error("fx: start failed", "error", e.Err)
+		l.Error("app: failed to start", "error", e.Err)
 	} else {
-		l.Debug("fx: started")
+		l.Info("app: started successfully")
 	}
 }
 
 func (l *Logger) logLoggerInitialized(e *fxevent.LoggerInitialized) {
 	if e.Err != nil {
-		l.Error("fx: logger failed to initialize", "error", e.Err)
+		l.Error("app: logger initialization failed", "error", e.Err)
 	} else {
-		l.Debug("fx: logger initialized", "constructor", e.ConstructorName)
+		l.Debug("app: logger initialized", "constructor", e.ConstructorName)
 	}
 }

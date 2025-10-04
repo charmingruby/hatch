@@ -18,9 +18,7 @@ import (
 func main() {
 	log := logger.New()
 
-	if err := godotenv.Load(); err != nil {
-		log.Warn("env: missing", "error", err)
-	}
+	_ = godotenv.Load()
 
 	fx.New(
 		fx.Supply(log),
