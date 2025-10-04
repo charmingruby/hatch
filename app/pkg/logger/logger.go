@@ -74,7 +74,15 @@ func (l *Logger) logOnStopExecuting(e *fxevent.OnStopExecuting) {
 
 func (l *Logger) logOnStopExecuted(e *fxevent.OnStopExecuted) {
 	if e.Err != nil {
-		l.Error("app: component failed to stop gracefully", "component", e.CallerName, "hook", e.FunctionName, "error", e.Err)
+		l.Error(
+			"app: component failed to stop gracefully",
+			"component",
+			e.CallerName,
+			"hook",
+			e.FunctionName,
+			"error",
+			e.Err,
+		)
 	} else {
 		l.Debug("app: component stopped successfully", "component", e.CallerName, "duration", e.Runtime.String())
 	}
