@@ -2,7 +2,7 @@ package fetch
 
 import (
 	"HATCH_APP/internal/shared/customerr"
-	"HATCH_APP/internal/shared/http/rest"
+	"HATCH_APP/internal/shared/transport/http"
 	"HATCH_APP/pkg/logger"
 	"HATCH_APP/pkg/validator"
 	"errors"
@@ -40,7 +40,7 @@ func (h *handler) handle(c *gin.Context) {
 				"error", databaseErr.Unwrap().Error(),
 			)
 
-			rest.SendInternalServerErrorResponse(c)
+			http.SendInternalServerErrorResponse(c)
 			return
 		}
 
@@ -49,7 +49,7 @@ func (h *handler) handle(c *gin.Context) {
 			"endpoint/ListNotes: unknown error", "error", err.Error(),
 		)
 
-		rest.SendInternalServerErrorResponse(c)
+		http.SendInternalServerErrorResponse(c)
 		return
 	}
 
@@ -58,7 +58,7 @@ func (h *handler) handle(c *gin.Context) {
 		"endpoint/ListNotes: finished successfully",
 	)
 
-	rest.SendOKResponse(
+	http.SendOKResponse(
 		c,
 		"",
 		op.Notes,

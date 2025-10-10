@@ -1,4 +1,4 @@
-package rest
+package http
 
 import (
 	"context"
@@ -19,7 +19,7 @@ type Server struct {
 	http.Server
 }
 
-func New(cfg *config.Config) (*Server, *gin.Engine) {
+func NewServer(cfg *config.Config) (*Server, *gin.Engine) {
 	router := gin.Default()
 	gin.SetMode(gin.ReleaseMode)
 
@@ -49,8 +49,8 @@ func (s *Server) Close(ctx context.Context) error {
 	return s.Shutdown(ctx)
 }
 
-var Module = fx.Module("rest",
-	fx.Provide(New),
+var Module = fx.Module("http",
+	fx.Provide(NewServer),
 	fx.Invoke(func(lc fx.Lifecycle, srv *Server, router *gin.Engine, shutdowner fx.Shutdowner) {
 		errChan := make(chan error, 1)
 

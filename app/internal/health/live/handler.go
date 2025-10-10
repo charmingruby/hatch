@@ -1,7 +1,7 @@
 package live
 
 import (
-	"HATCH_APP/internal/shared/http/rest"
+	"HATCH_APP/internal/shared/transport/http"
 	"HATCH_APP/pkg/logger"
 
 	"github.com/gin-gonic/gin"
@@ -24,5 +24,5 @@ func (h *handler) handle(c *gin.Context) {
 	h.log.InfoContext(ctx, "endpoint/Liveness: request received")
 	h.log.InfoContext(ctx, "endpoint/Liveness: finished successfully")
 
-	rest.SendOKResponse(c, "", nil)
+	http.SendOKResponse(c, "", nil)
 }

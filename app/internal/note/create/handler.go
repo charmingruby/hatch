@@ -2,7 +2,7 @@ package create
 
 import (
 	"HATCH_APP/internal/shared/customerr"
-	"HATCH_APP/internal/shared/http/rest"
+	"HATCH_APP/internal/shared/transport/http"
 	"HATCH_APP/pkg/logger"
 	"HATCH_APP/pkg/validator"
 	"errors"
@@ -38,7 +38,7 @@ func (e *handler) handle(c *gin.Context) {
 			"error", err.Error(),
 		)
 
-		rest.SendBadRequestResponse(c, err.Error())
+		http.SendBadRequestResponse(c, err.Error())
 		return
 	}
 	if err := e.val.Validate(req); err != nil {
@@ -48,7 +48,7 @@ func (e *handler) handle(c *gin.Context) {
 			"error", err.Error(),
 		)
 
-		rest.SendBadRequestResponse(c, err.Error())
+		http.SendBadRequestResponse(c, err.Error())
 		return
 	}
 
@@ -65,7 +65,7 @@ func (e *handler) handle(c *gin.Context) {
 				"error", databaseErr.Unwrap().Error(),
 			)
 
-			rest.SendInternalServerErrorResponse(c)
+			http.SendInternalServerErrorResponse(c)
 			return
 		}
 
@@ -74,7 +74,7 @@ func (e *handler) handle(c *gin.Context) {
 			"endpoint/CreateNote: unknown error", "error", err.Error(),
 		)
 
-		rest.SendInternalServerErrorResponse(c)
+		http.SendInternalServerErrorResponse(c)
 		return
 	}
 
@@ -83,5 +83,5 @@ func (e *handler) handle(c *gin.Context) {
 		"endpoint/CreateNote: finished successfully",
 	)
 
-	rest.SendCreatedResponse(c, op.ID, "note")
+	http.SendCreatedResponse(c, op.ID, "note")
 }

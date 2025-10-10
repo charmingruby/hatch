@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"HATCH_APP/internal/shared/http/rest"
+	"HATCH_APP/internal/shared/transport/http"
 	"HATCH_APP/pkg/database/postgres"
 	"HATCH_APP/pkg/logger"
 
@@ -37,11 +37,11 @@ func (h *handler) handle(c *gin.Context) {
 	if err := h.db.Ping(ctx); err != nil {
 		h.log.ErrorContext(ctx, "endpoint/Readiness: database error", "error", err.Error())
 
-		rest.SendServiceUnavailableResponse(c, "database")
+		http.SendServiceUnavailableResponse(c, "database")
 		return
 	}
 
 	h.log.InfoContext(ctx, "endpoint/Readiness: finished successfully")
 
-	rest.SendOKResponse(c, "", nil)
+	http.SendOKResponse(c, "", nil)
 }

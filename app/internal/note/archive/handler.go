@@ -2,7 +2,7 @@ package archive
 
 import (
 	"HATCH_APP/internal/shared/customerr"
-	"HATCH_APP/internal/shared/http/rest"
+	"HATCH_APP/internal/shared/transport/http"
 	"HATCH_APP/pkg/logger"
 	"HATCH_APP/pkg/validator"
 	"errors"
@@ -43,7 +43,7 @@ func (h *handler) handle(c *gin.Context) {
 				"error", err.Error(),
 			)
 
-			rest.SendNotFoundResponse(c, err.Error())
+			http.SendNotFoundResponse(c, err.Error())
 			return
 		}
 
@@ -55,7 +55,7 @@ func (h *handler) handle(c *gin.Context) {
 				"error", databaseErr.Unwrap().Error(),
 			)
 
-			rest.SendInternalServerErrorResponse(c)
+			http.SendInternalServerErrorResponse(c)
 			return
 		}
 
@@ -64,7 +64,7 @@ func (h *handler) handle(c *gin.Context) {
 			"endpoint/ArchiveNote: unknown error", "error", err.Error(),
 		)
 
-		rest.SendInternalServerErrorResponse(c)
+		http.SendInternalServerErrorResponse(c)
 		return
 	}
 
@@ -73,5 +73,5 @@ func (h *handler) handle(c *gin.Context) {
 		"endpoint/ArchiveNote: finished successfully",
 	)
 
-	rest.SendEmptyResponse(c)
+	http.SendEmptyResponse(c)
 }
