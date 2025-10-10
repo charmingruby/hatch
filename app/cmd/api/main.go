@@ -9,6 +9,7 @@ import (
 	"HATCH_APP/internal/shared/http/rest"
 	"HATCH_APP/pkg/database/postgres"
 	"HATCH_APP/pkg/logger"
+	"HATCH_APP/pkg/validator"
 
 	"github.com/joho/godotenv"
 	"go.uber.org/fx"
@@ -24,6 +25,7 @@ func main() {
 		fx.Supply(log),
 		config.Module,
 		postgres.Module,
+		validator.Module,
 		rest.Module,
 		health.Module,
 		note.Module,

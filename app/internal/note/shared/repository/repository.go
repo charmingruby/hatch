@@ -1,9 +1,8 @@
 package repository
 
 import (
+	"HATCH_APP/internal/note/shared/model"
 	"context"
-
-	"HATCH_APP/internal/note/model"
 )
 
 type NoteRepo interface {

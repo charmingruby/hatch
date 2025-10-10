@@ -1,25 +1,36 @@
-package endpoint
+package create
 
 import (
-	"HATCH_APP/internal/note/dto"
 	"HATCH_APP/internal/shared/customerr"
 	"HATCH_APP/internal/shared/http/rest"
+	"HATCH_APP/pkg/logger"
+	"HATCH_APP/pkg/validator"
 	"errors"
 
 	"github.com/gin-gonic/gin"
 )
 
-type CreateNoteRequest struct {
-	Title   string `json:"title"   binding:"required" validate:"required,gt=0"`
-	Content string `json:"content" binding:"required" validate:"required,gt=0"`
+type handler struct {
+	log *logger.Logger
+	r   *gin.Engine
+	val *validator.Validator
+	svc Service
 }
 
-func (e *Endpoint) CreateNote(c *gin.Context) {
+func registerRoute(h handler) {
+	api := h.r.Group("/api")
+	v1 := api.Group("/v1")
+	notes := v1.Group("/notes")
+
+	notes.POST("", h.handle)
+}
+
+func (e *handler) handle(c *gin.Context) {
 	ctx := c.Request.Context()
 
 	e.log.InfoContext(ctx, "endpoint/CreateNote: request received")
 
-	var req CreateNoteRequest
+	var req Input
 	if err := c.BindJSON(&req); err != nil {
 		e.log.ErrorContext(
 			ctx,
@@ -41,7 +52,7 @@ func (e *Endpoint) CreateNote(c *gin.Context) {
 		return
 	}
 
-	op, err := e.service.CreateNote(ctx, dto.CreateNoteInput{
+	op, err := e.svc.Execute(ctx, Input{
 		Title:   req.Title,
 		Content: req.Content,
 	})

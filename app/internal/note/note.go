@@ -1,9 +1,10 @@
 package note
 
 import (
-	"HATCH_APP/internal/note/http/endpoint"
-	"HATCH_APP/internal/note/repository/postgres"
-	"HATCH_APP/internal/note/usecase"
+	"HATCH_APP/internal/note/archive"
+	"HATCH_APP/internal/note/create"
+	"HATCH_APP/internal/note/fetch"
+	"HATCH_APP/internal/note/shared/repository/postgres"
 	"HATCH_APP/pkg/logger"
 	"HATCH_APP/pkg/validator"
 
@@ -16,17 +17,16 @@ func New(
 	log *logger.Logger,
 	r *gin.Engine,
 	db *sqlx.DB,
+	val *validator.Validator,
 ) error {
 	repo, err := postgres.NewNoteRepo(db)
 	if err != nil {
 		return err
 	}
 
-	uc := usecase.New(repo)
-
-	val := validator.New()
-
-	endpoint.New(log, r, val, uc).Register()
+	create.New(log, r, val, repo)
+	fetch.New(log, r, val, repo)
+	archive.New(log, r, val, repo)
 
 	return nil
 }

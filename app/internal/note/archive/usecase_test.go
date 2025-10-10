@@ -1,20 +1,35 @@
-package usecase_test
+package archive_test
 
 import (
 	"errors"
 	"testing"
 	"time"
 
-	"HATCH_APP/internal/note/dto"
-	"HATCH_APP/internal/note/model"
+	"HATCH_APP/internal/note/archive"
+	"HATCH_APP/internal/note/shared/model"
 	"HATCH_APP/internal/shared/customerr"
+	"HATCH_APP/test/gen/note/mocks"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 )
 
-func Test_ArchiveNote(t *testing.T) {
+type suite struct {
+	repo    *mocks.NoteRepo
+	usecase archive.Service
+}
+
+func setup(t *testing.T) suite {
+	repo := mocks.NewNoteRepo(t)
+
+	return suite{
+		repo:    repo,
+		usecase: archive.NewUseCase(repo),
+	}
+}
+
+func Test_Execute(t *testing.T) {
 	t.Run("should archive successfully", func(t *testing.T) {
 		s := setup(t)
 		n := model.NewNote("title", "content")
@@ -32,7 +47,7 @@ func Test_ArchiveNote(t *testing.T) {
 			Return(nil).
 			Once()
 
-		err := s.usecase.ArchiveNote(t.Context(), dto.ArchiveNoteInput{
+		err := s.usecase.Execute(t.Context(), archive.Input{
 			ID: n.ID,
 		})
 
@@ -46,7 +61,7 @@ func Test_ArchiveNote(t *testing.T) {
 			Return(model.Note{}, errors.New("repo down")).
 			Once()
 
-		err := s.usecase.ArchiveNote(t.Context(), dto.ArchiveNoteInput{
+		err := s.usecase.Execute(t.Context(), archive.Input{
 			ID: "nonexistent",
 		})
 
@@ -68,7 +83,7 @@ func Test_ArchiveNote(t *testing.T) {
 			Return(errors.New("save error")).
 			Once()
 
-		err := s.usecase.ArchiveNote(t.Context(), dto.ArchiveNoteInput{
+		err := s.usecase.Execute(t.Context(), archive.Input{
 			ID: n.ID,
 		})
 

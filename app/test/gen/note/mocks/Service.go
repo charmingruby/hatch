@@ -3,7 +3,7 @@
 package mocks
 
 import (
-	dto "HATCH_APP/internal/note/dto"
+	fetch "HATCH_APP/internal/note/fetch"
 	context "context"
 
 	mock "github.com/stretchr/testify/mock"
@@ -14,69 +14,23 @@ type Service struct {
 	mock.Mock
 }
 
-// ArchiveNote provides a mock function with given fields: ctx, input
-func (_m *Service) ArchiveNote(ctx context.Context, input dto.ArchiveNoteInput) error {
-	ret := _m.Called(ctx, input)
-
-	if len(ret) == 0 {
-		panic("no return value specified for ArchiveNote")
-	}
-
-	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, dto.ArchiveNoteInput) error); ok {
-		r0 = rf(ctx, input)
-	} else {
-		r0 = ret.Error(0)
-	}
-
-	return r0
-}
-
-// CreateNote provides a mock function with given fields: ctx, input
-func (_m *Service) CreateNote(ctx context.Context, input dto.CreateNoteInput) (dto.CreateNoteOutput, error) {
-	ret := _m.Called(ctx, input)
-
-	if len(ret) == 0 {
-		panic("no return value specified for CreateNote")
-	}
-
-	var r0 dto.CreateNoteOutput
-	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, dto.CreateNoteInput) (dto.CreateNoteOutput, error)); ok {
-		return rf(ctx, input)
-	}
-	if rf, ok := ret.Get(0).(func(context.Context, dto.CreateNoteInput) dto.CreateNoteOutput); ok {
-		r0 = rf(ctx, input)
-	} else {
-		r0 = ret.Get(0).(dto.CreateNoteOutput)
-	}
-
-	if rf, ok := ret.Get(1).(func(context.Context, dto.CreateNoteInput) error); ok {
-		r1 = rf(ctx, input)
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
-}
-
-// ListNotes provides a mock function with given fields: ctx
-func (_m *Service) ListNotes(ctx context.Context) (dto.ListNotesOutput, error) {
+// Execute provides a mock function with given fields: ctx
+func (_m *Service) Execute(ctx context.Context) (fetch.Output, error) {
 	ret := _m.Called(ctx)
 
 	if len(ret) == 0 {
-		panic("no return value specified for ListNotes")
+		panic("no return value specified for Execute")
 	}
 
-	var r0 dto.ListNotesOutput
+	var r0 fetch.Output
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context) (dto.ListNotesOutput, error)); ok {
+	if rf, ok := ret.Get(0).(func(context.Context) (fetch.Output, error)); ok {
 		return rf(ctx)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context) dto.ListNotesOutput); ok {
+	if rf, ok := ret.Get(0).(func(context.Context) fetch.Output); ok {
 		r0 = rf(ctx)
 	} else {
-		r0 = ret.Get(0).(dto.ListNotesOutput)
+		r0 = ret.Get(0).(fetch.Output)
 	}
 
 	if rf, ok := ret.Get(1).(func(context.Context) error); ok {

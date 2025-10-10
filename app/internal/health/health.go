@@ -1,7 +1,8 @@
 package health
 
 import (
-	"HATCH_APP/internal/health/http/endpoint"
+	"HATCH_APP/internal/health/live"
+	"HATCH_APP/internal/health/ready"
 	"HATCH_APP/pkg/database/postgres"
 	"HATCH_APP/pkg/logger"
 
@@ -14,7 +15,8 @@ func New(
 	r *gin.Engine,
 	db *postgres.Client,
 ) {
-	endpoint.New(log, r, db).Register()
+	live.New(log, r)
+	ready.New(log, r, db)
 }
 
 var Module = fx.Module("health",
