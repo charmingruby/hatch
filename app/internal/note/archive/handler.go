@@ -14,7 +14,7 @@ func registerRoute(
 	api *gin.RouterGroup,
 	uc UseCase,
 ) {
-	api.PATCH("/:id", func(c *gin.Context) {
+	api.PATCH(":id", func(c *gin.Context) {
 		ctx := c.Request.Context()
 
 		log.InfoContext(ctx, "endpoint/ArchiveNote: request received")

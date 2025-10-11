@@ -14,7 +14,7 @@ func registerRoute(
 	api *gin.RouterGroup,
 	uc UseCase,
 ) {
-	api.POST("/", func(c *gin.Context) {
+	api.POST("", func(c *gin.Context) {
 		ctx := c.Request.Context()
 
 		log.InfoContext(ctx, "endpoint/CreateNote: request received")

@@ -14,11 +14,11 @@ const timeoutInS = 10
 
 func registerRoutes(
 	log *logger.Logger,
-	api *gin.RouterGroup,
+	r *gin.Engine,
 	db *postgres.Client,
 ) {
-	api.GET("/livez", livenessRoute(log))
-	api.GET("/readyz", readinessRoute(log, db))
+	r.GET("/livez", livenessRoute(log))
+	r.GET("/readyz", readinessRoute(log, db))
 }
 
 func livenessRoute(log *logger.Logger) gin.HandlerFunc {

@@ -1,83 +1,112 @@
-# Hatch - AI Agent Context
+# Hatch – AI Agent Context
 
-**Hatch** is a production-ready Go template using Clean Architecture with modular design.
+> **Purpose:** Help agents contribute to Hatch effectively — fast, simple, and aligned with its philosophy.
+> “Simplicity is the ultimate sophistication.” — Leonardo da Vinci
 
-📖 **Read first**: [APP.MD](docs/app.md) | [PROJECT-STRUCTURE.MD](docs/project-structure.md)
+---
 
-## Your Role
+## Context
 
-You are a **Senior Platform Engineer** focused on pragmatic, production-ready solutions.
+Hatch is a **pragmatic Go template** using a **modular, package-by-feature** architecture.
+It favors **clarity over abstraction** and **production value over theory**.
 
-### Expected Behavior
-- **Be concise**: Make minimal, focused changes that solve the exact problem
-- **No over-engineering**: Resist adding unnecessary abstractions or premature optimizations
-- **Follow existing patterns**: Match the style and structure already present in the codebase
-- **Question assumptions**: If a request seems overly complex, suggest simpler alternatives
-- **Production-first**: Prioritize reliability, maintainability, and clarity over cleverness
+The goal: **ship production-quality features fast**, without unnecessary layers or complexity.
 
-## Quick Context
+---
 
-- **Language**: Go
-- **Architecture**: Modular Architecture (HTTP/Messaging → Use Case → Repository → Database)
-- **DI Framework**: Uber Fx
-- **Entry point**: `app/cmd/api/main.go`
-- **Reference module**: `app/internal/note/`
+## Architecture in One Glance
 
-## Commands
+Each module represents a **bounded context** (e.g., `note`, `user`)
+and contains its own features (create, fetch, etc.), each fully self-contained.
 
-Detailed step-by-step guides with complete code examples:
+```
+internal/note/
+├── create/          → Feature: POST /notes
+│   ├── handler.go   → Transport layer (HTTP, gRPC, messaging, etc.)
+│   ├── usecase.go   → Business logic
+│   ├── dto.go       → Input/Output structs
+│   └── usecase_test.go
+├── fetch/           → Feature: GET /notes
+│   ├── handler.go
+│   ├── usecase.go
+│   ├── dto.go
+│   └── usecase_test.go
+└── shared/
+    ├── model/       → Domain entities
+    └── repository/  → Repo interface + impl (Postgres)
+```
 
-- **[Adding New Module](docs/guides/new-module.md)** - Create a new feature module from scratch
-- **[Event-Driven Communication](docs/guides/adding-event-driven-communication.md)** - Add async messaging between modules
-- **[Third-Party Integration](docs/guides/adding-third-party-integration.md)** - Integrate external services (Stripe, etc)
-- **[Modifying Existing Code](docs/guides/modifying-existing-code.md)** - Safely extend existing modules
+**Each feature = one directory.**
+No global services, no tangled layers, no abstractions unless necessary.
 
-## Critical Rules (NEVER violate)
+> 🧠 Although most examples use **HTTP**, the same structure applies to **any transport** — messaging, gRPC, CLI, etc.
+> The delivery layer changes, but the separation (transport → use case → repository) remains the same.
 
-### Architectural
-- ❌ No layer skipping (handler → repository directly)
-- ❌ No business logic in handlers (handlers only parse, validate, delegate)
-- ❌ No SQL in use cases (only in `repository/postgres/*_query.go`)
-- ❌ No cross-module `internal/` imports (use `shared/` for shared code)
+---
 
-### Go Patterns
-- ❌ No global variables for dependencies
-- ❌ No `panic()` for error handling (return errors explicitly)
-- ❌ No ignoring context cancellation
-- ❌ No exporting internal services in barrel files (only `New()` and `Module`)
+## Agent Guidelines
 
-### Testing
-- ✅ **REQUIRED**: Unit tests for ALL use cases (non-negotiable)
-- ❌ No use case implementation without corresponding tests
-- ❌ No tests without mocks for dependencies
-- ❌ No testing implementation details (test behavior, not internals)
+### 1. **Be Pragmatic**
 
-### Engineering Discipline
-- ❌ No adding features that weren't explicitly requested
-- ❌ No refactoring unrelated code without asking first
-- ❌ No introducing new patterns when existing ones work fine
+* Only do what’s needed to solve the current request.
+* Avoid introducing abstractions or patterns unless explicitly requested.
 
-## Quick Reference
+### 2. **Follow the Pattern**
 
-### File Patterns
-- **Model**: `internal/MODULE/model/entity_name.go`
-- **DTO**: `internal/MODULE/dto/operation_name_dto.go`
-- **Use Case**: `internal/MODULE/usecase/operation_name.go`
-- **Use Case Tests**: `internal/MODULE/usecase/operation_name_test.go`
-- **Test Setup**: `internal/MODULE/usecase/setup_test.go`
-- **Repository**: `internal/MODULE/repository/postgres/entity_repository.go`
-- **Queries**: `internal/MODULE/repository/postgres/entity_query.go`
-- **Handler**: `internal/MODULE/http/endpoint/operation_endpoint.go`
-- **Event**: `internal/MODULE/messaging/event/event_name.go`
-- **Subscriber**: `internal/MODULE/messaging/subscriber/on_event_name.go`
-- **External**: `internal/MODULE/external/PROVIDER/service_name.go`
-- **Barrel**: `internal/MODULE/MODULE.go`
+* Each feature lives inside its own folder (`create`, `fetch`, etc.).
+* Transport (HTTP, gRPC, messaging) → parses, validates, and delegates.
+* UseCases → contain business logic.
+* Repositories → talk to the database.
 
-### Key Files
-- Entry: [cmd/api/main.go](app/cmd/api/main.go)
-- Example module: [internal/note/](app/internal/note/)
-- Example barrel: [internal/note/note.go](app/internal/note/note.go)
-- Example use case: [internal/note/usecase/create_note.go](app/internal/note/usecase/create_note.go)
-- Example use case test: [internal/note/usecase/create_note_test.go](app/internal/note/usecase/create_note_test.go)
-- Example repository: [internal/note/repository/postgres/note_repository.go](app/internal/note/repository/postgres/note_repository.go)
-- Example handler: [internal/note/http/endpoint/create_note_endpoint.go](app/internal/note/http/endpoint/create_note_endpoint.go)
+### 3. **Don’t Over-Engineer**
+
+* No factories, no layers for the sake of layering.
+* If something isn’t reused 3+ times, **don’t generalize it**.
+
+### 4. **Write for Production**
+
+* Focus on maintainability and reliability.
+* Avoid clever tricks — prefer clear and boring Go code.
+
+### 5. **Test Every Use Case**
+
+* Each `usecase.go` must have a corresponding `usecase_test.go`.
+* Mock dependencies, test behavior, not implementation details.
+
+---
+
+## Never Do
+
+* ❌ Add new architectural layers or frameworks
+* ❌ Bypass use cases (transport → repository directly)
+* ❌ Write SQL inside use cases
+* ❌ Add “helpers” or “utils” without purpose
+* ❌ Refactor unrelated code
+* ❌ Use global vars or `panic()`
+* ❌ Cross-import between modules
+
+---
+
+## Always Do
+
+* ✅ Keep changes local to the feature
+* ✅ Reuse existing patterns and naming
+* ✅ Respect the directory structure
+* ✅ Use explicit error handling
+* ✅ Keep each file focused and readable
+
+---
+
+## Reference
+
+* Entry point: `cmd/api/main.go`
+* Example module: `internal/note/`
+* DI: Uber Fx
+* Architecture: Transport → UseCase → Repository → DB
+
+---
+
+## Quick Reminder
+
+Hatch isn’t an enterprise framework — it’s **a fast, minimal foundation**.
+Agents should think: *“What’s the simplest production-ready change that works?”*

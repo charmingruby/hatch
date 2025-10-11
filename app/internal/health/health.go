@@ -13,9 +13,8 @@ func register(
 	r *gin.Engine,
 	db *postgres.Client,
 ) {
-	api := r.Group("/api/v1")
 
-	registerRoutes(log, api, db)
+	registerRoutes(log, r, db)
 }
 
 var Module = fx.Module("health",

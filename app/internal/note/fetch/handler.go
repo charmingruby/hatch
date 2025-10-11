@@ -14,7 +14,7 @@ func registerRoute(
 	api *gin.RouterGroup,
 	uc UseCase,
 ) {
-	api.GET("/", func(c *gin.Context) {
+	api.GET("", func(c *gin.Context) {
 		ctx := c.Request.Context()
 
 		log.InfoContext(ctx, "endpoint/ListNotes: request received")
