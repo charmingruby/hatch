@@ -13,7 +13,6 @@ func register(
 	r *gin.Engine,
 	db *postgres.Client,
 ) {
-
 	registerRoutes(log, r, db)
 }
 
