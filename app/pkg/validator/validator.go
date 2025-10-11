@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 	"go.uber.org/fx"
 )
@@ -29,6 +30,21 @@ func (v *Validator) Validate(s any) error {
 	errs := v.unwrapValidationErr(err)
 
 	return errors.New(strings.Join(errs, ", "))
+}
+
+func (v *Validator) Middleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		c.Set("validator", v)
+		c.Next()
+	}
+}
+
+func FromContext(c *gin.Context) *Validator {
+	validator, _ := c.Get("validator")
+
+	v, _ := validator.(*Validator)
+
+	return v
 }
 
 func (v *Validator) unwrapValidationErr(err error) []string {

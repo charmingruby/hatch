@@ -17,7 +17,7 @@ import (
 
 type suite struct {
 	repo    *mocks.NoteRepo
-	usecase archive.Service
+	usecase archive.UseCase
 }
 
 func setup(t *testing.T) suite {

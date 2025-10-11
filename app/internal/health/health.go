@@ -1,8 +1,6 @@
 package health
 
 import (
-	"HATCH_APP/internal/health/live"
-	"HATCH_APP/internal/health/ready"
 	"HATCH_APP/pkg/database/postgres"
 	"HATCH_APP/pkg/logger"
 
@@ -10,15 +8,16 @@ import (
 	"go.uber.org/fx"
 )
 
-func New(
+func register(
 	log *logger.Logger,
 	r *gin.Engine,
 	db *postgres.Client,
 ) {
-	live.New(log, r)
-	ready.New(log, r, db)
+	api := r.Group("/api/v1")
+
+	registerRoutes(log, api, db)
 }
 
 var Module = fx.Module("health",
-	fx.Invoke(New),
+	fx.Invoke(register),
 )

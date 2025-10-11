@@ -8,10 +8,6 @@ import (
 	"HATCH_APP/internal/shared/customerr"
 )
 
-type Service interface {
-	Execute(ctx context.Context, input Input) error
-}
-
 type UseCase struct {
 	repo repository.NoteRepo
 }

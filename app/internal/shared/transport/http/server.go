@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"HATCH_APP/config"
+	"HATCH_APP/pkg/validator"
 
 	"github.com/gin-gonic/gin"
 	"go.uber.org/fx"
@@ -19,11 +20,17 @@ type Server struct {
 	http.Server
 }
 
-func NewServer(cfg *config.Config) (*Server, *gin.Engine) {
+func NewServer(
+	cfg *config.Config,
+	val *validator.Validator,
+) (*Server, *gin.Engine) {
 	router := gin.Default()
+
 	gin.SetMode(gin.ReleaseMode)
 
 	addr := fmt.Sprintf(":%s", cfg.RestServerPort)
+
+	router.Use(val.Middleware())
 
 	return &Server{
 		Server: http.Server{
