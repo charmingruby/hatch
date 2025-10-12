@@ -20,6 +20,13 @@ Hatch is a **pragmatic Go project template** built on **package by feature** pri
 - ✅ **Battle-tested** - Proven in production, not theoretical
 - ✅ **Easy to understand** - Onboard in 30 minutes
 
+**Flexible for any project type:**
+- POCs & Labs - Quick experiments without architectural overhead
+- Microservices - Single service with clear boundaries
+- Monorepos - Multiple services with shared infrastructure
+- IaC Integration - Organize Terraform/Pulumi alongside your code
+- Production Apps - Battle-tested patterns that scale
+
 ## Architecture
 
 ### Package by Feature: Simple Yet Powerful
