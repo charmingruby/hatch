@@ -5,7 +5,7 @@ import (
 
 	"HATCH_APP/config"
 	"HATCH_APP/internal/note"
-	"HATCH_APP/internal/shared/http"
+	"HATCH_APP/internal/shared/http/rest"
 	"HATCH_APP/pkg/db/postgres"
 	"HATCH_APP/pkg/telemetry"
 	"HATCH_APP/pkg/validator"
@@ -25,7 +25,7 @@ func main() {
 		config.Module,
 		postgres.Module,
 		validator.Module,
-		http.Module,
+		rest.Module,
 		note.Module,
 		fx.WithLogger(func() fxevent.Logger {
 			return log

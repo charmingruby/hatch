@@ -1,4 +1,4 @@
-package http
+package rest
 
 import (
 	"context"
@@ -62,7 +62,7 @@ func (s *Server) Close(ctx context.Context) error {
 	return s.Shutdown(ctx)
 }
 
-var Module = fx.Module("http",
+var Module = fx.Module("rest",
 	fx.Provide(NewServer),
 	fx.Invoke(func(lc fx.Lifecycle, srv *Server, router *gin.Engine, shutdowner fx.Shutdowner) {
 		errChan := make(chan error, 1)

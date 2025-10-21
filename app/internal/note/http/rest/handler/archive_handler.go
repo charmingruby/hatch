@@ -3,7 +3,7 @@ package handler
 import (
 	"HATCH_APP/internal/note/usecase"
 	"HATCH_APP/internal/shared/errs"
-	"HATCH_APP/internal/shared/http"
+	"HATCH_APP/internal/shared/http/rest"
 	"HATCH_APP/pkg/telemetry"
 	"errors"
 
@@ -27,7 +27,7 @@ func ArchiveHandler(log *telemetry.Logger, uc usecase.UseCase) gin.HandlerFunc {
 					"error", err.Error(),
 				)
 
-				http.SendNotFoundResponse(c, err.Error())
+				rest.SendNotFoundResponse(c, err.Error())
 				return
 			}
 
@@ -39,7 +39,7 @@ func ArchiveHandler(log *telemetry.Logger, uc usecase.UseCase) gin.HandlerFunc {
 					"error", databaseErr.Unwrap().Error(),
 				)
 
-				http.SendInternalServerErrorResponse(c)
+				rest.SendInternalServerErrorResponse(c)
 				return
 			}
 
@@ -48,12 +48,12 @@ func ArchiveHandler(log *telemetry.Logger, uc usecase.UseCase) gin.HandlerFunc {
 				"endpoint/ArchiveNote: unknown error", "error", err.Error(),
 			)
 
-			http.SendInternalServerErrorResponse(c)
+			rest.SendInternalServerErrorResponse(c)
 			return
 		}
 
 		log.InfoContext(ctx, "endpoint/ArchiveNote: finished successfully")
 
-		http.SendEmptyResponse(c)
+		rest.SendEmptyResponse(c)
 	}
 }

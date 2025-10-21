@@ -11,31 +11,37 @@ Hatch is a pragmatic Go project template designed for rapid feature development 
 - ✅ **Modular by design** - Self-contained features that don't interfere
 - ✅ **Service-ready** - Extract modules to microservices without rewrites
 - ✅ **Fast development** - Add features without fighting the architecture
+- ✅ **Flat & clear** – No confusing layers or excessive nesting
 - ✅ **Go Way** - Idiomatic patterns, explicit dependencies, no magic
 
 ## Architecture
 
 ```text
-internal/note/             ← Self-contained module
+internal/note/             ← Self-contained feature (bounded context)
 │
-├── domain/                ← Business logic (zero dependencies)
-│   ├── note.go            → Entities & rules
-│   └── repository.go      → Repository interface
+├── domain/                ← Business entities & rules
+│   ├── note.go
+│   └── repository.go
 │
 ├── usecase/               ← Application logic
-│   ├── create.go          → Feature implementation
+│   ├── create.go
 │   ├── fetch.go
-│   └── archive.go
+│   ├── archive.go
+│   └── usecase.go         → Shared setup or interface
 │
-├── infra/                 ← External world
-│   ├── repository/postgres/   → Database implementation
-│   │   ├── note_repository.go
-│   │   └── note_query.go
-│   └── http/                  → HTTP layer
-│       ├── handler/           → Request handlers
-│       └── route.go           → Route registration
+├── db/repository/postgres/← Database layer
+│   ├── note_repository.go
+│   └── note_query.go
 │
-└── module.go                  ← Bounded context initialization with wiring
+├── http/rest/             ← HTTP layer
+│   ├── handler/
+│   │   ├── create_handler.go
+│   │   ├── fetch_handler.go
+│   │   └── archive_handler.go
+│   └── route.go
+│
+├── queue/                 ← (Optional) async processing
+└── module.go              ← Dependency wiring for the feature
 ```
 
 ## Project Structure
@@ -46,13 +52,7 @@ internal/note/             ← Self-contained module
 ├── config/                       # Configuration
 ├── db/migration/                # Database migrations
 ├── internal/
-│   ├── note/                    # Bounded conmtext
-│   │   ├── domain/              → Core business logic
-│   │   ├── usecase/             → Application features
-│   │   ├── infra/
-│   │   │   ├── repository/postgres/  → DB implementation
-│   │   │   └── http/                 → HTTP layer
-│   │   └── module.go                 → Dependency injection
+│   ├── note/                    # Bounded context
 │   └── shared/                  # Cross-cutting concerns
 │       ├── errs/                → Error types
 │       └── http/                → HTTP utilities (server, response, request)
@@ -73,9 +73,8 @@ internal/note/             ← Self-contained module
 - Zero architectural rewrites
 
 **Go Way**
-- Explicit dependencies, no frameworks
-- Interfaces for decoupling
-- Standard library first
+- Flat over nested – Shallow folder hierarchy for quick navigation and understanding
+- Purposeful packages — clear boundaries and naming
 
 ## Core Principles
 
@@ -85,4 +84,4 @@ internal/note/             ← Self-contained module
 
 ---
 
-Simple. Modular. Production-ready.
+Simple. Explicit. Modular. Production-ready.

@@ -3,7 +3,7 @@ package handler
 import (
 	"HATCH_APP/internal/note/usecase"
 	"HATCH_APP/internal/shared/errs"
-	"HATCH_APP/internal/shared/http"
+	"HATCH_APP/internal/shared/http/rest"
 	"HATCH_APP/pkg/telemetry"
 	"errors"
 
@@ -21,7 +21,7 @@ func CreateHandler(log *telemetry.Logger, uc usecase.UseCase) gin.HandlerFunc {
 
 		log.InfoContext(ctx, "endpoint/CreateNote: request received")
 
-		req, err := http.ParseRequest[CreateRequest](c)
+		req, err := rest.ParseRequest[CreateRequest](c)
 		if err != nil {
 			log.ErrorContext(
 				ctx,
@@ -29,7 +29,7 @@ func CreateHandler(log *telemetry.Logger, uc usecase.UseCase) gin.HandlerFunc {
 				"error", err.Error(),
 			)
 
-			http.SendBadRequestResponse(c, err.Error())
+			rest.SendBadRequestResponse(c, err.Error())
 		}
 
 		id, err := uc.Create(ctx, req.Title, req.Content)
@@ -42,7 +42,7 @@ func CreateHandler(log *telemetry.Logger, uc usecase.UseCase) gin.HandlerFunc {
 					"error", databaseErr.Unwrap().Error(),
 				)
 
-				http.SendInternalServerErrorResponse(c)
+				rest.SendInternalServerErrorResponse(c)
 				return
 			}
 
@@ -51,12 +51,12 @@ func CreateHandler(log *telemetry.Logger, uc usecase.UseCase) gin.HandlerFunc {
 				"endpoint/CreateNote: unknown error", "error", err.Error(),
 			)
 
-			http.SendInternalServerErrorResponse(c)
+			rest.SendInternalServerErrorResponse(c)
 			return
 		}
 
 		log.InfoContext(ctx, "endpoint/CreateNote: finished successfully")
 
-		http.SendCreatedResponse(c, id, "note")
+		rest.SendCreatedResponse(c, id, "note")
 	}
 }

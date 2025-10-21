@@ -4,7 +4,7 @@ import (
 	"HATCH_APP/internal/note/domain"
 	"HATCH_APP/internal/note/usecase"
 	"HATCH_APP/internal/shared/errs"
-	"HATCH_APP/internal/shared/http"
+	"HATCH_APP/internal/shared/http/rest"
 	"HATCH_APP/pkg/telemetry"
 	"errors"
 
@@ -29,7 +29,7 @@ func FetchHandler(log *telemetry.Logger, uc usecase.UseCase) gin.HandlerFunc {
 					"error", databaseErr.Unwrap().Error(),
 				)
 
-				http.SendInternalServerErrorResponse(c)
+				rest.SendInternalServerErrorResponse(c)
 				return
 			}
 
@@ -38,7 +38,7 @@ func FetchHandler(log *telemetry.Logger, uc usecase.UseCase) gin.HandlerFunc {
 				"endpoint/ListNotes: unknown error", "error", err.Error(),
 			)
 
-			http.SendInternalServerErrorResponse(c)
+			rest.SendInternalServerErrorResponse(c)
 			return
 		}
 
@@ -46,7 +46,7 @@ func FetchHandler(log *telemetry.Logger, uc usecase.UseCase) gin.HandlerFunc {
 
 		log.InfoContext(ctx, "endpoint/ListNotes: finished successfully")
 
-		http.SendOKResponse(
+		rest.SendOKResponse(
 			c,
 			"",
 			res,

@@ -1,7 +1,7 @@
-package http
+package rest
 
 import (
-	"HATCH_APP/internal/note/infra/http/handler"
+	"HATCH_APP/internal/note/http/rest/handler"
 	"HATCH_APP/internal/note/usecase"
 	"HATCH_APP/pkg/telemetry"
 
