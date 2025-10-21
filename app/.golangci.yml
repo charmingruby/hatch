@@ -48,7 +48,7 @@ linters:
   - iface
   - ineffassign
   - intrange
-  - telemetrycheck
+  - loggercheck
   - makezero
   - mirror
   - musttag
