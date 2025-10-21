@@ -7,7 +7,7 @@ import (
 
 	"HATCH_APP/internal/note/archive"
 	"HATCH_APP/internal/note/shared/model"
-	"HATCH_APP/internal/shared/customerr"
+	"HATCH_APP/internal/shared/errs"
 	"HATCH_APP/test/gen/note/mocks"
 
 	"github.com/stretchr/testify/assert"
@@ -47,7 +47,7 @@ func Test_Execute(t *testing.T) {
 			Return(nil).
 			Once()
 
-		err := s.usecase.Execute(t.Context(), archive.Input{
+		err := s.usecase.Execute(t.Context(), archive.UseCaseInput{
 			ID: n.ID,
 		})
 
@@ -61,13 +61,13 @@ func Test_Execute(t *testing.T) {
 			Return(model.Note{}, errors.New("repo down")).
 			Once()
 
-		err := s.usecase.Execute(t.Context(), archive.Input{
+		err := s.usecase.Execute(t.Context(), archive.UseCaseInput{
 			ID: "nonexistent",
 		})
 
 		require.Error(t, err)
 
-		var targetErr *customerr.DatabaseError
+		var targetErr *errs.DatabaseError
 		assert.ErrorAs(t, err, &targetErr)
 	})
 
@@ -83,13 +83,13 @@ func Test_Execute(t *testing.T) {
 			Return(errors.New("save error")).
 			Once()
 
-		err := s.usecase.Execute(t.Context(), archive.Input{
+		err := s.usecase.Execute(t.Context(), archive.UseCaseInput{
 			ID: n.ID,
 		})
 
 		require.Error(t, err)
 
-		var targetErr *customerr.DatabaseError
+		var targetErr *errs.DatabaseError
 		assert.ErrorAs(t, err, &targetErr)
 	})
 }

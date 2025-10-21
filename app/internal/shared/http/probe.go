@@ -1,55 +1,50 @@
-package health
+package http
 
 import (
-	"HATCH_APP/internal/shared/transport/http"
-	"HATCH_APP/pkg/database/postgres"
-	"HATCH_APP/pkg/logger"
+	"HATCH_APP/pkg/db/postgres"
+	"HATCH_APP/pkg/telemetry"
 	"context"
 	"time"
 
 	"github.com/gin-gonic/gin"
 )
 
-const timeoutInS = 10
+const timeoutInSeconds = 10
 
-func registerRoutes(
-	log *logger.Logger,
-	r *gin.Engine,
-	db *postgres.Client,
-) {
+func registerProbes(log *telemetry.Logger, r *gin.Engine, db *postgres.Client) {
 	r.GET("/livez", livenessRoute(log))
 	r.GET("/readyz", readinessRoute(log, db))
 }
 
-func livenessRoute(log *logger.Logger) gin.HandlerFunc {
+func livenessRoute(log *telemetry.Logger) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx := c.Request.Context()
 
 		log.InfoContext(ctx, "endpoint/Liveness: request received")
 		log.InfoContext(ctx, "endpoint/Liveness: finished successfully")
 
-		http.SendOKResponse(c, "", nil)
+		SendOKResponse(c, "", nil)
 	}
 }
 
-func readinessRoute(log *logger.Logger, db *postgres.Client) gin.HandlerFunc {
+func readinessRoute(log *telemetry.Logger, db *postgres.Client) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx := c.Request.Context()
 
 		log.InfoContext(ctx, "endpoint/Readiness: request received")
 
-		ctx, cancel := context.WithTimeout(ctx, timeoutInS*time.Second)
+		ctx, cancel := context.WithTimeout(ctx, timeoutInSeconds*time.Second)
 		defer cancel()
 
 		if err := db.Ping(ctx); err != nil {
 			log.ErrorContext(ctx, "endpoint/Readiness: database error", "error", err.Error())
 
-			http.SendServiceUnavailableResponse(c, "database")
+			SendServiceUnavailableResponse(c, "database")
 			return
 		}
 
 		log.InfoContext(ctx, "endpoint/Readiness: finished successfully")
 
-		http.SendOKResponse(c, "", nil)
+		SendOKResponse(c, "", nil)
 	}
 }

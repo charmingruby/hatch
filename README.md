@@ -37,17 +37,15 @@ Everything related to a feature lives together:
 internal/note/             ← Single cohesive module
 │
 ├── create/                ← Feature: Create notes
-│   ├── create.go          → Wiring & registration
+│   ├── feature.go         → Wiring & registration
 │   ├── handler.go         → HTTP: POST /notes
 │   ├── usecase.go         → Business Logic
-│   ├── dto.go             → Input/Output types
 │   └── usecase_test.go    → Unit tests
 │
 ├── fetch/                 ← Feature: Fetch notes
-│   ├── fetch.go
+│   ├── feature.go
 │   ├── handler.go         → HTTP: GET /notes
 │   ├── usecase.go         → Business Logic
-│   ├── dto.go             → Input/Output types
 │   └── usecase_test.go
 │
 ├── shared/                ← Shared within note module only
@@ -58,7 +56,7 @@ internal/note/             ← Single cohesive module
 │       └── postgres/
 │           └── note_repository.go → Implementation
 │
-└── note.go                ← Module aggregator: Wires all features
+└── module.go              ← Module aggregator: Wires all features
 ```
 
 ### Visual Architecture
@@ -70,7 +68,6 @@ internal/note/             ← Single cohesive module
 │  Each feature is a vertical slice with its own:                │
 │  • Delivery                                                    │
 │  • Business Logic                                              │
-│  • DTOs                                                        │
 │  • Tests                                                       │
 │                                                                │
 │  ╔══════════════╗  ╔══════════════╗  ╔══════════════╗          │
@@ -79,7 +76,6 @@ internal/note/             ← Single cohesive module
 │  ╠══════════════╣  ╠══════════════╣  ╠══════════════╣          │
 │  ║ Handler      ║  ║ Handler      ║  ║ Handler      ║          │
 │  ║ UseCase      ║  ║ UseCase      ║  ║ UseCase      ║          │
-│  ║ DTOs         ║  ║ DTOs         ║  ║ DTOs         ║          │
 │  ║ Tests        ║  ║ Tests        ║  ║ Tests        ║          │
 │  ╚══════╤═══════╝  ╚══════╤═══════╝  ╚══════╤═══════╝          │
 │         │                 │                 │                  │
@@ -215,28 +211,24 @@ Let's add a "like note" feature. Here's everything you need:
 mkdir -p internal/note/like
 ```
 
-**2. Define types (`dto.go`):**
-```go
-package like
-
-type Input struct {
-    NoteID string `json:"note_id" binding:"required" validate:"required"`
-}
-
-type Output struct {
-    LikesCount int `json:"likes_count"`
-}
-```
-
-**3. Implement business logic (`usecase.go`):**
+**2. Implement the business logic (usecase.go):**
 ```go
 package like
 
 import (
     "context"
+
     "HATCH_APP/internal/note/shared/repository"
-    "HATCH_APP/internal/shared/customerr"
+    "HATCH_APP/internal/shared/errs"
 )
+
+type UseCaseInput struct {
+    NoteID string
+}
+
+type UseCaseOutput struct {
+    LikesCount int
+}
 
 type UseCase struct {
     repo repository.NoteRepo
@@ -246,80 +238,109 @@ func NewUseCase(repo repository.NoteRepo) UseCase {
     return UseCase{repo: repo}
 }
 
-func (u UseCase) Execute(ctx context.Context, input Input) (Output, error) {
+func (u UseCase) Execute(ctx context.Context, input UseCaseInput) (UseCaseOutput, error) {
     count, err := u.repo.IncrementLikes(ctx, input.NoteID)
     if err != nil {
-        return Output{}, customerr.NewDatabaseError(err)
+        return UseCaseOutput{}, errs.NewDatabaseError(err)
     }
 
-    return Output{LikesCount: count}, nil
+    return UseCaseOutput{LikesCount: count}, nil
 }
 ```
 
-**4. Create HTTP handler (`handler.go`):**
+**3. Create the HTTP handler (handler.go):**
 ```go
 package like
 
 import (
-    "HATCH_APP/internal/shared/customerr"
-    "HATCH_APP/internal/shared/transport/http"
-    "HATCH_APP/pkg/logger"
     "errors"
+
+    "HATCH_APP/internal/shared/errs"
+    "HATCH_APP/internal/shared/http"
+    "HATCH_APP/pkg/telemetry"
+
     "github.com/gin-gonic/gin"
 )
 
-func registerRoute(
-    log *logger.Logger,
-    api *gin.RouterGroup,
-    uc UseCase,
-) {
-    api.POST(":id/like", func(c *gin.Context) {
+type Request struct {
+    NoteID string `json:"note_id" binding:"required" validate:"required,uuid4"`
+}
+
+type Response struct {
+    LikesCount int `json:"likes_count"`
+}
+
+func RegisterRoute(log *telemetry.Logger, api *gin.RouterGroup, uc UseCase) {
+    api.POST(":id/like", handle(log, uc))
+}
+
+func handle(log *telemetry.Logger, uc UseCase) gin.HandlerFunc {
+    return func(c *gin.Context) {
         ctx := c.Request.Context()
 
-        req, err := http.ParseRequest[Input](c)
+        log.InfoContext(ctx, "endpoint/LikeNote: request received")
+
+        req, err := http.ParseRequest[Request](c)
         if err != nil {
+            log.ErrorContext(ctx, "endpoint/LikeNote: invalid request", "error", err.Error())
             http.SendBadRequestResponse(c, err.Error())
             return
         }
 
-        output, err := uc.Execute(ctx, *req)
+        output, err := uc.Execute(ctx, UseCaseInput{NoteID: req.NoteID})
         if err != nil {
-            var dbErr *customerr.DatabaseError
+            var dbErr *errs.DatabaseError
             if errors.As(err, &dbErr) {
+                log.ErrorContext(ctx, "endpoint/LikeNote: database error", "error", dbErr.Unwrap().Error())
                 http.SendInternalServerErrorResponse(c)
                 return
             }
+
+            log.ErrorContext(ctx, "endpoint/LikeNote: unexpected error", "error", err.Error())
             http.SendInternalServerErrorResponse(c)
             return
         }
 
-        http.SendOkResponse(c, output)
-    })
+        log.InfoContext(ctx, "endpoint/LikeNote: finished successfully")
+        http.SendOkResponse(c, Response{LikesCount: output.LikesCount})
+    }
 }
 ```
 
-**5. Wire it up (`like.go`):**
+**4. Wire it up (feature.go):**
 ```go
 package like
 
 import (
     "HATCH_APP/internal/note/shared/repository"
-    "HATCH_APP/pkg/logger"
+    "HATCH_APP/pkg/telemetry"
+
     "github.com/gin-gonic/gin"
 )
 
-func New(
-    log *logger.Logger,
-    api *gin.RouterGroup,
-    repo repository.NoteRepo,
-) {
-    registerRoute(log, api, NewUseCase(repo))
+func New(log *telemetry.Logger, api *gin.RouterGroup, repo repository.NoteRepo) {
+    usecase := NewUseCase(repo)
+    RegisterRoute(log, api, usecase)
 }
 ```
 
-**6. Register in module (`internal/note/note.go`):**
+**5. Wire it up (`like.go`):**
 ```go
-func register(log *logger.Logger, r *gin.Engine, db *sqlx.DB) error {
+package note
+
+import (
+	"HATCH_APP/internal/note/archive"
+	"HATCH_APP/internal/note/create"
+	"HATCH_APP/internal/note/fetch"
+	"HATCH_APP/internal/note/shared/repository/postgres"
+	"HATCH_APP/pkg/telemetry"
+
+	"github.com/gin-gonic/gin"
+	"github.com/jmoiron/sqlx"
+	"go.uber.org/fx"
+)
+
+func Register(log *telemetry.Logger, r *gin.Engine, db *sqlx.DB) error {
     repo, err := postgres.NewNoteRepo(db)
     if err != nil {
         return err
@@ -330,10 +351,14 @@ func register(log *logger.Logger, r *gin.Engine, db *sqlx.DB) error {
     create.New(log, api, repo)
     fetch.New(log, api, repo)
     archive.New(log, api, repo)
-    like.New(log, api, repo)  // ← Add this line
+    like.New(log, api, repo) // ← Add this line
 
     return nil
 }
+
+var Module = fx.Module("note",
+	fx.Invoke(register),
+)
 ```
 
 **Done!** Feature ready in 5 minutes. Test it:

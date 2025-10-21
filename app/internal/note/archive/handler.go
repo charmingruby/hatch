@@ -1,30 +1,30 @@
 package archive
 
 import (
-	"HATCH_APP/internal/shared/customerr"
-	"HATCH_APP/internal/shared/transport/http"
-	"HATCH_APP/pkg/logger"
+	"HATCH_APP/internal/shared/errs"
+	"HATCH_APP/internal/shared/http"
+	"HATCH_APP/pkg/telemetry"
 	"errors"
 
 	"github.com/gin-gonic/gin"
 )
 
-func registerRoute(
-	log *logger.Logger,
-	api *gin.RouterGroup,
-	uc UseCase,
-) {
-	api.PATCH(":id", func(c *gin.Context) {
+func RegisterRoute(log *telemetry.Logger, api *gin.RouterGroup, uc UseCase) {
+	api.PATCH(":id", handle(log, uc))
+}
+
+func handle(log *telemetry.Logger, uc UseCase) gin.HandlerFunc {
+	return func(c *gin.Context) {
 		ctx := c.Request.Context()
 
 		log.InfoContext(ctx, "endpoint/ArchiveNote: request received")
 
 		id := c.Param("id")
 
-		if err := uc.Execute(ctx, Input{
+		if err := uc.Execute(ctx, UseCaseInput{
 			ID: id,
 		}); err != nil {
-			var notFoundErr *customerr.NotFoundError
+			var notFoundErr *errs.NotFoundError
 			if errors.As(err, &notFoundErr) {
 				log.ErrorContext(
 					ctx,
@@ -36,7 +36,7 @@ func registerRoute(
 				return
 			}
 
-			var databaseErr *customerr.DatabaseError
+			var databaseErr *errs.DatabaseError
 			if errors.As(err, &databaseErr) {
 				log.ErrorContext(
 					ctx,
@@ -60,5 +60,5 @@ func registerRoute(
 		log.InfoContext(ctx, "endpoint/ArchiveNote: finished successfully")
 
 		http.SendEmptyResponse(c)
-	})
+	}
 }

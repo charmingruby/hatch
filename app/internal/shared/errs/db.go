@@ -1,4 +1,4 @@
-package customerr
+package errs
 
 type DatabaseError struct {
 	originalErr error

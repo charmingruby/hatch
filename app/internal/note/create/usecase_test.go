@@ -6,7 +6,7 @@ import (
 
 	"HATCH_APP/internal/note/create"
 	"HATCH_APP/internal/note/shared/model"
-	"HATCH_APP/internal/shared/customerr"
+	"HATCH_APP/internal/shared/errs"
 	"HATCH_APP/test/gen/note/mocks"
 
 	"github.com/stretchr/testify/assert"
@@ -42,7 +42,7 @@ func Test_Execute(t *testing.T) {
 			Return(nil).
 			Once()
 
-		op, err := s.usecase.Execute(t.Context(), create.Input{
+		op, err := s.usecase.Execute(t.Context(), create.UseCaseInput{
 			Title:   title,
 			Content: content,
 		})
@@ -58,7 +58,7 @@ func Test_Execute(t *testing.T) {
 			Return(errors.New("unhealthy repo")).
 			Once()
 
-		op, err := s.usecase.Execute(t.Context(), create.Input{
+		op, err := s.usecase.Execute(t.Context(), create.UseCaseInput{
 			Title:   title,
 			Content: content,
 		})
@@ -67,7 +67,7 @@ func Test_Execute(t *testing.T) {
 
 		require.Error(t, err)
 
-		var targetErr *customerr.DatabaseError
+		var targetErr *errs.DatabaseError
 		assert.ErrorAs(t, err, &targetErr)
 	})
 }

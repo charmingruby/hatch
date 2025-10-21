@@ -1,25 +1,30 @@
 package create
 
 import (
-	"HATCH_APP/internal/shared/customerr"
-	"HATCH_APP/internal/shared/transport/http"
-	"HATCH_APP/pkg/logger"
+	"HATCH_APP/internal/shared/errs"
+	"HATCH_APP/internal/shared/http"
+	"HATCH_APP/pkg/telemetry"
 	"errors"
 
 	"github.com/gin-gonic/gin"
 )
 
-func registerRoute(
-	log *logger.Logger,
-	api *gin.RouterGroup,
-	uc UseCase,
-) {
-	api.POST("", func(c *gin.Context) {
+type Request struct {
+	Title   string `json:"title"   binding:"required" validate:"required,gt=0"`
+	Content string `json:"content" binding:"required" validate:"required,gt=0"`
+}
+
+func RegisterRoute(log *telemetry.Logger, api *gin.RouterGroup, uc UseCase) {
+	api.POST("", handle(log, uc))
+}
+
+func handle(log *telemetry.Logger, uc UseCase) gin.HandlerFunc {
+	return func(c *gin.Context) {
 		ctx := c.Request.Context()
 
 		log.InfoContext(ctx, "endpoint/CreateNote: request received")
 
-		req, err := http.ParseRequest[Input](c)
+		req, err := http.ParseRequest[Request](c)
 		if err != nil {
 			log.ErrorContext(
 				ctx,
@@ -30,12 +35,12 @@ func registerRoute(
 			http.SendBadRequestResponse(c, err.Error())
 		}
 
-		op, err := uc.Execute(ctx, Input{
+		op, err := uc.Execute(ctx, UseCaseInput{
 			Title:   req.Title,
 			Content: req.Content,
 		})
 		if err != nil {
-			var databaseErr *customerr.DatabaseError
+			var databaseErr *errs.DatabaseError
 			if errors.As(err, &databaseErr) {
 				log.ErrorContext(
 					ctx,
@@ -59,5 +64,5 @@ func registerRoute(
 		log.InfoContext(ctx, "endpoint/CreateNote: finished successfully")
 
 		http.SendCreatedResponse(c, op.ID, "note")
-	})
+	}
 }

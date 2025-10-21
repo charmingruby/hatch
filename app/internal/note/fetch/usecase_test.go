@@ -6,7 +6,7 @@ import (
 
 	"HATCH_APP/internal/note/fetch"
 	"HATCH_APP/internal/note/shared/model"
-	"HATCH_APP/internal/shared/customerr"
+	"HATCH_APP/internal/shared/errs"
 	"HATCH_APP/test/gen/note/mocks"
 
 	"github.com/stretchr/testify/assert"
@@ -60,7 +60,7 @@ func Test_Execute(t *testing.T) {
 		assert.Zero(t, op)
 		require.Error(t, err)
 
-		var targetErr *customerr.DatabaseError
+		var targetErr *errs.DatabaseError
 		assert.ErrorAs(t, err, &targetErr)
 	})
 }

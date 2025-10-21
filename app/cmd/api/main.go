@@ -4,11 +4,10 @@ import (
 	"time"
 
 	"HATCH_APP/config"
-	"HATCH_APP/internal/health"
 	"HATCH_APP/internal/note"
-	"HATCH_APP/internal/shared/transport/http"
-	"HATCH_APP/pkg/database/postgres"
-	"HATCH_APP/pkg/logger"
+	"HATCH_APP/internal/shared/http"
+	"HATCH_APP/pkg/db/postgres"
+	"HATCH_APP/pkg/telemetry"
 	"HATCH_APP/pkg/validator"
 
 	"github.com/joho/godotenv"
@@ -17,7 +16,7 @@ import (
 )
 
 func main() {
-	log := logger.New()
+	log := telemetry.NewLogger()
 
 	_ = godotenv.Load()
 
@@ -27,7 +26,6 @@ func main() {
 		postgres.Module,
 		validator.Module,
 		http.Module,
-		health.Module,
 		note.Module,
 		fx.WithLogger(func() fxevent.Logger {
 			return log

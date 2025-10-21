@@ -8,6 +8,8 @@ import (
 	"time"
 
 	"HATCH_APP/config"
+	"HATCH_APP/pkg/db/postgres"
+	"HATCH_APP/pkg/telemetry"
 	"HATCH_APP/pkg/validator"
 
 	"github.com/gin-gonic/gin"
@@ -21,8 +23,10 @@ type Server struct {
 }
 
 func NewServer(
+	log *telemetry.Logger,
 	cfg *config.Config,
 	val *validator.Validator,
+	db *postgres.Client,
 ) (*Server, *gin.Engine) {
 	router := gin.Default()
 
@@ -31,6 +35,8 @@ func NewServer(
 	addr := fmt.Sprintf(":%s", cfg.RestServerPort)
 
 	router.Use(val.Middleware())
+
+	registerProbes(log, router, db)
 
 	return &Server{
 		Server: http.Server{

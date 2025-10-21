@@ -23,13 +23,11 @@ and contains its own features (create, fetch, etc.), each fully self-contained.
 internal/note/
 ├── create/          → Feature: POST /notes
 │   ├── handler.go   → Transport layer (HTTP, gRPC, messaging, etc.)
-│   ├── usecase.go   → Business logic
 │   ├── dto.go       → Input/Output structs
 │   └── usecase_test.go
 ├── fetch/           → Feature: GET /notes
 │   ├── handler.go
 │   ├── usecase.go
-│   ├── dto.go
 │   └── usecase_test.go
 └── shared/
     ├── model/       → Domain entities

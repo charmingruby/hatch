@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"HATCH_APP/internal/note/shared/model"
-	"HATCH_APP/pkg/database/postgres"
+	"HATCH_APP/pkg/db/postgres"
 
 	"github.com/jmoiron/sqlx"
 )
