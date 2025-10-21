@@ -1,10 +1,9 @@
 package note
 
 import (
-	"HATCH_APP/internal/note/archive"
-	"HATCH_APP/internal/note/create"
-	"HATCH_APP/internal/note/fetch"
-	"HATCH_APP/internal/note/shared/repository/postgres"
+	"HATCH_APP/internal/note/infra/http"
+	"HATCH_APP/internal/note/infra/repository/postgres"
+	"HATCH_APP/internal/note/usecase"
 	"HATCH_APP/pkg/telemetry"
 
 	"github.com/gin-gonic/gin"
@@ -13,16 +12,14 @@ import (
 )
 
 func register(log *telemetry.Logger, r *gin.Engine, db *sqlx.DB) error {
-	repo, err := postgres.NewNoteRepo(db)
+	repo, err := postgres.NewNoteRepository(db)
 	if err != nil {
 		return err
 	}
 
-	api := r.Group("/api/v1/notes")
+	usecase := usecase.NewService(repo)
 
-	create.New(log, api, repo)
-	fetch.New(log, api, repo)
-	archive.New(log, api, repo)
+	http.RegisterRoutes(log, r, usecase)
 
 	return nil
 }

@@ -1,6 +1,7 @@
-package archive
+package handler
 
 import (
+	"HATCH_APP/internal/note/usecase"
 	"HATCH_APP/internal/shared/errs"
 	"HATCH_APP/internal/shared/http"
 	"HATCH_APP/pkg/telemetry"
@@ -9,11 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func RegisterRoute(log *telemetry.Logger, api *gin.RouterGroup, uc UseCase) {
-	api.PATCH(":id", handle(log, uc))
-}
-
-func handle(log *telemetry.Logger, uc UseCase) gin.HandlerFunc {
+func ArchiveHandler(log *telemetry.Logger, uc usecase.UseCase) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx := c.Request.Context()
 
@@ -21,9 +18,7 @@ func handle(log *telemetry.Logger, uc UseCase) gin.HandlerFunc {
 
 		id := c.Param("id")
 
-		if err := uc.Execute(ctx, UseCaseInput{
-			ID: id,
-		}); err != nil {
+		if err := uc.Archive(ctx, id); err != nil {
 			var notFoundErr *errs.NotFoundError
 			if errors.As(err, &notFoundErr) {
 				log.ErrorContext(

@@ -1,44 +1,29 @@
-package archive_test
+package usecase_test
 
 import (
 	"errors"
 	"testing"
 	"time"
 
-	"HATCH_APP/internal/note/archive"
-	"HATCH_APP/internal/note/shared/model"
+	"HATCH_APP/internal/note/domain"
 	"HATCH_APP/internal/shared/errs"
-	"HATCH_APP/test/gen/note/mocks"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 )
 
-type suite struct {
-	repo    *mocks.NoteRepo
-	usecase archive.UseCase
-}
-
-func setup(t *testing.T) suite {
-	repo := mocks.NewNoteRepo(t)
-
-	return suite{
-		repo:    repo,
-		usecase: archive.NewUseCase(repo),
-	}
-}
-
-func Test_Execute(t *testing.T) {
+func Test_UseCase_Archive(t *testing.T) {
 	t.Run("should archive successfully", func(t *testing.T) {
-		s := setup(t)
-		n := model.NewNote("title", "content")
+		s := setupSuite(t)
+
+		n := domain.NewNote("title", "content")
 
 		s.repo.On("FindByID", t.Context(), n.ID).
 			Return(n, nil).
 			Once()
 
-		s.repo.On("Save", t.Context(), mock.MatchedBy(func(note model.Note) bool {
+		s.repo.On("Save", t.Context(), mock.MatchedBy(func(note domain.Note) bool {
 			return note.ID == n.ID &&
 				note.Archived &&
 				note.UpdatedAt != nil &&
@@ -47,23 +32,19 @@ func Test_Execute(t *testing.T) {
 			Return(nil).
 			Once()
 
-		err := s.usecase.Execute(t.Context(), archive.UseCaseInput{
-			ID: n.ID,
-		})
+		err := s.service.Archive(t.Context(), n.ID)
 
 		require.NoError(t, err)
 	})
 
 	t.Run("should return DatabaseError when FindByID fails", func(t *testing.T) {
-		s := setup(t)
+		s := setupSuite(t)
 
 		s.repo.On("FindByID", t.Context(), "nonexistent").
-			Return(model.Note{}, errors.New("repo down")).
+			Return(domain.Note{}, errors.New("repo down")).
 			Once()
 
-		err := s.usecase.Execute(t.Context(), archive.UseCaseInput{
-			ID: "nonexistent",
-		})
+		err := s.service.Archive(t.Context(), "nonexistent")
 
 		require.Error(t, err)
 
@@ -72,8 +53,9 @@ func Test_Execute(t *testing.T) {
 	})
 
 	t.Run("should return DatabaseError when Save fails", func(t *testing.T) {
-		s := setup(t)
-		n := model.NewNote("title", "content")
+		s := setupSuite(t)
+
+		n := domain.NewNote("title", "content")
 
 		s.repo.On("FindByID", t.Context(), n.ID).
 			Return(n, nil).
@@ -83,13 +65,25 @@ func Test_Execute(t *testing.T) {
 			Return(errors.New("save error")).
 			Once()
 
-		err := s.usecase.Execute(t.Context(), archive.UseCaseInput{
-			ID: n.ID,
-		})
+		err := s.service.Archive(t.Context(), n.ID)
 
 		require.Error(t, err)
 
 		var targetErr *errs.DatabaseError
 		assert.ErrorAs(t, err, &targetErr)
+	})
+
+	t.Run("should return NotFoundError when note ID is empty", func(t *testing.T) {
+		s := setupSuite(t)
+
+		s.repo.On("FindByID", mock.Anything, "invalid-id").
+			Return(domain.Note{}, nil).
+			Once()
+
+		err := s.service.Archive(t.Context(), "invalid-id")
+
+		require.Error(t, err)
+		var notFoundErr *errs.NotFoundError
+		assert.ErrorAs(t, err, &notFoundErr)
 	})
 }

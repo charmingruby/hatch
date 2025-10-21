@@ -1,6 +1,7 @@
-package create
+package handler
 
 import (
+	"HATCH_APP/internal/note/usecase"
 	"HATCH_APP/internal/shared/errs"
 	"HATCH_APP/internal/shared/http"
 	"HATCH_APP/pkg/telemetry"
@@ -9,22 +10,18 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type Request struct {
+type CreateRequest struct {
 	Title   string `json:"title"   binding:"required" validate:"required,gt=0"`
 	Content string `json:"content" binding:"required" validate:"required,gt=0"`
 }
 
-func RegisterRoute(log *telemetry.Logger, api *gin.RouterGroup, uc UseCase) {
-	api.POST("", handle(log, uc))
-}
-
-func handle(log *telemetry.Logger, uc UseCase) gin.HandlerFunc {
+func CreateHandler(log *telemetry.Logger, uc usecase.UseCase) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx := c.Request.Context()
 
 		log.InfoContext(ctx, "endpoint/CreateNote: request received")
 
-		req, err := http.ParseRequest[Request](c)
+		req, err := http.ParseRequest[CreateRequest](c)
 		if err != nil {
 			log.ErrorContext(
 				ctx,
@@ -35,10 +32,7 @@ func handle(log *telemetry.Logger, uc UseCase) gin.HandlerFunc {
 			http.SendBadRequestResponse(c, err.Error())
 		}
 
-		op, err := uc.Execute(ctx, UseCaseInput{
-			Title:   req.Title,
-			Content: req.Content,
-		})
+		id, err := uc.Create(ctx, req.Title, req.Content)
 		if err != nil {
 			var databaseErr *errs.DatabaseError
 			if errors.As(err, &databaseErr) {
@@ -63,6 +57,6 @@ func handle(log *telemetry.Logger, uc UseCase) gin.HandlerFunc {
 
 		log.InfoContext(ctx, "endpoint/CreateNote: finished successfully")
 
-		http.SendCreatedResponse(c, op.ID, "note")
+		http.SendCreatedResponse(c, id, "note")
 	}
 }

@@ -1,7 +1,8 @@
-package fetch
+package handler
 
 import (
-	"HATCH_APP/internal/note/shared/model"
+	"HATCH_APP/internal/note/domain"
+	"HATCH_APP/internal/note/usecase"
 	"HATCH_APP/internal/shared/errs"
 	"HATCH_APP/internal/shared/http"
 	"HATCH_APP/pkg/telemetry"
@@ -10,19 +11,15 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type Response = []model.Note
+type Response = []domain.Note
 
-func RegisterRoute(log *telemetry.Logger, api *gin.RouterGroup, uc UseCase) {
-	api.GET("", handle(log, uc))
-}
-
-func handle(log *telemetry.Logger, uc UseCase) gin.HandlerFunc {
+func FetchHandler(log *telemetry.Logger, uc usecase.UseCase) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx := c.Request.Context()
 
 		log.InfoContext(ctx, "endpoint/ListNotes: request received")
 
-		op, err := uc.Execute(ctx)
+		notes, err := uc.Fetch(ctx)
 		if err != nil {
 			var databaseErr *errs.DatabaseError
 			if errors.As(err, &databaseErr) {
@@ -45,7 +42,7 @@ func handle(log *telemetry.Logger, uc UseCase) gin.HandlerFunc {
 			return
 		}
 
-		var res = op.Notes
+		var res = notes
 
 		log.InfoContext(ctx, "endpoint/ListNotes: finished successfully")
 
