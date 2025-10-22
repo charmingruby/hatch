@@ -1,5 +1,3 @@
-Você está certo. Baseado na estrutura de pastas que você mostrou, aqui está o README corrigido:
-
 # Hatch
 
 Production-ready Go template built for speed and clarity.
@@ -49,7 +47,7 @@ internal/note/             ← Self-contained feature (bounded context)
 ```text
 .
 ├── cmd/api/main.go              # Entry point
-├── config/                       # Configuration
+├── config/                      # Configuration
 ├── db/migration/                # Database migrations
 ├── internal/
 │   ├── note/                    # Bounded context
