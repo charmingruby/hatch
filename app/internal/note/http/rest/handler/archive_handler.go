@@ -24,7 +24,7 @@ func ArchiveHandler(log *telemetry.Logger, uc usecase.UseCase) gin.HandlerFunc {
 				log.ErrorContext(
 					ctx,
 					"endpoint/ArchiveNote: not found error",
-					"error", err.Error(),
+					"error", err,
 				)
 
 				rest.SendNotFoundResponse(c, err.Error())
@@ -45,7 +45,7 @@ func ArchiveHandler(log *telemetry.Logger, uc usecase.UseCase) gin.HandlerFunc {
 
 			log.ErrorContext(
 				ctx,
-				"endpoint/ArchiveNote: unknown error", "error", err.Error(),
+				"endpoint/ArchiveNote: unknown error", "error", err,
 			)
 
 			rest.SendInternalServerErrorResponse(c)

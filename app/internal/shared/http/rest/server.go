@@ -13,7 +13,6 @@ import (
 	"HATCH_APP/pkg/validator"
 
 	"github.com/gin-gonic/gin"
-	"go.uber.org/fx"
 )
 
 type Server struct {
@@ -28,15 +27,11 @@ func NewServer(
 	val *validator.Validator,
 	db *postgres.Client,
 ) (*Server, *gin.Engine) {
-	router := gin.Default()
-
-	gin.SetMode(gin.ReleaseMode)
-
 	addr := fmt.Sprintf(":%s", cfg.RestServerPort)
 
-	router.Use(val.Middleware())
+	r := setupRouter(val)
 
-	registerProbes(log, router, db)
+	registerProbes(log, r, db)
 
 	return &Server{
 		Server: http.Server{
@@ -44,14 +39,24 @@ func NewServer(
 			ReadTimeout:  5 * time.Second,
 			IdleTimeout:  120 * time.Second,
 			Addr:         addr,
-			Handler:      router,
+			Handler:      r,
 		},
 		port: cfg.RestServerPort,
-	}, router
+	}, r
+}
+
+func setupRouter(val *validator.Validator) *gin.Engine {
+	gin.SetMode(gin.ReleaseMode)
+
+	r := gin.Default()
+
+	r.Use(val.Middleware())
+
+	return r
 }
 
 func (s *Server) Start() error {
-	if err := s.ListenAndServe(); err != nil && errors.Is(err, http.ErrServerClosed) {
+	if err := s.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 		return err
 	}
 
@@ -61,35 +66,3 @@ func (s *Server) Start() error {
 func (s *Server) Close(ctx context.Context) error {
 	return s.Shutdown(ctx)
 }
-
-var Module = fx.Module("rest",
-	fx.Provide(NewServer),
-	fx.Invoke(func(lc fx.Lifecycle, srv *Server, router *gin.Engine, shutdowner fx.Shutdowner) {
-		errChan := make(chan error, 1)
-
-		lc.Append(fx.Hook{
-			OnStart: func(ctx context.Context) error {
-				go func() {
-					if err := srv.Start(); err != nil {
-						errChan <- err
-						_ = shutdowner.Shutdown()
-					}
-				}()
-
-				select {
-				case err := <-errChan:
-					return err
-				case <-time.After(100 * time.Millisecond):
-					return nil
-				}
-			},
-			OnStop: func(ctx context.Context) error {
-				if err := srv.Close(ctx); err != nil {
-					return err
-				}
-
-				return nil
-			},
-		})
-	}),
-)

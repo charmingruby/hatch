@@ -26,7 +26,7 @@ func FetchHandler(log *telemetry.Logger, uc usecase.UseCase) gin.HandlerFunc {
 				log.ErrorContext(
 					ctx,
 					"endpoint/ListNotes: database error",
-					"error", databaseErr.Unwrap().Error(),
+					"error", databaseErr.Unwrap(),
 				)
 
 				rest.SendInternalServerErrorResponse(c)
@@ -35,7 +35,7 @@ func FetchHandler(log *telemetry.Logger, uc usecase.UseCase) gin.HandlerFunc {
 
 			log.ErrorContext(
 				ctx,
-				"endpoint/ListNotes: unknown error", "error", err.Error(),
+				"endpoint/ListNotes: unknown error", "error", err,
 			)
 
 			rest.SendInternalServerErrorResponse(c)

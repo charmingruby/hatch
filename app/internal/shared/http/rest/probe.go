@@ -37,7 +37,7 @@ func readinessRoute(log *telemetry.Logger, db *postgres.Client) gin.HandlerFunc 
 		defer cancel()
 
 		if err := db.Ping(ctx); err != nil {
-			log.ErrorContext(ctx, "endpoint/Readiness: database error", "error", err.Error())
+			log.ErrorContext(ctx, "endpoint/Readiness: database error", "error", err)
 
 			SendServiceUnavailableResponse(c, "database")
 			return

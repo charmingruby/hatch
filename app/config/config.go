@@ -2,7 +2,6 @@ package config
 
 import (
 	"github.com/caarlos0/env"
-	"go.uber.org/fx"
 )
 
 type Config struct {
@@ -10,7 +9,7 @@ type Config struct {
 	PostgresURL    string `env:"POSTGRES_URL,required"`
 }
 
-func New() (*Config, error) {
+func Load() (*Config, error) {
 	var cfg Config
 
 	if err := env.Parse(&cfg); err != nil {
@@ -19,7 +18,3 @@ func New() (*Config, error) {
 
 	return &cfg, nil
 }
-
-var Module = fx.Module("config",
-	fx.Provide(New),
-)

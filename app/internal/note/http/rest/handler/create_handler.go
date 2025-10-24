@@ -26,7 +26,7 @@ func CreateHandler(log *telemetry.Logger, uc usecase.UseCase) gin.HandlerFunc {
 			log.ErrorContext(
 				ctx,
 				"endpoint/CreateNote: unable to parse payload",
-				"error", err.Error(),
+				"error", err,
 			)
 
 			rest.SendBadRequestResponse(c, err.Error())
@@ -39,7 +39,7 @@ func CreateHandler(log *telemetry.Logger, uc usecase.UseCase) gin.HandlerFunc {
 				log.ErrorContext(
 					ctx,
 					"endpoint/CreateNote: database error",
-					"error", databaseErr.Unwrap().Error(),
+					"error", databaseErr.Unwrap(),
 				)
 
 				rest.SendInternalServerErrorResponse(c)
@@ -48,7 +48,7 @@ func CreateHandler(log *telemetry.Logger, uc usecase.UseCase) gin.HandlerFunc {
 
 			log.ErrorContext(
 				ctx,
-				"endpoint/CreateNote: unknown error", "error", err.Error(),
+				"endpoint/CreateNote: unknown error", "error", err,
 			)
 
 			rest.SendInternalServerErrorResponse(c)
