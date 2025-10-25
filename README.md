@@ -19,7 +19,7 @@ internal/note/             ← Self-contained feature (bounded context)
 │
 ├── domain/                ← Business entities & rules
 │   ├── note.go
-│   └── repository.go
+│   └── repository.go      → Interfaces for external dependencies
 │
 ├── usecase/               ← Application logic
 │   ├── create.go
@@ -27,9 +27,13 @@ internal/note/             ← Self-contained feature (bounded context)
 │   ├── archive.go
 │   └── usecase.go         → Shared setup or interface
 │
-├── db/repository/postgres/← Database layer
-│   ├── note_repository.go
-│   └── note_query.go
+├── provider/              ← External service providers
+│   ├── postgres/          → Database implementation
+│   │   ├── note_repository.go
+│   │   └── note_query.go
+│   ├── redis/             → Cache implementation
+│   ├── rabbitmq/          → Queue implementation
+│   └── sendgrid/          → Email service implementation
 │
 ├── http/rest/             ← HTTP layer
 │   ├── handler/
@@ -38,7 +42,6 @@ internal/note/             ← Self-contained feature (bounded context)
 │   │   └── archive_handler.go
 │   └── route.go
 │
-├── queue/                 ← (Optional) async processing
 └── module.go              ← Dependency wiring for the feature
 ```
 
@@ -51,12 +54,43 @@ internal/note/             ← Self-contained feature (bounded context)
 ├── db/migration/                # Database migrations
 ├── internal/
 │   ├── note/                    # Bounded context
+│   │   ├── domain/              → Business logic & interfaces
+│   │   ├── usecase/             → Application logic
+│   │   ├── provider/            → External service providers
+│   │   ├── http/                → HTTP handlers
+│   │   └── module.go            → Dependency injection
 │   └── shared/                  # Cross-cutting concerns
 │       ├── errs/                → Error types
-│       └── http/                → HTTP utilities (server, response, request)
+│       └── http/                → HTTP utilities
 ├── pkg/                         # Reusable packages
 └── test/gen/                    # Generated mocks
 ```
+
+## Layer Responsibilities
+
+**domain/** - Business entities and interface contracts
+- Core business logic
+- Entity definitions
+- Repository and service interfaces
+- No external dependencies
+
+**usecase/** - Application logic orchestration
+- Coordinates business operations
+- Implements use cases
+- Depends only on domain interfaces
+
+**provider/** - External service implementations
+- Database repositories (Postgres, MySQL)
+- Cache providers (Redis, Memcached)
+- Message queues (RabbitMQ, Kafka)
+- Third-party APIs (SendGrid, Stripe, Twilio)
+- Storage services (S3, MinIO)
+- All external integrations live here
+
+**http/** - HTTP presentation layer
+- Request/response handling
+- Route definitions
+- Input validation
 
 ## Key Benefits
 
@@ -70,15 +104,22 @@ internal/note/             ← Self-contained feature (bounded context)
 - Add `cmd/main.go`, done
 - Zero architectural rewrites
 
+**Provider Flexibility**
+- Swap implementations without touching business logic
+- Mock providers easily for testing
+- Deploy with different providers per environment
+
 **Go Way**
-- Flat over nested – Shallow folder hierarchy for quick navigation and understanding
-- Purposeful packages — clear boundaries and naming
+- Flat over nested – Shallow folder hierarchy for quick navigation
+- Purposeful packages – Clear boundaries and naming
+- Explicit dependencies – No hidden magic
 
 ## Core Principles
 
 **Modularity** - Features are self-contained  
 **Decoupling** - Layers depend on interfaces  
-**Extractability** - Modules → Microservices naturally
+**Extractability** - Modules → Microservices naturally  
+**Provider Pattern** - External dependencies are pluggable
 
 ---
 

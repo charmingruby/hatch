@@ -1,8 +1,8 @@
 package note
 
 import (
-	"HATCH_APP/internal/note/db/repository/postgres"
 	"HATCH_APP/internal/note/http/rest"
+	"HATCH_APP/internal/note/provider/postgres"
 	"HATCH_APP/internal/note/usecase"
 	"HATCH_APP/pkg/telemetry"
 
