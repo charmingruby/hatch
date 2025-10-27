@@ -1,7 +1,6 @@
-package handler
+package archive_note
 
 import (
-	"HATCH_APP/internal/note/usecase"
 	"HATCH_APP/internal/shared/errs"
 	"HATCH_APP/internal/shared/http/rest"
 	"HATCH_APP/pkg/telemetry"
@@ -10,7 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func ArchiveHandler(log *telemetry.Logger, uc usecase.UseCase) gin.HandlerFunc {
+func NewHTTPHandler(log *telemetry.Logger, uc UseCase) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx := c.Request.Context()
 
@@ -18,7 +17,7 @@ func ArchiveHandler(log *telemetry.Logger, uc usecase.UseCase) gin.HandlerFunc {
 
 		id := c.Param("id")
 
-		if err := uc.Archive(ctx, id); err != nil {
+		if err := uc.Execute(ctx, id); err != nil {
 			var notFoundErr *errs.NotFoundError
 			if errors.As(err, &notFoundErr) {
 				log.ErrorContext(

@@ -18,7 +18,7 @@ A **production-ready Go template** focused on:
 ### ✅ Always Do
 - Keep changes **inside the module** you're working on
 - Follow existing patterns and naming
-- Respect dependency flow: `provider/` → `usecase/` → `domain/`
+- Respect dependency flow
 - Test every use case
 - Keep files small and focused
 
@@ -28,21 +28,6 @@ A **production-ready Go template** focused on:
 - Cross-import between modules
 - Use global vars or `panic()`
 - Refactor unrelated code
-
----
-
-## Module Structure (Quick Reference)
-
-```
-internal/note/
-├── domain/       → Entities + Interfaces (pure Go)
-├── usecase/      → Business logic
-├── provider/     → External services (DB, APIs, cache, queues)
-├── http/         → HTTP handlers
-└── module.go     → Dependency wiring
-```
-
-**Key principle:** `domain/` defines interfaces, `provider/` implements them.
 
 ---
 

@@ -1,8 +1,7 @@
-package handler
+package fetch_notes
 
 import (
 	"HATCH_APP/internal/note/domain"
-	"HATCH_APP/internal/note/usecase"
 	"HATCH_APP/internal/shared/errs"
 	"HATCH_APP/internal/shared/http/rest"
 	"HATCH_APP/pkg/telemetry"
@@ -13,19 +12,19 @@ import (
 
 type Response = []domain.Note
 
-func FetchHandler(log *telemetry.Logger, uc usecase.UseCase) gin.HandlerFunc {
+func NewHTTPHandler(log *telemetry.Logger, uc UseCase) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx := c.Request.Context()
 
-		log.InfoContext(ctx, "endpoint/ListNotes: request received")
+		log.InfoContext(ctx, "endpoint/FetchNotes: request received")
 
-		notes, err := uc.Fetch(ctx)
+		notes, err := uc.Execute(ctx)
 		if err != nil {
 			var databaseErr *errs.DatabaseError
 			if errors.As(err, &databaseErr) {
 				log.ErrorContext(
 					ctx,
-					"endpoint/ListNotes: database error",
+					"endpoint/FetchNotes: database error",
 					"error", databaseErr.Unwrap(),
 				)
 
@@ -35,7 +34,7 @@ func FetchHandler(log *telemetry.Logger, uc usecase.UseCase) gin.HandlerFunc {
 
 			log.ErrorContext(
 				ctx,
-				"endpoint/ListNotes: unknown error", "error", err,
+				"endpoint/FetchNotes: unknown error", "error", err,
 			)
 
 			rest.SendInternalServerErrorResponse(c)
@@ -44,7 +43,7 @@ func FetchHandler(log *telemetry.Logger, uc usecase.UseCase) gin.HandlerFunc {
 
 		var res = notes
 
-		log.InfoContext(ctx, "endpoint/ListNotes: finished successfully")
+		log.InfoContext(ctx, "endpoint/FetchNotes: finished successfully")
 
 		rest.SendOKResponse(
 			c,

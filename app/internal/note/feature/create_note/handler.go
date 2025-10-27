@@ -1,7 +1,6 @@
-package handler
+package create_note
 
 import (
-	"HATCH_APP/internal/note/usecase"
 	"HATCH_APP/internal/shared/errs"
 	"HATCH_APP/internal/shared/http/rest"
 	"HATCH_APP/pkg/telemetry"
@@ -10,18 +9,18 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type CreateRequest struct {
+type Request struct {
 	Title   string `json:"title"   binding:"required" validate:"required,gt=0"`
 	Content string `json:"content" binding:"required" validate:"required,gt=0"`
 }
 
-func CreateHandler(log *telemetry.Logger, uc usecase.UseCase) gin.HandlerFunc {
+func NewHTTPHandler(log *telemetry.Logger, uc UseCase) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx := c.Request.Context()
 
 		log.InfoContext(ctx, "endpoint/CreateNote: request received")
 
-		req, err := rest.ParseRequest[CreateRequest](c)
+		req, err := rest.ParseRequest[Request](c)
 		if err != nil {
 			log.ErrorContext(
 				ctx,
@@ -32,7 +31,7 @@ func CreateHandler(log *telemetry.Logger, uc usecase.UseCase) gin.HandlerFunc {
 			rest.SendBadRequestResponse(c, err.Error())
 		}
 
-		id, err := uc.Create(ctx, req.Title, req.Content)
+		id, err := uc.Execute(ctx, req.Title, req.Content)
 		if err != nil {
 			var databaseErr *errs.DatabaseError
 			if errors.As(err, &databaseErr) {

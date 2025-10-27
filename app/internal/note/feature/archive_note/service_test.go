@@ -1,19 +1,36 @@
-package usecase_test
+package archive_note_test
 
 import (
+	"HATCH_APP/internal/note/domain"
+	"HATCH_APP/internal/note/feature/archive_note"
+	"HATCH_APP/internal/shared/errs"
+	"HATCH_APP/test/gen/note/mocks"
 	"errors"
 	"testing"
 	"time"
-
-	"HATCH_APP/internal/note/domain"
-	"HATCH_APP/internal/shared/errs"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 )
 
-func Test_UseCase_Archive(t *testing.T) {
+type suite struct {
+	repo    *mocks.NoteRepository
+	usecase archive_note.UseCase
+}
+
+func setupSuite(t *testing.T) *suite {
+	repo := mocks.NewNoteRepository(t)
+
+	service := archive_note.NewService(repo)
+
+	return &suite{
+		repo:    repo,
+		usecase: service,
+	}
+}
+
+func Test_UseCase_Execute(t *testing.T) {
 	t.Run("should archive successfully", func(t *testing.T) {
 		s := setupSuite(t)
 
@@ -32,7 +49,7 @@ func Test_UseCase_Archive(t *testing.T) {
 			Return(nil).
 			Once()
 
-		err := s.service.Archive(t.Context(), n.ID)
+		err := s.usecase.Execute(t.Context(), n.ID)
 
 		require.NoError(t, err)
 	})
@@ -44,7 +61,7 @@ func Test_UseCase_Archive(t *testing.T) {
 			Return(domain.Note{}, errors.New("repo down")).
 			Once()
 
-		err := s.service.Archive(t.Context(), "nonexistent")
+		err := s.usecase.Execute(t.Context(), "nonexistent")
 
 		require.Error(t, err)
 
@@ -65,7 +82,7 @@ func Test_UseCase_Archive(t *testing.T) {
 			Return(errors.New("save error")).
 			Once()
 
-		err := s.service.Archive(t.Context(), n.ID)
+		err := s.usecase.Execute(t.Context(), n.ID)
 
 		require.Error(t, err)
 
@@ -80,7 +97,7 @@ func Test_UseCase_Archive(t *testing.T) {
 			Return(domain.Note{}, nil).
 			Once()
 
-		err := s.service.Archive(t.Context(), "invalid-id")
+		err := s.usecase.Execute(t.Context(), "invalid-id")
 
 		require.Error(t, err)
 		var notFoundErr *errs.NotFoundError

@@ -1,8 +1,10 @@
-package usecase_test
+package create_note_test
 
 import (
 	"HATCH_APP/internal/note/domain"
+	"HATCH_APP/internal/note/feature/create_note"
 	"HATCH_APP/internal/shared/errs"
+	"HATCH_APP/test/gen/note/mocks"
 	"errors"
 	"testing"
 
@@ -11,7 +13,23 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func Test_UseCase_Create(t *testing.T) {
+type suite struct {
+	repo    *mocks.NoteRepository
+	usecase create_note.UseCase
+}
+
+func setupSuite(t *testing.T) *suite {
+	repo := mocks.NewNoteRepository(t)
+
+	service := create_note.NewService(repo)
+
+	return &suite{
+		repo:    repo,
+		usecase: service,
+	}
+}
+
+func Test_UseCase_Execute(t *testing.T) {
 	title := "Hatch"
 	content := "Template"
 
@@ -25,7 +43,7 @@ func Test_UseCase_Create(t *testing.T) {
 			Return(nil).
 			Once()
 
-		id, err := s.service.Create(t.Context(), title, content)
+		id, err := s.usecase.Execute(t.Context(), title, content)
 
 		require.NoError(t, err)
 		assert.NotEmpty(t, id)
@@ -38,7 +56,7 @@ func Test_UseCase_Create(t *testing.T) {
 			Return(errors.New("unhealthy repo")).
 			Once()
 
-		id, err := s.service.Create(t.Context(), title, content)
+		id, err := s.usecase.Execute(t.Context(), title, content)
 
 		assert.Empty(t, id)
 		require.Error(t, err)

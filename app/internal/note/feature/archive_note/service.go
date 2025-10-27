@@ -1,12 +1,27 @@
-package usecase
+package archive_note
 
 import (
+	"HATCH_APP/internal/note/domain"
 	"HATCH_APP/internal/shared/errs"
 	"context"
 	"time"
 )
 
-func (s *Service) Archive(ctx context.Context, id string) error {
+type UseCase interface {
+	Execute(ctx context.Context, id string) error
+}
+
+type Service struct {
+	repo domain.NoteRepository
+}
+
+func NewService(repo domain.NoteRepository) *Service {
+	return &Service{
+		repo: repo,
+	}
+}
+
+func (s *Service) Execute(ctx context.Context, id string) error {
 	note, err := s.repo.FindByID(ctx, id)
 
 	if err != nil {

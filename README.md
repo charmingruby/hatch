@@ -2,124 +2,58 @@
 
 Production-ready Go template built for speed and clarity.
 
-Hatch is a pragmatic Go project template designed for rapid feature development and effortless service extraction. Modular, decoupled, and production-ready.
+Hatch is a pragmatic Go template for rapid feature development and easy service extraction. Modular, decoupled, and production-ready.
 
 ## Why Hatch?
 
-- ✅ **Modular by design** - Self-contained features that don't interfere
-- ✅ **Service-ready** - Extract modules to microservices without rewrites
-- ✅ **Fast development** - Add features without fighting the architecture
-- ✅ **Flat & clear** – No confusing layers or excessive nesting
-- ✅ **Go Way** - Idiomatic patterns, explicit dependencies, no magic
+* ✅ **Modular** – Self-contained bounded contexts
+* ✅ **Service-ready** – Extract modules to microservices easily
+* ✅ **Fast development** – Add features without fighting the architecture
+* ✅ **Flat & clear** – No deep nesting or confusing layers
+* ✅ **Go idiomatic** – Explicit dependencies, no hidden magic
 
 ## Architecture
 
 ```text
-internal/note/             ← Self-contained feature (bounded context)
-│
-├── domain/                ← Business entities & rules
-│   ├── note.go
-│   └── repository.go      → Interfaces for external dependencies
-│
-├── usecase/               ← Application logic
-│   ├── create.go
-│   ├── fetch.go
-│   ├── archive.go
-│   └── usecase.go         → Shared setup or interface
-│
-├── provider/              ← External service providers
-│   ├── postgres/          → Database implementation
-│   │   ├── note_repository.go
-│   │   └── note_query.go
-│   ├── redis/             → Cache implementation
-│   ├── rabbitmq/          → Queue implementation
-│   └── sendgrid/          → Email service implementation
-│
-├── http/rest/             ← HTTP layer
-│   ├── handler/
-│   │   ├── create_handler.go
-│   │   ├── fetch_handler.go
-│   │   └── archive_handler.go
-│   └── route.go
-│
-└── module.go              ← Dependency wiring for the feature
-```
-
-## Project Structure
-
-```text
-.
-├── cmd/api/main.go              # Entry point
-├── config/                      # Configuration
-├── db/migration/                # Database migrations
+app/
+├── cmd/api/main.go           # Entry point
+├── config/config.go          # Configuration
+├── db/migration/             # SQL migrations
 ├── internal/
-│   ├── note/                    # Bounded context
-│   │   ├── domain/              → Business logic & interfaces
-│   │   ├── usecase/             → Application logic
-│   │   ├── provider/            → External service providers
-│   │   ├── http/                → HTTP handlers
-│   │   └── module.go            → Dependency injection
-│   └── shared/                  # Cross-cutting concerns
-│       ├── errs/                → Error types
-│       └── http/                → HTTP utilities
-├── pkg/                         # Reusable packages
-└── test/gen/                    # Generated mocks
+│   ├── note/                 # Bounded Context: Notes
+│   │   ├── domain/           # Shared entities & interfaces
+│   │   ├── feature/          # Vertical Slices per use case
+│   │   │   ├── create_note/
+│   │   │   ├── fetch_notes/
+│   │   │   └── archive_note/
+│   │   ├── infra/            # External implementations (DB, cache, etc.)
+│   │   └── module.go         # Dependency wiring
+│   └── shared/               # Cross-cutting concerns (errors, HTTP utils)
+├── pkg/                      # Reusable packages (DB client, logger, validator)
+└── test/gen/                 # Generated mocks
 ```
 
 ## Layer Responsibilities
 
-**domain/** - Business entities and interface contracts
-- Core business logic
-- Entity definitions
-- Repository and service interfaces
-- No external dependencies
+* **domain/** – Entities and business rules, no external dependencies
+* **feature/** – Self-contained vertical slice per use case
+* **infra/** – External services (DB, cache, queues, APIs)
+* **shared/** – Utilities and cross-cutting concerns
 
-**usecase/** - Application logic orchestration
-- Coordinates business operations
-- Implements use cases
-- Depends only on domain interfaces
+## Benefits
 
-**provider/** - External service implementations
-- Database repositories (Postgres, MySQL)
-- Cache providers (Redis, Memcached)
-- Message queues (RabbitMQ, Kafka)
-- Third-party APIs (SendGrid, Stripe, Twilio)
-- Storage services (S3, MinIO)
-- All external integrations live here
+* Rapid development with isolated features
+* Easy extraction to microservices
+* Flexible providers for testing and deployment
+* Clear, flat structure for quick navigation
 
-**http/** - HTTP presentation layer
-- Request/response handling
-- Route definitions
-- Input validation
+## Principles
 
-## Key Benefits
-
-**Rapid Development**
-- Add features in isolated modules
-- No cascade of changes across codebase
-- Clear boundaries = predictable changes
-
-**Service Extraction**
-- Move `internal/note/` to new repo
-- Add `cmd/main.go`, done
-- Zero architectural rewrites
-
-**Provider Flexibility**
-- Swap implementations without touching business logic
-- Mock providers easily for testing
-- Deploy with different providers per environment
-
-**Go Way**
-- Flat over nested – Shallow folder hierarchy for quick navigation
-- Purposeful packages – Clear boundaries and naming
-- Explicit dependencies – No hidden magic
-
-## Core Principles
-
-**Modularity** - Features are self-contained  
-**Decoupling** - Layers depend on interfaces  
-**Extractability** - Modules → Microservices naturally  
-**Provider Pattern** - External dependencies are pluggable
+* **Modularity** – Bounded contexts
+* **Decoupling** – Depend on interfaces, not implementations
+* **Extractability** – Modules can become microservices
+* **Vertical Slice** – Each use case encapsulates its own logic
+* **Provider Pattern** – Pluggable external dependencies
 
 ---
 

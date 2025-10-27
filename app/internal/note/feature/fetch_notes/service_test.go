@@ -1,8 +1,10 @@
-package usecase_test
+package fetch_notes_test
 
 import (
 	"HATCH_APP/internal/note/domain"
+	"HATCH_APP/internal/note/feature/fetch_notes"
 	"HATCH_APP/internal/shared/errs"
+	"HATCH_APP/test/gen/note/mocks"
 	"errors"
 	"testing"
 
@@ -10,7 +12,23 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func Test_UseCase_Fetch(t *testing.T) {
+type suite struct {
+	repo    *mocks.NoteRepository
+	usecase fetch_notes.UseCase
+}
+
+func setupSuite(t *testing.T) *suite {
+	repo := mocks.NewNoteRepository(t)
+
+	service := fetch_notes.NewService(repo)
+
+	return &suite{
+		repo:    repo,
+		usecase: service,
+	}
+}
+
+func Test_UseCase_Execute(t *testing.T) {
 	t.Run("should list notes successfully", func(t *testing.T) {
 		s := setupSuite(t)
 
@@ -23,7 +41,7 @@ func Test_UseCase_Fetch(t *testing.T) {
 			Return(notes, nil).
 			Once()
 
-		notes, err := s.service.Fetch(t.Context())
+		notes, err := s.usecase.Execute(t.Context())
 
 		require.NoError(t, err)
 		assert.Len(t, notes, 2)
@@ -38,7 +56,7 @@ func Test_UseCase_Fetch(t *testing.T) {
 			Return(nil, errors.New("db error")).
 			Once()
 
-		op, err := s.service.Fetch(t.Context())
+		op, err := s.usecase.Execute(t.Context())
 
 		assert.Zero(t, op)
 		require.Error(t, err)
