@@ -40,6 +40,12 @@ app/
 * **infra/** – External services (DB, cache, queues, APIs)
 * **shared/** – Utilities and cross-cutting concerns
 
+## Template overrides
+
+1. Replace `HATCH_APP` with your Go module path (e.g., `github.com/yourorg/project`)
+2. Copy `.env.example` → `.env` and fill required values
+3. Update Docker image name in `.github/workflows/*.yml` and configure repository secrets
+
 ## Benefits
 
 * Rapid development with isolated features
