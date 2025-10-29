@@ -27,10 +27,10 @@ app/
 │   │   │   ├── fetch_notes/
 │   │   │   └── archive_note/
 │   │   ├── infra/            # External implementations (DB, cache, etc.)
+│   │   ├── mocks/            # Module specific mocks
 │   │   └── module.go         # Dependency wiring
 │   └── shared/               # Cross-cutting concerns (errors, HTTP utils)
-├── pkg/                      # Reusable packages (DB client, logger, validator)
-└── test/gen/                 # Generated mocks
+└── pkg/                      # Reusable packages (DB client, logger, validator)
 ```
 
 ## Layer Responsibilities
