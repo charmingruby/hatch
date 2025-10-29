@@ -3,7 +3,7 @@
 package mocks
 
 import (
-	domain "HATCH_APP/internal/note/domain"
+	core "HATCH_APP/internal/note/core"
 	context "context"
 
 	mock "github.com/stretchr/testify/mock"
@@ -14,24 +14,70 @@ type UseCase struct {
 	mock.Mock
 }
 
-// Execute provides a mock function with given fields: ctx
-func (_m *UseCase) Execute(ctx context.Context) ([]domain.Note, error) {
+// ArchiveNote provides a mock function with given fields: ctx, id
+func (_m *UseCase) ArchiveNote(ctx context.Context, id string) error {
+	ret := _m.Called(ctx, id)
+
+	if len(ret) == 0 {
+		panic("no return value specified for ArchiveNote")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(context.Context, string) error); ok {
+		r0 = rf(ctx, id)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// CreateNote provides a mock function with given fields: ctx, title, content
+func (_m *UseCase) CreateNote(ctx context.Context, title string, content string) (string, error) {
+	ret := _m.Called(ctx, title, content)
+
+	if len(ret) == 0 {
+		panic("no return value specified for CreateNote")
+	}
+
+	var r0 string
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, string, string) (string, error)); ok {
+		return rf(ctx, title, content)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, string, string) string); ok {
+		r0 = rf(ctx, title, content)
+	} else {
+		r0 = ret.Get(0).(string)
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context, string, string) error); ok {
+		r1 = rf(ctx, title, content)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// FetchNotes provides a mock function with given fields: ctx
+func (_m *UseCase) FetchNotes(ctx context.Context) ([]core.Note, error) {
 	ret := _m.Called(ctx)
 
 	if len(ret) == 0 {
-		panic("no return value specified for Execute")
+		panic("no return value specified for FetchNotes")
 	}
 
-	var r0 []domain.Note
+	var r0 []core.Note
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context) ([]domain.Note, error)); ok {
+	if rf, ok := ret.Get(0).(func(context.Context) ([]core.Note, error)); ok {
 		return rf(ctx)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context) []domain.Note); ok {
+	if rf, ok := ret.Get(0).(func(context.Context) []core.Note); ok {
 		r0 = rf(ctx)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]domain.Note)
+			r0 = ret.Get(0).([]core.Note)
 		}
 	}
 

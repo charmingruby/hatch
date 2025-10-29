@@ -3,7 +3,7 @@
 package mocks
 
 import (
-	domain "HATCH_APP/internal/note/domain"
+	core "HATCH_APP/internal/note/core"
 	context "context"
 
 	mock "github.com/stretchr/testify/mock"
@@ -15,7 +15,7 @@ type NoteRepository struct {
 }
 
 // Create provides a mock function with given fields: ctx, note
-func (_m *NoteRepository) Create(ctx context.Context, note domain.Note) error {
+func (_m *NoteRepository) Create(ctx context.Context, note core.Note) error {
 	ret := _m.Called(ctx, note)
 
 	if len(ret) == 0 {
@@ -23,7 +23,7 @@ func (_m *NoteRepository) Create(ctx context.Context, note domain.Note) error {
 	}
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, domain.Note) error); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, core.Note) error); ok {
 		r0 = rf(ctx, note)
 	} else {
 		r0 = ret.Error(0)
@@ -33,22 +33,22 @@ func (_m *NoteRepository) Create(ctx context.Context, note domain.Note) error {
 }
 
 // FindByID provides a mock function with given fields: ctx, id
-func (_m *NoteRepository) FindByID(ctx context.Context, id string) (domain.Note, error) {
+func (_m *NoteRepository) FindByID(ctx context.Context, id string) (core.Note, error) {
 	ret := _m.Called(ctx, id)
 
 	if len(ret) == 0 {
 		panic("no return value specified for FindByID")
 	}
 
-	var r0 domain.Note
+	var r0 core.Note
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, string) (domain.Note, error)); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, string) (core.Note, error)); ok {
 		return rf(ctx, id)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, string) domain.Note); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, string) core.Note); ok {
 		r0 = rf(ctx, id)
 	} else {
-		r0 = ret.Get(0).(domain.Note)
+		r0 = ret.Get(0).(core.Note)
 	}
 
 	if rf, ok := ret.Get(1).(func(context.Context, string) error); ok {
@@ -61,23 +61,23 @@ func (_m *NoteRepository) FindByID(ctx context.Context, id string) (domain.Note,
 }
 
 // List provides a mock function with given fields: ctx
-func (_m *NoteRepository) List(ctx context.Context) ([]domain.Note, error) {
+func (_m *NoteRepository) List(ctx context.Context) ([]core.Note, error) {
 	ret := _m.Called(ctx)
 
 	if len(ret) == 0 {
 		panic("no return value specified for List")
 	}
 
-	var r0 []domain.Note
+	var r0 []core.Note
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context) ([]domain.Note, error)); ok {
+	if rf, ok := ret.Get(0).(func(context.Context) ([]core.Note, error)); ok {
 		return rf(ctx)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context) []domain.Note); ok {
+	if rf, ok := ret.Get(0).(func(context.Context) []core.Note); ok {
 		r0 = rf(ctx)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]domain.Note)
+			r0 = ret.Get(0).([]core.Note)
 		}
 	}
 
@@ -91,7 +91,7 @@ func (_m *NoteRepository) List(ctx context.Context) ([]domain.Note, error) {
 }
 
 // Save provides a mock function with given fields: ctx, note
-func (_m *NoteRepository) Save(ctx context.Context, note domain.Note) error {
+func (_m *NoteRepository) Save(ctx context.Context, note core.Note) error {
 	ret := _m.Called(ctx, note)
 
 	if len(ret) == 0 {
@@ -99,7 +99,7 @@ func (_m *NoteRepository) Save(ctx context.Context, note domain.Note) error {
 	}
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, domain.Note) error); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, core.Note) error); ok {
 		r0 = rf(ctx, note)
 	} else {
 		r0 = ret.Error(0)

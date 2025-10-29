@@ -5,7 +5,7 @@ import (
 	"database/sql"
 	"time"
 
-	"HATCH_APP/internal/note/domain"
+	"HATCH_APP/internal/note/core"
 	"HATCH_APP/pkg/db/postgres"
 
 	"github.com/jmoiron/sqlx"
@@ -46,7 +46,7 @@ func (r *NoteRepository) statement(queryName string) (*sqlx.Stmt, error) {
 	return stmt, nil
 }
 
-func (r *NoteRepository) Create(ctx context.Context, note domain.Note) error {
+func (r *NoteRepository) Create(ctx context.Context, note core.Note) error {
 	ctx, cancel := context.WithTimeout(ctx, time.Second*5)
 	defer cancel()
 
@@ -67,16 +67,16 @@ func (r *NoteRepository) Create(ctx context.Context, note domain.Note) error {
 	return err
 }
 
-func (r *NoteRepository) FindByID(ctx context.Context, id string) (domain.Note, error) {
+func (r *NoteRepository) FindByID(ctx context.Context, id string) (core.Note, error) {
 	ctx, cancel := context.WithTimeout(ctx, time.Second*5)
 	defer cancel()
 
 	stmt, err := r.statement(findNoteByID)
 	if err != nil {
-		return domain.Note{}, err
+		return core.Note{}, err
 	}
 
-	var note domain.Note
+	var note core.Note
 
 	if err := stmt.QueryRowContext(ctx, id).Scan(
 		&note.ID,
@@ -87,16 +87,16 @@ func (r *NoteRepository) FindByID(ctx context.Context, id string) (domain.Note, 
 		&note.UpdatedAt,
 	); err != nil {
 		if err == sql.ErrNoRows {
-			return domain.Note{}, nil
+			return core.Note{}, nil
 		}
 
-		return domain.Note{}, err
+		return core.Note{}, err
 	}
 
 	return note, nil
 }
 
-func (r *NoteRepository) List(ctx context.Context) ([]domain.Note, error) {
+func (r *NoteRepository) List(ctx context.Context) ([]core.Note, error) {
 	ctx, cancel := context.WithTimeout(ctx, time.Second*5)
 	defer cancel()
 
@@ -110,10 +110,10 @@ func (r *NoteRepository) List(ctx context.Context) ([]domain.Note, error) {
 		return nil, err
 	}
 
-	var notes []domain.Note
+	var notes []core.Note
 
 	for rows.Next() {
-		var note domain.Note
+		var note core.Note
 		if err := rows.StructScan(&note); err != nil {
 			return nil, err
 		}
@@ -128,7 +128,7 @@ func (r *NoteRepository) List(ctx context.Context) ([]domain.Note, error) {
 	return notes, nil
 }
 
-func (r *NoteRepository) Save(ctx context.Context, note domain.Note) error {
+func (r *NoteRepository) Save(ctx context.Context, note core.Note) error {
 	ctx, cancel := context.WithTimeout(ctx, time.Second*5)
 	defer cancel()
 

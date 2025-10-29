@@ -23,16 +23,21 @@ Choose based on complexity. Mix both patterns in the same project.
 #### Simpler Module Approach (Package by Feature)
 
 ```text
-internal/user/
-├── postgres
-│   └── note_repository.go
-├── mocks
-├── handler.go
-├── service.go
-├── note.go
-├── event.go
-├── subscriber.go
-├── repository.go
+internal/note/
+├── core
+│   ├── service.go
+│   ├── note.go
+│   ├── event.go
+│   └── repository.go
+├── event
+│   └── subscriber.go
+├── http
+│   ├── route.go
+│   └── handler.go
+├── infra
+│   └── postgres
+│       └── note_repository.go
+├── mocks/
 └── module.go
 ```
 
