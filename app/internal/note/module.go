@@ -2,8 +2,8 @@ package note
 
 import (
 	"HATCH_APP/internal/note/core"
+	"HATCH_APP/internal/note/db/postgres"
 	"HATCH_APP/internal/note/http"
-	"HATCH_APP/internal/note/infra/postgres"
 	"HATCH_APP/pkg/telemetry"
 
 	"github.com/gin-gonic/gin"

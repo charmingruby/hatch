@@ -13,8 +13,6 @@ import (
 	"syscall"
 	"time"
 
-	_ "net/http/pprof"
-
 	"github.com/joho/godotenv"
 )
 
@@ -67,6 +65,7 @@ func run() error {
 
 		return err
 	}
+	log.Info("note: module created")
 
 	errShutdown := make(chan error, 1)
 

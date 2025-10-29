@@ -9,6 +9,7 @@ Hatch is a pragmatic Go project template designed for rapid feature development 
 * ✅ **Service-ready** – Extract modules to microservices without rewrites
 * ✅ **Fast development** – Add features without fighting the architecture
 * ✅ **Go-idiomatic** – Simple, explicit, and dependency-free
+* ✅ **Screaming Architecture** – Project structure reveals business intent at first glance
 
 ---
 
@@ -16,12 +17,17 @@ Hatch is a pragmatic Go project template designed for rapid feature development 
 
 Start simple and evolve as your domain grows.
 
+### Screaming Architecture
+
+The folder structure **screams** what your application does, not what framework you use.
+
+This is architecture that **communicates intent**. New developers understand the business before understanding the code.
+
 ### Module Patterns
 
 Choose based on complexity. Mix both patterns in the same project.
 
 #### Simpler Module Approach (Package by Feature)
-
 ```text
 internal/note/
 ├── core
@@ -34,7 +40,7 @@ internal/note/
 ├── http
 │   ├── route.go
 │   └── handler.go
-├── infra
+├── db
 │   └── postgres
 │       └── note_repository.go
 ├── mocks/
@@ -43,8 +49,9 @@ internal/note/
 
 **Use for:** CRUD, simple business logic, orchestration.
 
-#### Richer Domain Module (Vertical Slice)
+**Screams:** "This app manages notes"
 
+#### Richer Domain Module (Vertical Slice)
 ```text
 internal
 ├── order
@@ -76,7 +83,9 @@ internal
 
 **Use for:** Complex rules, rich behavior, strong invariants.
 
-Each `feature/` folder = one complete use case.
+**Screams:** "This is an e-commerce system with orders and catalogs"
+
+Each `feature/` folder = one complete use case that screams its business purpose.
 
 ---
 
@@ -86,6 +95,7 @@ Each `feature/` folder = one complete use case.
 * **Feature-driven** – Organize by what the code does, not by technical layers
 * **Dependency inversion** – Domain defines interfaces, infrastructure implements them
 * **Explicit over magical** – No hidden framework behaviors, just clear Go code
+* **Intent-revealing structure** – Architecture screams the business domain, not technical details
 
 ---
 

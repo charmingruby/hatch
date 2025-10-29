@@ -33,10 +33,6 @@ func NewServer(
 
 	registerProbes(log, r, db)
 
-	if cfg.EnablePProf {
-		registerPProf(r)
-	}
-
 	return &Server{
 		Server: http.Server{
 			WriteTimeout: 10 * time.Second,
