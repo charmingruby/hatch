@@ -3,8 +3,8 @@ package archive_note_test
 import (
 	"HATCH_APP/internal/note/domain"
 	"HATCH_APP/internal/note/feature/archive_note"
+	"HATCH_APP/internal/note/mocks"
 	"HATCH_APP/internal/shared/errs"
-	"HATCH_APP/test/gen/note/mocks"
 	"errors"
 	"testing"
 	"time"

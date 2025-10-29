@@ -3,8 +3,8 @@ package fetch_notes_test
 import (
 	"HATCH_APP/internal/note/domain"
 	"HATCH_APP/internal/note/feature/fetch_notes"
+	"HATCH_APP/internal/note/mocks"
 	"HATCH_APP/internal/shared/errs"
-	"HATCH_APP/test/gen/note/mocks"
 	"errors"
 	"testing"
 
