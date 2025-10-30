@@ -54,10 +54,9 @@ internal/
 │   │   ├── NoteRepository.go
 │   │   └── UseCase.go
 │   └── note.go
-└── shared/
+└── pkg/
     ├── event/
-    ├── logging/
-    └── errors/
+    └── errs/
 ```
 
 **Structure overview:**

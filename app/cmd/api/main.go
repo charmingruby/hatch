@@ -3,7 +3,7 @@ package main
 import (
 	"HATCH_APP/config"
 	"HATCH_APP/internal/note"
-	"HATCH_APP/internal/shared/http/rest"
+	"HATCH_APP/internal/pkg/http/rest"
 	"HATCH_APP/pkg/db/postgres"
 	"HATCH_APP/pkg/telemetry"
 	"HATCH_APP/pkg/validator"
