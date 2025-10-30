@@ -60,7 +60,7 @@ func run() error {
 	srv, r := rest.NewServer(log, cfg, val, db)
 
 	log.Info("note: creating module...")
-	if err := note.NewModule(log, r, db.Conn); err != nil {
+	if err := note.Scaffold(log, r, db.Conn); err != nil {
 		log.Error("note: module error", "error", err)
 
 		return err
