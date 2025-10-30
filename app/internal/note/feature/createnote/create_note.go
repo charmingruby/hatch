@@ -15,7 +15,5 @@ func NewFeature(
 
 	handler := NewHTTPHandler(log, usecase)
 
-	//router.POST("", handler)
-
 	return handler
 }

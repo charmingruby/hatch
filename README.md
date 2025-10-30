@@ -20,7 +20,7 @@ This approach enables fast delivery, clear boundaries, and effortless scalabilit
 
 ### Module Organization
 
-Each module lives under internal/ and follows a consistent vertical-slice layout:
+Each module lives under `internal/` and follows a consistent vertical-slice layout:
 domain logic, features, and infrastructure are grouped inside the same bounded context.
 
 ```text
