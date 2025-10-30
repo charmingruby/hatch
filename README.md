@@ -17,75 +17,101 @@ Hatch is a pragmatic Go project template designed for rapid feature development 
 
 Start simple and evolve as your domain grows.
 
-### Screaming Architecture
+### Module Organization
 
-The folder structure **screams** what your application does, not what framework you use.
+Hatch is **pattern-agnostic** and encourages choosing the right structure for each module's complexity. The architecture evolves with your domain understanding, not predetermined templates.
 
-This is architecture that **communicates intent**. New developers understand the business before understanding the code.
+**Start simple, evolve deliberately.** Begin with flat structures and introduce layers only when complexity demands them. Mix approaches freely across modules—a CRUD module can stay flat while a complex workflow adopts vertical slices.
 
-### Module Patterns
+The key is **intentional evolution**: refactor when you feel the pain of the current structure, not because a pattern prescribes it.
+There is a section to help with implementation details at `examples/vertical or packagebyfeat`.
 
-Choose based on complexity. Mix both patterns in the same project.
+#### Vertical Slice (Feature-First)
 
-#### Simpler Module Approach (Package by Feature)
 ```text
-internal/note/
-├── core
-│   ├── service.go
-│   ├── note.go
-│   ├── event.go
-│   └── repository.go
-├── event
-│   └── subscriber.go
-├── http
-│   ├── route.go
-│   └── handler.go
-├── db
-│   └── postgres
-│       └── note_repository.go
-├── mocks/
-└── module.go
+internal/
+├── order/
+│   ├── domain/
+│   │   ├── order.go              # Aggregate root
+│   │   ├── order_item.go         # Value object
+│   │   ├── repository.go         # Interface
+│   │   └── events.go             # Domain events
+│   ├── feature/
+│   │   ├── create_order/
+│   │   │   ├── service.go        # Use case logic
+│   │   │   ├── handler.go        # HTTP entry point
+│   │   │   └── dto.go            # Request/response
+│   │   ├── cancel_order/
+│   │   │   ├── service.go
+│   │   │   └── handler.go
+│   │   └── list_orders/
+│   │       ├── service.go
+│   │       ├── handler.go
+│   │       └── query.go          # Read model
+│   ├── infra/
+│   │   ├── postgres/
+│   │   │   └── repository.go     # Persistence implementation
+│   │   └── events/
+│   │       └── publisher.go      # Event infrastructure
+│   └── module.go                 # Dependency injection
+├── catalog/
+│   └── ...
+└── shared/                        # Cross-cutting concerns
+    ├── event/
+    ├── logging/
+    └── errors/
 ```
 
-**Use for:** CRUD, simple business logic, orchestration.
+**Use for:** Complex business rules, rich domain behavior, strong invariants, workflows with multiple steps.
 
-**Screams:** "This app manages notes"
+**Key traits:**
+- Domain entities encapsulate business rules
+- Each `feature/` folder represents one use case with clear business purpose
+- Infrastructure depends on domain, never the reverse
 
-#### Richer Domain Module (Vertical Slice)
+#### Simplified: Package by Feature (Flat Structure)
+
 ```text
-internal
-├── order
-│    ├── domain/
-│    │   ├── order.go
-│    │   ├── order_repository.go
-│    │   ├── order_item.go
-│    │   └── order_created_event.go
-│    ├── feature/
-│    │   ├── create_order/
-│    │   │   ├── subscriber.go
-│    │   │   ├── service.go
-│    │   │   └── dto.go
-│    │   ├── fetch_orders/
-│    │   │   ├── handler.go
-│    │   │   └── service.go
-│    │   └── cancel_order/
-│    ├── infra/
-│    │   ├── repository/
-│    │   │   └── postgres
-│    │   │       └── order_repository.go
-│    │   └── events/
-│    │       └── order_created_event.go
-│    ├── mocks/
-│    └── module.go   
-├── catalog
-└── shared
+internal/
+├── note/
+│   ├── note.go                   # Entity
+│   ├── service.go                # Business logic
+│   ├── handler.go                # HTTP handlers
+│   ├── repository.go             # Interface
+│   ├── event.go                  # Event definitions
+│   └── module.go
+├── tag/
+│   └── ...
+└── shared/
 ```
 
-**Use for:** Complex rules, rich behavior, strong invariants.
+**Use for:** CRUD operations, simple validations, thin business logic, data orchestration.
 
-**Screams:** "This is an e-commerce system with orders and catalogs"
+**When to simplify:**
+- Behavior is primarily data transformation
+- Few or no business invariants to enforce
+- Logic fits comfortably in a single service file
+- Module is unlikely to grow significantly
 
-Each `feature/` folder = one complete use case that screams its business purpose.
+---
+
+## Decision Guide
+
+Ask yourself:
+
+**Choose Vertical Slice when:**
+- Business rules are complex or will grow
+- Multiple features operate on the same entity
+- You need clear boundaries between use cases
+- Domain logic deserves its own layer
+
+**Choose Flat Structure when:**
+- Module is essentially CRUD with validation
+- All operations are similar in complexity
+- Simpler structure aids velocity
+- Over-engineering would obscure simplicity
+
+**Remember:** You can start flat and refactor to vertical slices when complexity justifies it. The module boundary remains the same.
 
 ---
 
@@ -96,6 +122,7 @@ Each `feature/` folder = one complete use case that screams its business purpose
 * **Dependency inversion** – Domain defines interfaces, infrastructure implements them
 * **Explicit over magical** – No hidden framework behaviors, just clear Go code
 * **Intent-revealing structure** – Architecture screams the business domain, not technical details
+* **Simplicity when possible** – Don't add layers until complexity demands them
 
 ---
 
