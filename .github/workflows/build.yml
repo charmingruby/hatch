@@ -18,6 +18,5 @@ jobs:
           cache: false
 
       - name: Build
-        working-directory: app
         run: |
           make build
