@@ -1,0 +1,50 @@
+# Git
+.git
+.gitignore
+.github
+
+# Documentation
+*.md
+AGENTS.md
+README.md
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Development tools
+.air.toml
+Makefile
+
+# Docker
+docker-compose.yml
+Dockerfile
+.dockerignore
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Testing
+*_test.go
+**/*_test.go
+coverage.out
+coverage.html
+
+# Mocks
+**/mocks/
+internal/**/mocks/
+
+# Temporary files
+*.log
+*.tmp
+tmp/
+temp/
