@@ -114,9 +114,9 @@ func shutdown(
 	defer cancel()
 
 	err := srv.Close(ctxTimeout)
-	switch err {
-	case nil:
-	case context.DeadlineExceeded:
+	switch {
+	case err == nil:
+	case errors.Is(err, context.DeadlineExceeded):
 		errShutdown <- errors.New("deadline exceeded, forcing shutdown")
 		return
 	default:
