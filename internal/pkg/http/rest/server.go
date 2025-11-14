@@ -8,11 +8,11 @@ import (
 	"time"
 
 	"HATCH_APP/config"
-	"HATCH_APP/pkg/db/postgres"
 	"HATCH_APP/pkg/telemetry"
 	"HATCH_APP/pkg/validator"
 
 	"github.com/gin-gonic/gin"
+	"github.com/jmoiron/sqlx"
 )
 
 type Server struct {
@@ -25,7 +25,7 @@ func NewServer(
 	log *telemetry.Logger,
 	cfg *config.Config,
 	val *validator.Validator,
-	db *postgres.Client,
+	db *sqlx.DB,
 ) (*Server, *gin.Engine) {
 	addr := fmt.Sprintf(":%s", cfg.RestServerPort)
 

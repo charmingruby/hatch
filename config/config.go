@@ -7,7 +7,6 @@ import (
 type Config struct {
 	RestServerPort string `env:"REST_SERVER_PORT,required"`
 	PostgresURL    string `env:"POSTGRES_URL,required"`
-	EnablePProf    bool   `env:"ENABLE_PPROF"              envDefault:"false"`
 }
 
 func Load() (*Config, error) {

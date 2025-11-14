@@ -4,15 +4,18 @@ import (
 	"HATCH_APP/config"
 	"HATCH_APP/internal/note"
 	"HATCH_APP/internal/pkg/http/rest"
-	"HATCH_APP/pkg/db/postgres"
+	"HATCH_APP/pkg/database"
 	"HATCH_APP/pkg/telemetry"
 	"HATCH_APP/pkg/validator"
 	"context"
+	"errors"
+	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
 
+	"github.com/jmoiron/sqlx"
 	"github.com/joho/godotenv"
 )
 
@@ -38,21 +41,25 @@ func run() error {
 	_ = godotenv.Load()
 
 	log.Info("config: loading...")
+
 	cfg, err := config.Load()
 	if err != nil {
 		log.Error("config: error loading config", "error", err)
 
 		return err
 	}
+
 	log.Info("config: loaded")
 
 	log.Info("postgres: connecting...")
-	db, err := postgres.New(ctx, cfg.PostgresURL)
+
+	db, err := database.NewPostgresClient(ctx, cfg.PostgresURL)
 	if err != nil {
 		log.Error("postgres: connection error", "error", err)
 
 		return err
 	}
+
 	log.Info("postgres: connected")
 
 	val := validator.New()
@@ -60,29 +67,37 @@ func run() error {
 	srv, r := rest.NewServer(log, cfg, val, db)
 
 	log.Info("note: creating module...")
-	if err := note.Scaffold(log, r, db.Conn); err != nil {
+
+	if err := note.Scaffold(log, r, db); err != nil {
 		log.Error("note: module error", "error", err)
 
 		return err
 	}
+
 	log.Info("note: module created")
 
-	errShutdown := make(chan error, 1)
+	shutdownErrCh := make(chan error, 1)
 
-	go shutdown(ctx, errShutdown, log, srv, db)
+	go shutdown(ctx, shutdownErrCh, srv, db)
 
 	log.Info("server: running...", "port", cfg.RestServerPort)
 
-	if err := srv.Start(); err != nil {
+	if err := srv.Start(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 		log.Info("server: server start error", "error", err)
 
 		return err
 	}
 
-	err = <-errShutdown
+	log.Info("shutdown: signal received, starting graceful shutdown...")
+
+	err = <-shutdownErrCh
 	if err != nil {
+		log.Error("shutdown: shutdown error", "error", err)
+
 		return err
 	}
+
+	log.Info("shutdown: gracefully shutdown")
 
 	return nil
 }
@@ -90,34 +105,29 @@ func run() error {
 func shutdown(
 	ctx context.Context,
 	errShutdown chan error,
-	log *telemetry.Logger,
 	srv *rest.Server,
-	db *postgres.Client,
+	db *sqlx.DB,
 ) {
 	<-ctx.Done()
-
-	log.Info("shutdown: signal received, starting graceful shutdown...")
 
 	ctxTimeout, cancel := context.WithTimeout(context.Background(), SHUTDOWN_TIMEOUT)
 	defer cancel()
 
-	log.Info("shutdown: stopping server...")
-	if err := srv.Close(ctxTimeout); err != nil {
-		log.Error("shutdown: server error", "error", err)
-
-		errShutdown <- err
+	err := srv.Close(ctxTimeout)
+	switch err {
+	case nil:
+	case context.DeadlineExceeded:
+		errShutdown <- errors.New("deadline exceeded, forcing shutdown")
+		return
+	default:
+		errShutdown <- errors.New("forcing shutdown")
 		return
 	}
 
-	log.Info("shutdown: closing database...")
 	if err := db.Close(); err != nil {
-		log.Error("shutdown: database error", "error", err)
-
 		errShutdown <- err
 		return
 	}
-
-	log.Info("shutdown: completed successfully")
 
 	errShutdown <- nil
 }

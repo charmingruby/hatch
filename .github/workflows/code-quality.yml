@@ -17,7 +17,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version: 1.24.3 # golangci does not support 1.25 yet
+          go-version: 1.25.0
           cache: false
 
       - name: Install dependencies
@@ -27,4 +27,4 @@ jobs:
       - name: Lint
         uses: golangci/golangci-lint-action@v8
         with:
-          version: v2.1
+          version: v2.6.1

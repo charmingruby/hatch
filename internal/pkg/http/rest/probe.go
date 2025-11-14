@@ -1,17 +1,15 @@
 package rest
 
 import (
-	"HATCH_APP/pkg/db/postgres"
 	"HATCH_APP/pkg/telemetry"
 	"context"
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/jmoiron/sqlx"
 )
 
-const timeoutInSeconds = 10
-
-func registerProbes(log *telemetry.Logger, r *gin.Engine, db *postgres.Client) {
+func registerProbes(log *telemetry.Logger, r *gin.Engine, db *sqlx.DB) {
 	r.GET("/livez", livenessRoute(log))
 	r.GET("/readyz", readinessRoute(log, db))
 }
@@ -27,16 +25,16 @@ func livenessRoute(log *telemetry.Logger) gin.HandlerFunc {
 	}
 }
 
-func readinessRoute(log *telemetry.Logger, db *postgres.Client) gin.HandlerFunc {
+func readinessRoute(log *telemetry.Logger, db *sqlx.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx := c.Request.Context()
 
 		log.InfoContext(ctx, "endpoint/Readiness: request received")
 
-		ctx, cancel := context.WithTimeout(ctx, timeoutInSeconds*time.Second)
+		ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
 		defer cancel()
 
-		if err := db.Ping(ctx); err != nil {
+		if err := db.PingContext(ctx); err != nil {
 			log.ErrorContext(ctx, "endpoint/Readiness: database error", "error", err)
 
 			SendServiceUnavailableResponse(c, "database")

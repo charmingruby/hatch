@@ -3,10 +3,11 @@ package postgres
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	"time"
 
 	"HATCH_APP/internal/note/domain"
-	"HATCH_APP/pkg/db/postgres"
+	"HATCH_APP/pkg/database"
 
 	"github.com/jmoiron/sqlx"
 )
@@ -22,8 +23,8 @@ func NewNoteRepository(db *sqlx.DB) (*NoteRepository, error) {
 	for queryName, statement := range noteQueries() {
 		stmt, err := db.Preparex(statement)
 		if err != nil {
-			return nil,
-				postgres.NewPreparationErr(queryName, "note", err)
+			return nil, fmt.Errorf("%w: failed to prepare query %s for note: %w",
+				database.ErrQueryPreparation, queryName, err)
 		}
 
 		stmts[queryName] = stmt
@@ -39,8 +40,8 @@ func (r *NoteRepository) statement(queryName string) (*sqlx.Stmt, error) {
 	stmt, ok := r.stmts[queryName]
 
 	if !ok {
-		return nil,
-			postgres.NewStatementNotPreparedErr(queryName, "note")
+		return nil, fmt.Errorf("%w: statement %s not prepared for note",
+			database.ErrQueryPreparation, queryName)
 	}
 
 	return stmt, nil
