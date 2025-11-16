@@ -68,7 +68,7 @@ func run() error {
 
 	log.Info("note: creating module...")
 
-	if err := note.Scaffold(log, r, db); err != nil {
+	if err := note.Register(log, r, db); err != nil {
 		log.Error("note: module error", "error", err)
 
 		return err

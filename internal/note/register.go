@@ -11,7 +11,7 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-func Scaffold(log *telemetry.Logger, r *gin.Engine, db *sqlx.DB) error {
+func Register(log *telemetry.Logger, r *gin.Engine, db *sqlx.DB) error {
 	repo, err := postgres.NewNoteRepository(db)
 	if err != nil {
 		return err
