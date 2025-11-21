@@ -3,7 +3,7 @@ package createnote
 import (
 	"HATCH_APP/internal/pkg/errs"
 	"HATCH_APP/internal/pkg/http/rest"
-	"HATCH_APP/pkg/telemetry"
+	"HATCH_APP/pkg/telemetry/logger"
 	"errors"
 
 	"github.com/gin-gonic/gin"
@@ -14,9 +14,11 @@ type Request struct {
 	Content string `json:"content" binding:"required" validate:"required,gt=0"`
 }
 
-func NewHTTPHandler(log *telemetry.Logger, uc UseCase) gin.HandlerFunc {
+func NewHTTPHandler(uc UseCase) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx := c.Request.Context()
+
+		log := logger.FromContext(ctx)
 
 		log.InfoContext(ctx, "endpoint/CreateNote: request received")
 

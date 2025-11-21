@@ -31,13 +31,6 @@ func (v *Validator) Validate(s any) error {
 	return errors.New(strings.Join(errs, ", "))
 }
 
-func (v *Validator) Middleware() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		c.Set("validator", v)
-		c.Next()
-	}
-}
-
 func FromContext(c *gin.Context) *Validator {
 	validator, _ := c.Get("validator")
 

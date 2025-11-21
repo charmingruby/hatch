@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"HATCH_APP/config"
-	"HATCH_APP/pkg/telemetry"
 	"HATCH_APP/pkg/validator"
 
 	"github.com/gin-gonic/gin"
@@ -22,7 +21,6 @@ type Server struct {
 }
 
 func NewServer(
-	log *telemetry.Logger,
 	cfg *config.Config,
 	val *validator.Validator,
 	db *sqlx.DB,
@@ -31,7 +29,7 @@ func NewServer(
 
 	r := setupRouter(val)
 
-	registerProbes(log, r, db)
+	registerProbes(r, db)
 
 	return &Server{
 		Server: http.Server{
@@ -50,7 +48,10 @@ func setupRouter(val *validator.Validator) *gin.Engine {
 
 	r := gin.Default()
 
-	r.Use(val.Middleware())
+	r.Use(
+		loggingMiddleware(),
+		validationMiddleware(val),
+	)
 
 	return r
 }

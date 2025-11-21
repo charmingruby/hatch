@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"HATCH_APP/internal/note/domain"
-	"HATCH_APP/pkg/database"
+	"HATCH_APP/pkg/database/postgres"
 
 	"github.com/jmoiron/sqlx"
 )
@@ -24,7 +24,7 @@ func NewNoteRepository(db *sqlx.DB) (*NoteRepository, error) {
 		stmt, err := db.Preparex(statement)
 		if err != nil {
 			return nil, fmt.Errorf("%w: failed to prepare query %s for note: %w",
-				database.ErrQueryPreparation, queryName, err)
+				postgres.ErrQueryPreparation, queryName, err)
 		}
 
 		stmts[queryName] = stmt
@@ -41,7 +41,7 @@ func (r *NoteRepository) statement(queryName string) (*sqlx.Stmt, error) {
 
 	if !ok {
 		return nil, fmt.Errorf("%w: statement %s not prepared for note",
-			database.ErrQueryPreparation, queryName)
+			postgres.ErrQueryPreparation, queryName)
 	}
 
 	return stmt, nil

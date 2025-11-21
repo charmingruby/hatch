@@ -5,21 +5,20 @@ import (
 	"HATCH_APP/internal/note/feature/createnote"
 	"HATCH_APP/internal/note/feature/listnotes"
 	"HATCH_APP/internal/note/infra/db/postgres"
-	"HATCH_APP/pkg/telemetry"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jmoiron/sqlx"
 )
 
-func Register(log *telemetry.Logger, r *gin.Engine, db *sqlx.DB) error {
+func Register(r *gin.Engine, db *sqlx.DB) error {
 	repo, err := postgres.NewNoteRepository(db)
 	if err != nil {
 		return err
 	}
 
-	createNoteHandler := createnote.NewFeature(log, repo)
-	listNotesHandler := listnotes.NewFeature(log, repo)
-	archiveNoteHandler := archivenote.NewFeature(log, repo)
+	createNoteHandler := createnote.NewFeature(repo)
+	listNotesHandler := listnotes.NewFeature(repo)
+	archiveNoteHandler := archivenote.NewFeature(repo)
 
 	api := r.Group("/api/v1/notes")
 	{

@@ -1,7 +1,7 @@
 package rest
 
 import (
-	"HATCH_APP/pkg/telemetry"
+	"HATCH_APP/pkg/telemetry/logger"
 	"context"
 	"time"
 
@@ -9,13 +9,15 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-func registerProbes(log *telemetry.Logger, r *gin.Engine, db *sqlx.DB) {
-	r.GET("/livez", livenessRoute(log))
-	r.GET("/readyz", readinessRoute(log, db))
+func registerProbes(r *gin.Engine, db *sqlx.DB) {
+	r.GET("/livez", livenessRoute())
+	r.GET("/readyz", readinessRoute(db))
 }
 
-func livenessRoute(log *telemetry.Logger) gin.HandlerFunc {
+func livenessRoute() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		log := logger.FromContext(c)
+
 		ctx := c.Request.Context()
 
 		log.InfoContext(ctx, "endpoint/Liveness: request received")
@@ -25,8 +27,10 @@ func livenessRoute(log *telemetry.Logger) gin.HandlerFunc {
 	}
 }
 
-func readinessRoute(log *telemetry.Logger, db *sqlx.DB) gin.HandlerFunc {
+func readinessRoute(db *sqlx.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
+		log := logger.FromContext(c)
+
 		ctx := c.Request.Context()
 
 		log.InfoContext(ctx, "endpoint/Readiness: request received")
