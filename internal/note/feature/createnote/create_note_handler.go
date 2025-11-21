@@ -31,6 +31,7 @@ func NewHTTPHandler(uc UseCase) gin.HandlerFunc {
 			)
 
 			rest.SendBadRequestResponse(c, err.Error())
+			return
 		}
 
 		id, err := uc.Execute(ctx, req.Title, req.Content)

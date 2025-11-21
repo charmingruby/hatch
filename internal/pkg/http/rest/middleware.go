@@ -25,7 +25,7 @@ func loggingMiddleware() gin.HandlerFunc {
 
 func validationMiddleware(v *validator.Validator) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		c.Set("validator", v)
+		validator.WithValidator(c.Request.Context(), v)
 		c.Next()
 	}
 }

@@ -27,6 +27,8 @@ func NewServer(
 ) (*Server, *gin.Engine) {
 	addr := fmt.Sprintf(":%s", cfg.RestServerPort)
 
+	gin.SetMode(gin.ReleaseMode)
+
 	r := setupRouter(val)
 
 	registerProbes(r, db)
@@ -44,11 +46,10 @@ func NewServer(
 }
 
 func setupRouter(val *validator.Validator) *gin.Engine {
-	gin.SetMode(gin.ReleaseMode)
-
-	r := gin.Default()
+	r := gin.New()
 
 	r.Use(
+		gin.Recovery(),
 		loggingMiddleware(),
 		validationMiddleware(val),
 	)

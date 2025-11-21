@@ -1,17 +1,19 @@
 package validator
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"strings"
 
-	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 )
 
 type Validator struct {
 	validator *validator.Validate
 }
+
+type ctxKey struct{}
 
 func New() *Validator {
 	return &Validator{
@@ -31,12 +33,17 @@ func (v *Validator) Validate(s any) error {
 	return errors.New(strings.Join(errs, ", "))
 }
 
-func FromContext(c *gin.Context) *Validator {
-	validator, _ := c.Get("validator")
+func WithValidator(ctx context.Context, val *Validator) context.Context {
+	return context.WithValue(ctx, ctxKey{}, val)
+}
 
-	v, _ := validator.(*Validator)
+func FromContext(ctx context.Context) *Validator {
+	val, ok := ctx.Value(ctxKey{}).(*Validator)
+	if !ok {
+		return New()
+	}
 
-	return v
+	return val
 }
 
 func (v *Validator) unwrapValidationErr(err error) []string {

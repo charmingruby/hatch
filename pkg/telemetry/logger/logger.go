@@ -13,7 +13,7 @@ type Logger = slog.Logger
 type ctxKey struct{}
 
 func Init() {
-	slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
+	Log = slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
 		Level: slog.LevelDebug,
 	}))
 }
