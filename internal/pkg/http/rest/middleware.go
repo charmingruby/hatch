@@ -14,7 +14,8 @@ func loggingMiddleware() gin.HandlerFunc {
 			"method", c.Request.Method,
 		)
 
-		logger.WithLogger(c.Request.Context(), log)
+		ctx := logger.WithLogger(c.Request.Context(), log)
+		c.Request = c.Request.WithContext(ctx)
 
 		log.Info("request started")
 		defer log.Info("request finished")
@@ -25,7 +26,8 @@ func loggingMiddleware() gin.HandlerFunc {
 
 func validationMiddleware(v *validator.Validator) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		validator.WithValidator(c.Request.Context(), v)
+		ctx := validator.WithValidator(c.Request.Context(), v)
+		c.Request = c.Request.WithContext(ctx)
 		c.Next()
 	}
 }
