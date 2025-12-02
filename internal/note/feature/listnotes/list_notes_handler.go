@@ -12,7 +12,7 @@ import (
 
 type Response = []domain.Note
 
-func NewHTTPHandler(uc UseCase) gin.HandlerFunc {
+func NewHTTPHandler(svc *Service) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx := c.Request.Context()
 
@@ -20,7 +20,7 @@ func NewHTTPHandler(uc UseCase) gin.HandlerFunc {
 
 		log.InfoContext(ctx, "endpoint/ListNotes: request received")
 
-		notes, err := uc.Execute(ctx)
+		notes, err := svc.Execute(ctx)
 		if err != nil {
 			var databaseErr *errs.DatabaseError
 			if errors.As(err, &databaseErr) {

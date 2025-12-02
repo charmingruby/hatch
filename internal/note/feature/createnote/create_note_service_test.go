@@ -15,7 +15,7 @@ import (
 
 type suite struct {
 	repo    *mocks.NoteRepository
-	usecase createnote.UseCase
+	service *createnote.Service
 }
 
 func setupSuite(t *testing.T) *suite {
@@ -25,11 +25,11 @@ func setupSuite(t *testing.T) *suite {
 
 	return &suite{
 		repo:    repo,
-		usecase: service,
+		service: service,
 	}
 }
 
-func Test_UseCase_Execute(t *testing.T) {
+func Test_Service_Execute(t *testing.T) {
 	title := "Hatch"
 	content := "Template"
 
@@ -43,7 +43,7 @@ func Test_UseCase_Execute(t *testing.T) {
 			Return(nil).
 			Once()
 
-		id, err := s.usecase.Execute(t.Context(), title, content)
+		id, err := s.service.Execute(t.Context(), title, content)
 
 		require.NoError(t, err)
 		assert.NotEmpty(t, id)
@@ -56,7 +56,7 @@ func Test_UseCase_Execute(t *testing.T) {
 			Return(errors.New("unhealthy repo")).
 			Once()
 
-		id, err := s.usecase.Execute(t.Context(), title, content)
+		id, err := s.service.Execute(t.Context(), title, content)
 
 		assert.Empty(t, id)
 		require.Error(t, err)

@@ -6,10 +6,6 @@ import (
 	"context"
 )
 
-type UseCase interface {
-	Execute(ctx context.Context, title, content string) (string, error)
-}
-
 type Service struct {
 	repo domain.NoteRepository
 }

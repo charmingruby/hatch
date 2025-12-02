@@ -16,7 +16,7 @@ import (
 
 type suite struct {
 	repo    *mocks.NoteRepository
-	usecase archivenote.UseCase
+	service *archivenote.Service
 }
 
 func setupSuite(t *testing.T) *suite {
@@ -26,11 +26,11 @@ func setupSuite(t *testing.T) *suite {
 
 	return &suite{
 		repo:    repo,
-		usecase: service,
+		service: service,
 	}
 }
 
-func Test_UseCase_Execute(t *testing.T) {
+func Test_Service_Execute(t *testing.T) {
 	t.Run("should archive successfully", func(t *testing.T) {
 		s := setupSuite(t)
 
@@ -49,7 +49,7 @@ func Test_UseCase_Execute(t *testing.T) {
 			Return(nil).
 			Once()
 
-		err := s.usecase.Execute(t.Context(), n.ID)
+		err := s.service.Execute(t.Context(), n.ID)
 
 		require.NoError(t, err)
 	})
@@ -61,7 +61,7 @@ func Test_UseCase_Execute(t *testing.T) {
 			Return(domain.Note{}, errors.New("repo down")).
 			Once()
 
-		err := s.usecase.Execute(t.Context(), "nonexistent")
+		err := s.service.Execute(t.Context(), "nonexistent")
 
 		require.Error(t, err)
 
@@ -82,7 +82,7 @@ func Test_UseCase_Execute(t *testing.T) {
 			Return(errors.New("save error")).
 			Once()
 
-		err := s.usecase.Execute(t.Context(), n.ID)
+		err := s.service.Execute(t.Context(), n.ID)
 
 		require.Error(t, err)
 
@@ -97,7 +97,7 @@ func Test_UseCase_Execute(t *testing.T) {
 			Return(domain.Note{}, nil).
 			Once()
 
-		err := s.usecase.Execute(t.Context(), "invalid-id")
+		err := s.service.Execute(t.Context(), "invalid-id")
 
 		require.Error(t, err)
 		var notFoundErr *errs.NotFoundError

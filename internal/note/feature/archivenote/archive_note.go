@@ -7,9 +7,9 @@ import (
 )
 
 func NewFeature(repo domain.NoteRepository) gin.HandlerFunc {
-	usecase := NewService(repo)
+	service := NewService(repo)
 
-	handler := NewHTTPHandler(usecase)
+	handler := NewHTTPHandler(service)
 
 	return handler
 }

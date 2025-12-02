@@ -14,7 +14,7 @@ type Request struct {
 	Content string `json:"content" binding:"required" validate:"required,gt=0"`
 }
 
-func NewHTTPHandler(uc UseCase) gin.HandlerFunc {
+func NewHTTPHandler(svc *Service) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx := c.Request.Context()
 
@@ -34,7 +34,7 @@ func NewHTTPHandler(uc UseCase) gin.HandlerFunc {
 			return
 		}
 
-		id, err := uc.Execute(ctx, req.Title, req.Content)
+		id, err := svc.Execute(ctx, req.Title, req.Content)
 		if err != nil {
 			var databaseErr *errs.DatabaseError
 			if errors.As(err, &databaseErr) {

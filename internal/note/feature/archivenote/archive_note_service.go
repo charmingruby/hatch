@@ -7,10 +7,6 @@ import (
 	"time"
 )
 
-type UseCase interface {
-	Execute(ctx context.Context, id string) error
-}
-
 type Service struct {
 	repo domain.NoteRepository
 }

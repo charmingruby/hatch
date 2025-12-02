@@ -14,7 +14,7 @@ import (
 
 type suite struct {
 	repo    *mocks.NoteRepository
-	usecase listnotes.UseCase
+	service *listnotes.Service
 }
 
 func setupSuite(t *testing.T) *suite {
@@ -24,11 +24,11 @@ func setupSuite(t *testing.T) *suite {
 
 	return &suite{
 		repo:    repo,
-		usecase: service,
+		service: service,
 	}
 }
 
-func Test_UseCase_Execute(t *testing.T) {
+func Test_Service_Execute(t *testing.T) {
 	t.Run("should list notes successfully", func(t *testing.T) {
 		s := setupSuite(t)
 
@@ -41,7 +41,7 @@ func Test_UseCase_Execute(t *testing.T) {
 			Return(ns, nil).
 			Once()
 
-		notes, err := s.usecase.Execute(t.Context())
+		notes, err := s.service.Execute(t.Context())
 
 		require.NoError(t, err)
 		assert.Len(t, notes, 2)
@@ -56,7 +56,7 @@ func Test_UseCase_Execute(t *testing.T) {
 			Return(nil, errors.New("db error")).
 			Once()
 
-		op, err := s.usecase.Execute(t.Context())
+		op, err := s.service.Execute(t.Context())
 
 		assert.Zero(t, op)
 		require.Error(t, err)

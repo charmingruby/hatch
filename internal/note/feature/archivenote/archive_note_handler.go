@@ -9,7 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func NewHTTPHandler(uc UseCase) gin.HandlerFunc {
+func NewHTTPHandler(svc *Service) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx := c.Request.Context()
 
@@ -19,7 +19,7 @@ func NewHTTPHandler(uc UseCase) gin.HandlerFunc {
 
 		id := c.Param("id")
 
-		if err := uc.Execute(ctx, id); err != nil {
+		if err := svc.Execute(ctx, id); err != nil {
 			var notFoundErr *errs.NotFoundError
 			if errors.As(err, &notFoundErr) {
 				log.ErrorContext(
