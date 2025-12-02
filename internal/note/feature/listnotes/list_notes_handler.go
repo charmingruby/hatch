@@ -4,7 +4,7 @@ import (
 	"HATCH_APP/internal/note/domain"
 	"HATCH_APP/internal/pkg/errs"
 	"HATCH_APP/internal/pkg/http/rest"
-	"HATCH_APP/pkg/telemetry/logger"
+	"HATCH_APP/pkg/o11y/logging"
 	"errors"
 
 	"github.com/gin-gonic/gin"
@@ -16,7 +16,7 @@ func NewHTTPHandler(uc UseCase) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx := c.Request.Context()
 
-		log := logger.FromContext(ctx)
+		log := logging.FromContext(ctx)
 
 		log.InfoContext(ctx, "endpoint/ListNotes: request received")
 

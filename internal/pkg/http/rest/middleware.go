@@ -1,7 +1,7 @@
 package rest
 
 import (
-	"HATCH_APP/pkg/telemetry/logger"
+	"HATCH_APP/pkg/o11y/logging"
 	"HATCH_APP/pkg/validator"
 
 	"github.com/gin-gonic/gin"
@@ -9,12 +9,12 @@ import (
 
 func loggingMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		log := logger.Log.With(
+		log := logging.Log.With(
 			"path", c.Request.URL.Path,
 			"method", c.Request.Method,
 		)
 
-		ctx := logger.WithLogger(c.Request.Context(), log)
+		ctx := logging.WithLogger(c.Request.Context(), log)
 		c.Request = c.Request.WithContext(ctx)
 
 		log.Info("request started")

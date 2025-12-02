@@ -4,8 +4,9 @@ import (
 	"HATCH_APP/config"
 	"HATCH_APP/internal/note"
 	"HATCH_APP/internal/pkg/http/rest"
-	"HATCH_APP/pkg/database/postgres"
-	"HATCH_APP/pkg/telemetry/logger"
+
+	"HATCH_APP/pkg/db/postgres"
+	"HATCH_APP/pkg/o11y/logging"
 	"HATCH_APP/pkg/validator"
 	"context"
 	"errors"
@@ -36,68 +37,68 @@ func run() error {
 	)
 	defer stop()
 
-	logger.Init()
+	logging.Init()
 
 	_ = godotenv.Load()
 
-	logger.Log.Info("config: loading...")
+	logging.Log.Info("config: loading...")
 
 	cfg, err := config.Load()
 	if err != nil {
-		logger.Log.Error("config: error loading config", "error", err)
+		logging.Log.Error("config: error loading config", "error", err)
 
 		return err
 	}
 
-	logger.Log.Info("config: loaded")
+	logging.Log.Info("config: loaded")
 
-	logger.Log.Info("postgres: connecting...")
+	logging.Log.Info("postgres: connecting...")
 
 	db, err := postgres.NewClient(ctx, cfg.PostgresURL)
 	if err != nil {
-		logger.Log.Error("postgres: connection error", "error", err)
+		logging.Log.Error("postgres: connection error", "error", err)
 
 		return err
 	}
 
-	logger.Log.Info("postgres: connected")
+	logging.Log.Info("postgres: connected")
 
 	val := validator.New()
 
 	srv, r := rest.NewServer(cfg, val, db)
 
-	logger.Log.Info("note: creating module...")
+	logging.Log.Info("note: creating module...")
 
 	if err := note.Register(r, db); err != nil {
-		logger.Log.Error("note: module error", "error", err)
+		logging.Log.Error("note: module error", "error", err)
 
 		return err
 	}
 
-	logger.Log.Info("note: module created")
+	logging.Log.Info("note: module created")
 
 	shutdownErrCh := make(chan error, 1)
 
 	go shutdown(ctx, shutdownErrCh, srv, db)
 
-	logger.Log.Info("server: running...", "port", cfg.RestServerPort)
+	logging.Log.Info("server: running...", "port", cfg.RestServerPort)
 
 	if err := srv.Start(); err != nil && !errors.Is(err, http.ErrServerClosed) {
-		logger.Log.Info("server: server start error", "error", err)
+		logging.Log.Info("server: server start error", "error", err)
 
 		return err
 	}
 
-	logger.Log.Info("shutdown: signal received, starting graceful shutdown...")
+	logging.Log.Info("shutdown: signal received, starting graceful shutdown...")
 
 	err = <-shutdownErrCh
 	if err != nil {
-		logger.Log.Error("shutdown: shutdown error", "error", err)
+		logging.Log.Error("shutdown: shutdown error", "error", err)
 
 		return err
 	}
 
-	logger.Log.Info("shutdown: gracefully shutdown")
+	logging.Log.Info("shutdown: gracefully shutdown")
 
 	return nil
 }
