@@ -54,7 +54,7 @@ func run() error {
 
 	logging.Log.Info("postgres: connecting...")
 
-	db, err := postgres.NewClient(ctx, cfg.PostgresURL)
+	db, err := postgres.Connect(ctx, cfg.PostgresURL)
 	if err != nil {
 		logging.Log.Error("postgres: connection error", "error", err)
 

@@ -11,7 +11,7 @@ import (
 
 const postgresgDriver = "postgres"
 
-func NewClient(ctx context.Context, url string) (*sqlx.DB, error) {
+func Connect(ctx context.Context, url string) (*sqlx.DB, error) {
 	ctx, stop := context.WithTimeout(ctx, 10*time.Second)
 	defer stop()
 
