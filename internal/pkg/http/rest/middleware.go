@@ -17,8 +17,8 @@ func loggingMiddleware() gin.HandlerFunc {
 		ctx := logging.WithLogger(c.Request.Context(), log)
 		c.Request = c.Request.WithContext(ctx)
 
-		log.Info("request started")
-		defer log.Info("request finished")
+		log.InfoContext(ctx, "request started")
+		defer log.InfoContext(ctx, "request finished")
 
 		c.Next()
 	}
