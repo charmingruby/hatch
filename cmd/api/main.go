@@ -2,8 +2,8 @@ package main
 
 import (
 	"HATCH_APP/config"
+	"HATCH_APP/internal/common/http/rest"
 	"HATCH_APP/internal/note"
-	"HATCH_APP/internal/pkg/http/rest"
 
 	"HATCH_APP/pkg/db/postgres"
 	"HATCH_APP/pkg/o11y/logging"

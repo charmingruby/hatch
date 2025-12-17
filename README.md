@@ -54,8 +54,8 @@ internal/
 │   │   ├── NoteRepository.go
 │   │   └── UseCase.go
 │   └── note.go
-└── pkg/
-    ├── event/
+└── common/
+    ├── http/
     └── errs/
 ```
 
@@ -65,7 +65,7 @@ internal/
 * **`feature/`** → Independent use cases (each subfolder = one use case)
 * **`infra/`** → Persistence, messaging, or external integrations
 * **`mocks/`** → Generated test doubles for interfaces
-* **`pkg/`** → Internal cross-cutting utilities and shared abstractions
+* **`common/`** → Internal cross-cutting utilities and shared abstractions
 
 ---
 

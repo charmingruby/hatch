@@ -1,8 +1,8 @@
 package listnotes
 
 import (
+	"HATCH_APP/internal/common/errs"
 	"HATCH_APP/internal/note/domain"
-	"HATCH_APP/internal/pkg/errs"
 	"context"
 )
 

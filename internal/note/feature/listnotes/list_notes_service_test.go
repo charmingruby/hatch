@@ -1,10 +1,10 @@
 package listnotes_test
 
 import (
+	"HATCH_APP/internal/common/errs"
 	"HATCH_APP/internal/note/domain"
 	"HATCH_APP/internal/note/feature/listnotes"
 	"HATCH_APP/internal/note/mocks"
-	"HATCH_APP/internal/pkg/errs"
 	"errors"
 	"testing"
 
