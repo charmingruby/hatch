@@ -1,7 +1,6 @@
 package archivenote_test
 
 import (
-	"HATCH_APP/internal/common/errs"
 	"HATCH_APP/internal/note/domain"
 	"HATCH_APP/internal/note/feature/archivenote"
 	"HATCH_APP/internal/note/mocks"
@@ -54,7 +53,7 @@ func Test_Service_Execute(t *testing.T) {
 		require.NoError(t, err)
 	})
 
-	t.Run("should return DatabaseError when FindByID fails", func(t *testing.T) {
+	t.Run("should return error when FindByID fails", func(t *testing.T) {
 		s := setupSuite(t)
 
 		s.repo.On("FindByID", t.Context(), "nonexistent").
@@ -64,12 +63,9 @@ func Test_Service_Execute(t *testing.T) {
 		err := s.service.Execute(t.Context(), "nonexistent")
 
 		require.Error(t, err)
-
-		var targetErr *errs.DatabaseError
-		assert.ErrorAs(t, err, &targetErr)
 	})
 
-	t.Run("should return DatabaseError when Save fails", func(t *testing.T) {
+	t.Run("should return error when Save fails", func(t *testing.T) {
 		s := setupSuite(t)
 
 		n := domain.NewNote("title", "content")
@@ -85,12 +81,9 @@ func Test_Service_Execute(t *testing.T) {
 		err := s.service.Execute(t.Context(), n.ID)
 
 		require.Error(t, err)
-
-		var targetErr *errs.DatabaseError
-		assert.ErrorAs(t, err, &targetErr)
 	})
 
-	t.Run("should return NotFoundError when note ID is empty", func(t *testing.T) {
+	t.Run("should return ErrNoteNotFound when note ID is empty", func(t *testing.T) {
 		s := setupSuite(t)
 
 		s.repo.On("FindByID", mock.Anything, "invalid-id").
@@ -100,7 +93,6 @@ func Test_Service_Execute(t *testing.T) {
 		err := s.service.Execute(t.Context(), "invalid-id")
 
 		require.Error(t, err)
-		var notFoundErr *errs.NotFoundError
-		assert.ErrorAs(t, err, &notFoundErr)
+		assert.ErrorIs(t, err, domain.ErrNoteNotFound)
 	})
 }

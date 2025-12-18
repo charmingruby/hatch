@@ -1,8 +1,8 @@
 package archivenote
 
 import (
-	"HATCH_APP/internal/common/errs"
-	"HATCH_APP/internal/common/http/rest"
+	"HATCH_APP/internal/note/domain"
+	"HATCH_APP/pkg/http/rest"
 	"HATCH_APP/pkg/o11y/logging"
 	"errors"
 
@@ -20,11 +20,10 @@ func NewHTTPHandler(svc *Service) gin.HandlerFunc {
 		id := c.Param("id")
 
 		if err := svc.Execute(ctx, id); err != nil {
-			var notFoundErr *errs.NotFoundError
-			if errors.As(err, &notFoundErr) {
+			if errors.Is(err, domain.ErrNoteNotFound) {
 				log.ErrorContext(
 					ctx,
-					"endpoint/ArchiveNote: not found error",
+					"endpoint/ArchiveNote: note not found",
 					"error", err,
 				)
 
@@ -32,21 +31,10 @@ func NewHTTPHandler(svc *Service) gin.HandlerFunc {
 				return
 			}
 
-			var databaseErr *errs.DatabaseError
-			if errors.As(err, &databaseErr) {
-				log.ErrorContext(
-					ctx,
-					"endpoint/ArchiveNote: database error",
-					"error", databaseErr.Unwrap().Error(),
-				)
-
-				rest.SendInternalServerErrorResponse(c)
-				return
-			}
-
 			log.ErrorContext(
 				ctx,
-				"endpoint/ArchiveNote: unknown error", "error", err,
+				"endpoint/ArchiveNote: internal error",
+				"error", err,
 			)
 
 			rest.SendInternalServerErrorResponse(c)

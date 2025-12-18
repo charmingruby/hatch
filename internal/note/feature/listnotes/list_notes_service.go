@@ -1,9 +1,9 @@
 package listnotes
 
 import (
-	"HATCH_APP/internal/common/errs"
 	"HATCH_APP/internal/note/domain"
 	"context"
+	"fmt"
 )
 
 type Service struct {
@@ -19,7 +19,7 @@ func NewService(repo domain.NoteRepository) *Service {
 func (s *Service) Execute(ctx context.Context) ([]domain.Note, error) {
 	notes, err := s.repo.List(ctx)
 	if err != nil {
-		return nil, errs.NewDatabaseError(err)
+		return nil, fmt.Errorf("failed to list notes: %w", err)
 	}
 
 	return notes, nil

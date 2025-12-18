@@ -1,9 +1,9 @@
 package createnote
 
 import (
-	"HATCH_APP/internal/common/errs"
 	"HATCH_APP/internal/note/domain"
 	"context"
+	"fmt"
 )
 
 type Service struct {
@@ -20,7 +20,7 @@ func (s *Service) Execute(ctx context.Context, title, content string) (string, e
 	note := domain.NewNote(title, content)
 
 	if err := s.repo.Create(ctx, note); err != nil {
-		return "", errs.NewDatabaseError(err)
+		return "", fmt.Errorf("failed to create note: %w", err)
 	}
 
 	return note.ID, nil

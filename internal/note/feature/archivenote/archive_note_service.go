@@ -1,9 +1,9 @@
 package archivenote
 
 import (
-	"HATCH_APP/internal/common/errs"
 	"HATCH_APP/internal/note/domain"
 	"context"
+	"fmt"
 	"time"
 )
 
@@ -21,11 +21,11 @@ func (s *Service) Execute(ctx context.Context, id string) error {
 	note, err := s.repo.FindByID(ctx, id)
 
 	if err != nil {
-		return errs.NewDatabaseError(err)
+		return fmt.Errorf("failed to find note: %w", err)
 	}
 
 	if note.ID == "" {
-		return errs.NewNotFoundError("note")
+		return domain.ErrNoteNotFound
 	}
 
 	now := time.Now()
@@ -33,7 +33,7 @@ func (s *Service) Execute(ctx context.Context, id string) error {
 	note.UpdatedAt = &now
 
 	if err := s.repo.Save(ctx, note); err != nil {
-		return errs.NewDatabaseError(err)
+		return fmt.Errorf("failed to save note: %w", err)
 	}
 
 	return nil

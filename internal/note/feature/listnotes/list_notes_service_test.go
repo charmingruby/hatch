@@ -1,7 +1,6 @@
 package listnotes_test
 
 import (
-	"HATCH_APP/internal/common/errs"
 	"HATCH_APP/internal/note/domain"
 	"HATCH_APP/internal/note/feature/listnotes"
 	"HATCH_APP/internal/note/mocks"
@@ -49,7 +48,7 @@ func Test_Service_Execute(t *testing.T) {
 		assert.Equal(t, "title2", notes[1].Title)
 	})
 
-	t.Run("should return DatabaseError when List fails", func(t *testing.T) {
+	t.Run("should return error when List fails", func(t *testing.T) {
 		s := setupSuite(t)
 
 		s.repo.On("List", t.Context()).
@@ -60,8 +59,5 @@ func Test_Service_Execute(t *testing.T) {
 
 		assert.Zero(t, op)
 		require.Error(t, err)
-
-		var targetErr *errs.DatabaseError
-		assert.ErrorAs(t, err, &targetErr)
 	})
 }

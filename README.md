@@ -26,6 +26,7 @@ domain logic, features, and infrastructure are grouped inside the same bounded c
 ```text
 internal/
 ├── note/
+│   ├── register.go          ← Defines module behavior and interface layer
 │   ├── domain/
 │   │   ├── note_repository.go
 │   │   └── note.go
@@ -54,18 +55,15 @@ internal/
 │   │   ├── NoteRepository.go
 │   │   └── UseCase.go
 │   └── note.go
-└── common/
-    ├── http/
-    └── errs/
 ```
 
 **Structure overview:**
 
+* **`register.go`** → Defines module behavior and interface layer (HTTP, gRPC, CLI, etc)
 * **`domain/`** → Entities, value objects, interfaces, and domain rules
 * **`feature/`** → Independent use cases (each subfolder = one use case)
 * **`infra/`** → Persistence, messaging, or external integrations
 * **`mocks/`** → Generated test doubles for interfaces
-* **`common/`** → Internal cross-cutting utilities and shared abstractions
 
 ---
 

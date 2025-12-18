@@ -1,7 +1,6 @@
 package createnote_test
 
 import (
-	"HATCH_APP/internal/common/errs"
 	"HATCH_APP/internal/note/domain"
 	"HATCH_APP/internal/note/feature/createnote"
 	"HATCH_APP/internal/note/mocks"
@@ -49,7 +48,7 @@ func Test_Service_Execute(t *testing.T) {
 		assert.NotEmpty(t, id)
 	})
 
-	t.Run("should return a DatabaseError when there is a datasource error", func(t *testing.T) {
+	t.Run("should return error when there is a datasource error", func(t *testing.T) {
 		s := setupSuite(t)
 
 		s.repo.On("Create", mock.Anything, mock.Anything).
@@ -60,8 +59,5 @@ func Test_Service_Execute(t *testing.T) {
 
 		assert.Empty(t, id)
 		require.Error(t, err)
-
-		var targetErr *errs.DatabaseError
-		assert.ErrorAs(t, err, &targetErr)
 	})
 }
