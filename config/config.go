@@ -2,6 +2,7 @@ package config
 
 import (
 	"github.com/caarlos0/env"
+	"github.com/joho/godotenv"
 )
 
 type Config struct {
@@ -10,6 +11,8 @@ type Config struct {
 }
 
 func Load() (*Config, error) {
+	_ = godotenv.Load()
+
 	var cfg Config
 
 	if err := env.Parse(&cfg); err != nil {

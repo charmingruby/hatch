@@ -17,7 +17,6 @@ import (
 	"time"
 
 	"github.com/jmoiron/sqlx"
-	"github.com/joho/godotenv"
 )
 
 const SHUTDOWN_TIMEOUT = 30 * time.Second
@@ -38,8 +37,6 @@ func run() error {
 	defer stop()
 
 	logging.Init()
-
-	_ = godotenv.Load()
 
 	logging.Log.Info("config: loading...")
 
