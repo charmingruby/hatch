@@ -1,7 +1,7 @@
 package rest
 
 import (
-	"HATCH_APP/pkg/o11y/logging"
+	"HATCH_APP/pkg/o11y"
 	"context"
 	"time"
 
@@ -16,7 +16,7 @@ func registerProbes(r *gin.Engine, db *sqlx.DB) {
 
 func livenessRoute() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		log := logging.FromContext(c)
+		log := o11y.FromContext(c)
 
 		ctx := c.Request.Context()
 
@@ -29,7 +29,7 @@ func livenessRoute() gin.HandlerFunc {
 
 func readinessRoute(db *sqlx.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		log := logging.FromContext(c)
+		log := o11y.FromContext(c)
 
 		ctx := c.Request.Context()
 

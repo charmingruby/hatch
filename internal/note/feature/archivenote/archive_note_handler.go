@@ -3,7 +3,7 @@ package archivenote
 import (
 	"HATCH_APP/internal/note/domain"
 	"HATCH_APP/pkg/http/rest"
-	"HATCH_APP/pkg/o11y/logging"
+	"HATCH_APP/pkg/o11y"
 	"errors"
 
 	"github.com/gin-gonic/gin"
@@ -13,7 +13,7 @@ func NewHTTPHandler(svc *Service) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx := c.Request.Context()
 
-		log := logging.FromContext(ctx)
+		log := o11y.FromContext(ctx)
 
 		log.InfoContext(ctx, "endpoint/ArchiveNote: request received")
 

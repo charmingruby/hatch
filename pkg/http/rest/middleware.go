@@ -1,20 +1,20 @@
 package rest
 
 import (
-	"HATCH_APP/pkg/o11y/logging"
+	"HATCH_APP/pkg/o11y"
 	"HATCH_APP/pkg/validator"
 
 	"github.com/gin-gonic/gin"
 )
 
-func loggingMiddleware() gin.HandlerFunc {
+func o11yMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		log := logging.Log.With(
+		log := o11y.Log.With(
 			"path", c.Request.URL.Path,
 			"method", c.Request.Method,
 		)
 
-		ctx := logging.WithLogger(c.Request.Context(), log)
+		ctx := o11y.WithLogger(c.Request.Context(), log)
 		c.Request = c.Request.WithContext(ctx)
 
 		log.InfoContext(ctx, "request started")
