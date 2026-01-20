@@ -12,10 +12,12 @@ type Logger = slog.Logger
 
 type ctxKey struct{}
 
-func Init() {
+func Init() *Logger {
 	Log = slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
 		Level: slog.LevelDebug,
 	}))
+
+	return Log
 }
 
 func WithLogger(ctx context.Context, log *Logger) context.Context {

@@ -36,66 +36,66 @@ func run() error {
 	)
 	defer stop()
 
-	o11y.Init()
+	log := o11y.Init()
 
-	o11y.Log.Info("config: loading...")
+	log.Info("config: loading...")
 
 	cfg, err := config.Load()
 	if err != nil {
-		o11y.Log.Error("config: error loading config", "error", err)
+		log.Error("config: error loading config", "error", err)
 
 		return err
 	}
 
-	o11y.Log.Info("config: loaded")
+	log.Info("config: loaded")
 
-	o11y.Log.Info("postgres: connecting...")
+	log.Info("postgres: connecting...")
 
 	db, err := postgres.Connect(ctx, cfg.PostgresURL)
 	if err != nil {
-		o11y.Log.Error("postgres: connection error", "error", err)
+		log.Error("postgres: connection error", "error", err)
 
 		return err
 	}
 
-	o11y.Log.Info("postgres: connected")
+	log.Info("postgres: connected")
 
 	val := validator.New()
 
 	srv, r := rest.NewServer(cfg, val, db)
 
-	o11y.Log.Info("note: creating module...")
+	log.Info("note: creating module...")
 
 	if err := note.Register(r, db); err != nil {
-		o11y.Log.Error("note: module error", "error", err)
+		log.Error("note: module error", "error", err)
 
 		return err
 	}
 
-	o11y.Log.Info("note: module created")
+	log.Info("note: module created")
 
 	shutdownErrCh := make(chan error, 1)
 
 	go shutdown(ctx, shutdownErrCh, srv, db)
 
-	o11y.Log.Info("server: running...", "port", cfg.RestServerPort)
+	log.Info("server: running...", "port", cfg.RestServerPort)
 
 	if err := srv.Start(); err != nil && !errors.Is(err, http.ErrServerClosed) {
-		o11y.Log.Info("server: server start error", "error", err)
+		log.Info("server: server start error", "error", err)
 
 		return err
 	}
 
-	o11y.Log.Info("shutdown: signal received, starting graceful shutdown...")
+	log.Info("shutdown: signal received, starting graceful shutdown...")
 
 	err = <-shutdownErrCh
 	if err != nil {
-		o11y.Log.Error("shutdown: shutdown error", "error", err)
+		log.Error("shutdown: shutdown error", "error", err)
 
 		return err
 	}
 
-	o11y.Log.Info("shutdown: gracefully shutdown")
+	log.Info("shutdown: gracefully shutdown")
 
 	return nil
 }
