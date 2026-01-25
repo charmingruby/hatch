@@ -7,7 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func o11yMiddleware() gin.HandlerFunc {
+func telemetryMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		log := o11y.Log.With(
 			"path", c.Request.URL.Path,

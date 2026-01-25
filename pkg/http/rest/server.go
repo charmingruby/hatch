@@ -50,7 +50,7 @@ func setupRouter(val *validator.Validator) *gin.Engine {
 
 	r.Use(
 		gin.Recovery(),
-		o11yMiddleware(),
+		telemetryMiddleware(),
 		validationMiddleware(val),
 	)
 
