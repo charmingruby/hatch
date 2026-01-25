@@ -10,7 +10,6 @@ import (
 	"HATCH_APP/pkg/validator"
 	"context"
 	"errors"
-	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
@@ -80,7 +79,7 @@ func run() error {
 
 	log.Info("server: running...", "port", cfg.RestServerPort)
 
-	if err := srv.Start(); err != nil && !errors.Is(err, http.ErrServerClosed) {
+	if err := srv.Start(); err != nil {
 		log.Info("server: server start error", "error", err)
 
 		return err
