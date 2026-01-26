@@ -78,4 +78,26 @@ internal/
 
 ---
 
+## Cross-Module Communication
+
+When a bounded context needs to expose functionality to other modules, the simplest approach is to create a minimal public API (facade) that exports only what is strictly necessary.
+
+```text
+internal/
+├── note/
+│   ├── note.go                ← Public facade: exports minimal API for other modules
+│   ├── register.go
+│   ├── domain/
+│   ├── feature/
+│   └── infra/
+```
+
+**Guidelines:**
+
+* **Minimal surface** – Export only what other modules actually need
+* **Stable contracts** – The facade acts as a stable boundary, protecting internal changes
+* **Explicit dependencies** – Consumers depend on the facade, not on internal implementation
+
+---
+
 **Simple. Explicit. Modular. Production-ready.**
