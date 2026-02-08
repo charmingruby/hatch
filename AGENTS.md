@@ -1,4 +1,4 @@
-# 🧠 AI Agent Context
+# Agent Context
 
 > **Quick Start:** Read the main README.md first for full architecture details.
 
@@ -7,6 +7,7 @@
 ## What is Hatch?
 
 A **production-ready Go template** focused on:
+
 - **Modularity** - Self-contained features
 - **Clarity** - Flat structure, explicit dependencies
 - **Speed** - Ship features fast without fighting architecture
@@ -15,14 +16,16 @@ A **production-ready Go template** focused on:
 
 ## Core Rules
 
-### ✅ Always Do
+### Always Do
+
 - Keep changes **inside the module** you're working on
 - Follow existing patterns and naming
 - Respect dependency flow
 - Test every use case
 - Keep files small and focused
 
-### 🚫 Never Do
+### Never Do
+
 - Add new architectural layers
 - Bypass use cases (handler → provider directly)
 - Cross-import between modules
