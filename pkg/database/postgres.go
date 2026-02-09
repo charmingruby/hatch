@@ -1,7 +1,8 @@
-package postgres
+package database
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"github.com/jmoiron/sqlx"
@@ -9,13 +10,15 @@ import (
 	_ "github.com/lib/pq"
 )
 
-const postgresgDriver = "postgres"
+const postgresDriver = "postgres"
 
-func Connect(ctx context.Context, url string) (*sqlx.DB, error) {
+var ErrPostgresQueryPreparation = errors.New("query preparation error")
+
+func PostgresConnect(ctx context.Context, url string) (*sqlx.DB, error) {
 	ctx, stop := context.WithTimeout(ctx, 10*time.Second)
 	defer stop()
 
-	db, err := sqlx.ConnectContext(ctx, postgresgDriver, url)
+	db, err := sqlx.ConnectContext(ctx, postgresDriver, url)
 	if err != nil {
 		return nil, err
 	}

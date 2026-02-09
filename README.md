@@ -65,6 +65,23 @@ internal/
 * **`infra/`** → Persistence, messaging, or external integrations
 * **`mocks/`** → Generated test doubles for interfaces
 
+### Shared Packages
+
+Infrastructure helpers live under `pkg/`. The database helpers are intentionally flat so each provider ships in a single Go file that owns its own connection logic and error values:
+
+```text
+pkg/
+├── database/
+│   ├── error.go           ← Common datasource errors
+│   └── postgres.go        ← Provider-specific connect helpers + sentinels
+├── http/
+├── id/
+├── o11y/
+└── validator/
+```
+
+Add new providers by dropping another `<provider>.go` beside `postgres.go`; avoid nested directories so all database concerns stay discoverable at a glance.
+
 ---
 
 ## Principles
