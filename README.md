@@ -10,7 +10,7 @@ Hatch is a pragmatic Go project template designed for rapid feature development 
 - ✅ **Fast iteration** – Deliver features independently and incrementally
 - ✅ **Go-idiomatic** – Simple, explicit, and dependency-free
 
-> Hatch ships a complete vertical-slice stack. If your problem only needs a flat starter or you prefer to decide structure later, consider [F-Hatch](https://github.com/charmingruby/f-hatch).
+> Hatch ships a complete vertical-slice stack meant to scale products and complex contexts with clear boundaries and opinionated workflows. If your problem is simpler, doesn’t demand this much ceremony, or you prefer to dial structure in later, consider [F-Hatch](https://github.com/charmingruby/f-hatch) for a flatter starter.
 
 ---
 
