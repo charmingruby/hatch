@@ -16,9 +16,9 @@ func Register(r *gin.Engine, db *sqlx.DB) error {
 		return err
 	}
 
-	createNoteHandler := createnote.NewFeature(repo)
-	listNotesHandler := listnotes.NewFeature(repo)
-	archiveNoteHandler := archivenote.NewFeature(repo)
+	createNoteHandler := createnote.New(repo)
+	listNotesHandler := listnotes.New(repo)
+	archiveNoteHandler := archivenote.New(repo)
 
 	api := r.Group("/api/v1/notes")
 	{

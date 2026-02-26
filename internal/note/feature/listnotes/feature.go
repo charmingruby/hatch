@@ -1,4 +1,4 @@
-package archivenote
+package listnotes
 
 import (
 	"HATCH_APP/internal/note/domain"
@@ -6,10 +6,12 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func NewFeature(repo domain.NoteRepository) gin.HandlerFunc {
+func New(
+	repo domain.NoteRepository,
+) gin.HandlerFunc {
 	service := NewService(repo)
 
-	handler := NewHTTPHandler(service)
+	handler := NewHandler(service)
 
 	return handler
 }

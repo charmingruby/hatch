@@ -12,7 +12,7 @@ type Request struct {
 	Content string `json:"content" binding:"required" validate:"required,gt=0"`
 }
 
-func NewHTTPHandler(svc *Service) gin.HandlerFunc {
+func NewHandler(svc *Service) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx := c.Request.Context()
 

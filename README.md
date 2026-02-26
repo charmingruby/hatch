@@ -6,9 +6,11 @@ Hatch is a pragmatic Go project template designed for rapid feature development 
 
 ## Why Hatch?
 
-* ✅ **Service-ready** – Extract modules into microservices without rewrites
-* ✅ **Fast iteration** – Deliver features independently and incrementally
-* ✅ **Go-idiomatic** – Simple, explicit, and dependency-free
+- ✅ **Service-ready** – Extract modules into microservices without rewrites
+- ✅ **Fast iteration** – Deliver features independently and incrementally
+- ✅ **Go-idiomatic** – Simple, explicit, and dependency-free
+
+> Hatch ships a complete vertical-slice stack. If your problem only needs a flat starter or you prefer to decide structure later, consider [F-Hatch](https://github.com/charmingruby/f-hatch).
 
 ---
 
@@ -32,20 +34,20 @@ internal/
 │   │   └── note.go
 │   ├── feature/
 │   │   ├── archivenote/
-│   │   │   ├── archive_note_handler.go
-│   │   │   ├── archive_note_service.go
-│   │   │   ├── archive_note_service_test.go
-│   │   │   └── archive_note.go
+│   │   │   ├── handler.go
+│   │   │   ├── service.go
+│   │   │   ├── service_test.go
+│   │   │   └── feature.go
 │   │   ├── createnote/
-│   │   │   ├── create_note_handler.go
-│   │   │   ├── create_note_service.go
-│   │   │   ├── create_note_service_test.go
-│   │   │   └── create_note.go
+│   │   │   ├── handler.go
+│   │   │   ├── service.go
+│   │   │   ├── service_test.go
+│   │   │   └── feature.go
 │   │   └── listnotes/
-│   │       ├── list_notes_handler.go
-│   │       ├── list_notes_service.go
-│   │       ├── list_notes_service_test.go
-│   │       └── list_notes.go
+│   │       ├── handler.go
+│   │       ├── service.go
+│   │       ├── service_test.go
+│   │       └── feature.go
 │   ├── infra/
 │   │   └── db/
 │   │       └── postgres/
@@ -59,11 +61,11 @@ internal/
 
 **Structure overview:**
 
-* **`register.go`** → Defines module behavior and interface layer (HTTP, gRPC, CLI, etc)
-* **`domain/`** → Entities, value objects, interfaces, and domain rules
-* **`feature/`** → Independent use cases (each subfolder = one use case)
-* **`infra/`** → Persistence, messaging, or external integrations
-* **`mocks/`** → Generated test doubles for interfaces
+- **`{MODULE_NAME}.go`** → Defines module behavior and interface layer (HTTP, gRPC, CLI, etc)
+- **`domain/`** → Entities, value objects, interfaces, and domain rules
+- **`feature/`** → Independent use cases (each subfolder = one use case; files inside use role-based names like `handler.go`, `service.go`, `service_test.go`, and `feature.go`)
+- **`infra/`** → Persistence, messaging, or external integrations
+- **`mocks/`** → Generated test doubles for interfaces
 
 ### Shared Packages
 
@@ -86,12 +88,12 @@ Add new providers by dropping another `<provider>.go` beside `postgres.go`; avoi
 
 ## Principles
 
-* **Modular by default** – Each module can live independently or evolve into a service
-* **Feature-driven** – Deliver use cases end-to-end in isolation
-* **Dependency inversion** – Domain defines interfaces, infrastructure implements them
-* **Explicit over magical** – No hidden frameworks, just clear Go code
-* **Intent-revealing structure** – Folder names express business purpose
-* **Simplicity first** – Add layers only when complexity demands it
+- **Modular by default** – Each module can live independently or evolve into a service
+- **Feature-driven** – Deliver use cases end-to-end in isolation
+- **Dependency inversion** – Domain defines interfaces, infrastructure implements them
+- **Explicit over magical** – No hidden frameworks, just clear Go code
+- **Intent-revealing structure** – Folder names express business purpose
+- **Simplicity first** – Add layers only when complexity demands it
 
 ---
 
@@ -111,9 +113,9 @@ internal/
 
 **Guidelines:**
 
-* **Minimal surface** – Export only what other modules actually need
-* **Stable contracts** – The facade acts as a stable boundary, protecting internal changes
-* **Explicit dependencies** – Consumers depend on the facade, not on internal implementation
+- **Minimal surface** – Export only what other modules actually need
+- **Stable contracts** – The facade acts as a stable boundary, protecting internal changes
+- **Explicit dependencies** – Consumers depend on the facade, not on internal implementation
 
 ---
 

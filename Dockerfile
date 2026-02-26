@@ -1,5 +1,5 @@
 # Stage 1: Install dependencies
-FROM golang:1.25 AS deps
+FROM golang:1.26 AS deps
 
 WORKDIR /app
 

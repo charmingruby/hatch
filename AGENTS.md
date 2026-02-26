@@ -23,6 +23,7 @@ A **production-ready Go template** focused on:
 - Respect dependency flow
 - Test every use case
 - Keep files small and focused
+- Name files inside each feature folder by their role (`handler.go`, `service.go`, etc.)
 
 ### Never Do
 
