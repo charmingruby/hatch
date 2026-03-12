@@ -6,11 +6,11 @@ import (
 	"HATCH_APP/internal/note/feature/listnotes"
 	"HATCH_APP/internal/note/infra/db/postgres"
 
-	"github.com/gin-gonic/gin"
+	"github.com/go-chi/chi/v5"
 	"github.com/jmoiron/sqlx"
 )
 
-func Register(r *gin.Engine, db *sqlx.DB) error {
+func Register(r *chi.Mux, db *sqlx.DB) error {
 	repo, err := postgres.NewNoteRepository(db)
 	if err != nil {
 		return err
@@ -20,12 +20,15 @@ func Register(r *gin.Engine, db *sqlx.DB) error {
 	listNotesHandler := listnotes.New(repo)
 	archiveNoteHandler := archivenote.New(repo)
 
-	api := r.Group("/api/v1/notes")
-	{
-		api.POST("", createNoteHandler)
-		api.GET("", listNotesHandler)
-		api.PATCH(":id", archiveNoteHandler)
-	}
+	r.Route("/api", func(api chi.Router) {
+		api.Route("/v1", func(v1 chi.Router) {
+			v1.Route("/notes", func(notes chi.Router) {
+				notes.Post("/", createNoteHandler)
+				notes.Get("/", listNotesHandler)
+				notes.Patch("/{id}", archiveNoteHandler)
+			})
+		})
+	})
 
 	return nil
 }

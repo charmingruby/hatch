@@ -2,13 +2,10 @@ package createnote
 
 import (
 	"HATCH_APP/internal/note/domain"
-
-	"github.com/gin-gonic/gin"
+	"net/http"
 )
 
-func New(
-	repo domain.NoteRepository,
-) gin.HandlerFunc {
+func New(repo domain.NoteRepository) http.HandlerFunc {
 	service := NewService(repo)
 
 	handler := NewHandler(service)

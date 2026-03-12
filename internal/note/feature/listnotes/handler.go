@@ -2,40 +2,31 @@ package listnotes
 
 import (
 	"HATCH_APP/internal/note/domain"
-	"HATCH_APP/pkg/http/rest"
 	"HATCH_APP/pkg/o11y"
-
-	"github.com/gin-gonic/gin"
+	"HATCH_APP/pkg/transport/httpx"
+	"net/http"
 )
 
 type Response = []domain.Note
 
-func NewHandler(svc *Service) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		ctx := c.Request.Context()
+func NewHandler(svc *Service) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		ctx := r.Context()
 
-		log := o11y.FromContext(ctx)
-
-		log.InfoContext(ctx, "endpoint/ListNotes: request received")
+		log := o11y.FromContext(ctx).With("feature", "ListNotes")
 
 		notes, err := svc.Execute(ctx)
 		if err != nil {
-			log.ErrorContext(
-				ctx,
-				"endpoint/ListNotes: internal error",
-				"error", err,
-			)
+			log.ErrorContext(ctx, "execute list notes failed", "error", err)
 
-			rest.SendInternalServerErrorResponse(c)
+			httpx.WriteInternalServerErrorResponse(w)
 			return
 		}
 
 		var res = notes
 
-		log.InfoContext(ctx, "endpoint/ListNotes: finished successfully")
-
-		rest.SendOKResponse(
-			c,
+		httpx.WriteOKResponse(
+			w,
 			"",
 			res,
 		)

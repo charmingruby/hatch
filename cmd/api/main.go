@@ -4,8 +4,8 @@ import (
 	"HATCH_APP/config"
 	"HATCH_APP/internal/note"
 	"HATCH_APP/pkg/database"
-	"HATCH_APP/pkg/http/rest"
 	"HATCH_APP/pkg/o11y"
+	"HATCH_APP/pkg/transport/httpx"
 	"HATCH_APP/pkg/validator"
 	"context"
 	"errors"
@@ -60,7 +60,9 @@ func run() error {
 
 	val := validator.New()
 
-	srv, r := rest.NewServer(cfg, val, db)
+	srv, r := httpx.NewServer(cfg.RestServerPort, val, httpx.External{
+		DB: db,
+	})
 
 	log.Info("note: creating module...")
 
@@ -101,7 +103,7 @@ func run() error {
 func shutdown(
 	ctx context.Context,
 	errShutdown chan error,
-	srv *rest.Server,
+	srv *httpx.Server,
 	db *sqlx.DB,
 ) {
 	<-ctx.Done()
