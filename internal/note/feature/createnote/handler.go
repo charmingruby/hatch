@@ -30,10 +30,12 @@ func NewHandler(svc *Service) http.HandlerFunc {
 
 		id, err := svc.Execute(ctx, req.Title, req.Content)
 		if err != nil {
-			log.ErrorContext(ctx, "execute create note failed", "error", err)
-
-			httpx.WriteInternalServerErrorResponse(w)
-			return
+			switch {
+			default:
+				log.ErrorContext(ctx, "execute create note failed", "error", err)
+				httpx.WriteInternalServerErrorResponse(w)
+				return
+			}
 		}
 
 		httpx.WriteCreatedResponse(

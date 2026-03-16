@@ -5,7 +5,7 @@ import (
 	"net/http"
 )
 
-func New(repo domain.NoteRepository) http.HandlerFunc {
+func Route(repo domain.NoteRepository) http.HandlerFunc {
 	service := NewService(repo)
 
 	handler := NewHandler(service)

@@ -18,17 +18,16 @@ func NewHandler(svc *Service) http.HandlerFunc {
 		log = log.With("note_id", id)
 
 		if err := svc.Execute(ctx, id); err != nil {
-			if errors.Is(err, domain.ErrNoteNotFound) {
+			switch {
+			case errors.Is(err, domain.ErrNoteNotFound):
 				log.WarnContext(ctx, "note not found", "error", err)
-
 				httpx.WriteNotFoundResponse(w, err.Error())
 				return
+			default:
+				log.ErrorContext(ctx, "execute archive note failed", "error", err)
+				httpx.WriteInternalServerErrorResponse(w)
+				return
 			}
-
-			log.ErrorContext(ctx, "execute archive note failed", "error", err)
-
-			httpx.WriteInternalServerErrorResponse(w)
-			return
 		}
 
 		httpx.WriteEmptyResponse(w)

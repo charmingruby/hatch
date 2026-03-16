@@ -17,10 +17,12 @@ func NewHandler(svc *Service) http.HandlerFunc {
 
 		notes, err := svc.Execute(ctx)
 		if err != nil {
-			log.ErrorContext(ctx, "execute list notes failed", "error", err)
-
-			httpx.WriteInternalServerErrorResponse(w)
-			return
+			switch {
+			default:
+				log.ErrorContext(ctx, "execute list notes failed", "error", err)
+				httpx.WriteInternalServerErrorResponse(w)
+				return
+			}
 		}
 
 		var res = notes
