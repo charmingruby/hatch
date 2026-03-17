@@ -39,7 +39,7 @@ func Test_Service_Execute(t *testing.T) {
 			Return(n, nil).
 			Once()
 
-		s.repo.On("Save", t.Context(), mock.MatchedBy(func(note domain.Note) bool {
+		s.repo.On("Save", t.Context(), mock.MatchedBy(func(note *domain.Note) bool {
 			return note.ID == n.ID &&
 				note.Archived &&
 				note.UpdatedAt != nil &&
@@ -57,7 +57,7 @@ func Test_Service_Execute(t *testing.T) {
 		s := setupSuite(t)
 
 		s.repo.On("FindByID", t.Context(), "nonexistent").
-			Return(domain.Note{}, errors.New("repo down")).
+			Return((*domain.Note)(nil), errors.New("repo down")).
 			Once()
 
 		err := s.service.Execute(t.Context(), "nonexistent")
@@ -87,7 +87,7 @@ func Test_Service_Execute(t *testing.T) {
 		s := setupSuite(t)
 
 		s.repo.On("FindByID", mock.Anything, "invalid-id").
-			Return(domain.Note{}, nil).
+			Return((*domain.Note)(nil), nil).
 			Once()
 
 		err := s.service.Execute(t.Context(), "invalid-id")

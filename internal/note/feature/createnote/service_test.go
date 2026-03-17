@@ -35,7 +35,7 @@ func Test_Service_Execute(t *testing.T) {
 	t.Run("should create successfully", func(t *testing.T) {
 		s := setupSuite(t)
 
-		s.repo.On("Create", t.Context(), mock.MatchedBy(func(n domain.Note) bool {
+		s.repo.On("Create", t.Context(), mock.MatchedBy(func(n *domain.Note) bool {
 			return n.Title == title &&
 				n.Content == content
 		})).

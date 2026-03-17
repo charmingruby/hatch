@@ -31,7 +31,7 @@ func Test_Service_Execute(t *testing.T) {
 	t.Run("should list notes successfully", func(t *testing.T) {
 		s := setupSuite(t)
 
-		ns := []domain.Note{
+		ns := []*domain.Note{
 			domain.NewNote("title1", "content1"),
 			domain.NewNote("title2", "content2"),
 		}

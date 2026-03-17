@@ -7,7 +7,7 @@ import (
 	"net/http"
 )
 
-type Response = []domain.Note
+type Response = []*domain.Note
 
 func NewHandler(svc *Service) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {

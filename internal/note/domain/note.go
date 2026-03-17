@@ -15,8 +15,8 @@ type Note struct {
 	Archived  bool       `json:"archived"   db:"archived"`
 }
 
-func NewNote(title, content string) Note {
-	return Note{
+func NewNote(title, content string) *Note {
+	return &Note{
 		ID:        id.New(),
 		Title:     title,
 		Content:   content,
@@ -24,4 +24,9 @@ func NewNote(title, content string) Note {
 		CreatedAt: time.Now(),
 		UpdatedAt: nil,
 	}
+}
+
+func (n *Note) Archive() {
+	n.Archived = true
+	n.UpdatedAt = new(time.Now())
 }

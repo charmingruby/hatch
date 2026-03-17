@@ -4,7 +4,6 @@ import (
 	"HATCH_APP/internal/note/domain"
 	"context"
 	"fmt"
-	"time"
 )
 
 type Service struct {
@@ -24,13 +23,11 @@ func (s *Service) Execute(ctx context.Context, id string) error {
 		return fmt.Errorf("failed to find note: %w", err)
 	}
 
-	if note.ID == "" {
+	if note == nil {
 		return domain.ErrNoteNotFound
 	}
 
-	now := time.Now()
-	note.Archived = true
-	note.UpdatedAt = &now
+	note.Archive()
 
 	if err := s.repo.Save(ctx, note); err != nil {
 		return fmt.Errorf("failed to save note: %w", err)
