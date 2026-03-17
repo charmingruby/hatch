@@ -17,6 +17,7 @@ func NewHandler(svc *Service) http.HandlerFunc {
 
 		notes, err := svc.Execute(ctx)
 		if err != nil {
+			//nolint:gocritic // keep single-case switch for consistency with other handlers and declarative behaviours.
 			switch {
 			default:
 				log.ErrorContext(ctx, "execute list notes failed", "error", err)

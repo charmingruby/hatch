@@ -67,6 +67,45 @@ internal/
 - **`infra/`** → Persistence, messaging, or external integrations
 - **`mocks/`** → Generated test doubles for interfaces
 
+### Declarative features
+
+Think of each feature folder as a small declaration of behavior. It states which dependencies it needs, which transports it exposes, and which background jobs or listeners it runs. Everything stays in plain Go so you can read a feature and instantly know what it does.
+
+**Route-only feature (pure HTTP):** mirrors `internal/note/feature/createnote/feature.go`. The function name is the declaration: “This feature provides an HTTP handler for creating notes.”
+
+```go
+func Route(repo domain.NoteRepository) http.HandlerFunc {
+    service := NewService(repo)
+    handler := NewHandler(service)
+    return handler
+}
+```
+
+From module code you can read `notes.Post("/", createnote.Route(repo))` and understand the behavior without opening other files.
+
+**Feature exporting multiple behaviors:** when the same use case must also emit/consume events, cron jobs, etc., just expose more functions. Each export describes one capability, and everything still returns native Go types.
+
+```go
+// Declarative: "this feature serves HTTP"
+func Route(repo domain.NoteRepository, bus eventbus.Bus) http.HandlerFunc {
+    svc := NewService(repo, bus)
+    return NewHandler(svc)
+}
+
+// Declarative: "this feature listens to events"
+func Listener(repo domain.NoteRepository, bus eventbus.Bus) eventbus.Listener {
+    svc := NewService(repo, bus)
+    return eventbus.Listener{
+        Event: "note.created",
+        Handle: func(ctx context.Context, payload any) error {
+            return svc.HandleEvent(ctx, payload)
+        },
+    }
+}
+```
+
+`internal/{module}/module.go` stays simple and declarative: call whichever functions a feature exposes, mount routes on the HTTP router, and register listeners on the event bus. There is no framework magic—just reading Go functions to understand the module’s behavior map.
+
 ### Shared Packages
 
 Infrastructure helpers live under `pkg/`. The database helpers are intentionally flat so each provider ships in a single Go file that owns its own connection logic and error values:

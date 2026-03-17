@@ -24,6 +24,7 @@ A **production-ready Go template** focused on:
 - Test every use case
 - Keep files small and focused
 - Name files inside each feature folder by their role (`handler.go`, `service.go`, etc.)
+- Wire features explicitly: each feature should read like a declaration of its handlers/listeners (see README "Declarative features")
 
 ### Never Do
 
