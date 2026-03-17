@@ -14,7 +14,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version: stable
+          go-version: '1.26'
           cache: false
 
       - name: Install dependencies
@@ -23,7 +23,7 @@ jobs:
 
       - name: Install mockery
         run: |
-          go install github.com/vektra/mockery/v2@latest
+          GOTOOLCHAIN=go1.26.0 go install github.com/vektra/mockery/v2@v2.53.4
           echo "${HOME}/go/bin" >> $GITHUB_PATH
 
       - name: Run tests

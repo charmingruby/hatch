@@ -1,13 +1,13 @@
 # Hatch
 
-Hatch is a pragmatic Go project template designed for rapid feature development and effortless service extraction. Modular, decoupled, and production-ready.
+Hatch is a pragmatic Go project template designed for rapid feature development with explicit, declarative behaviors. Modular, decoupled, and production-ready.
 
 ---
 
 ## Why Hatch?
 
-- ✅ **Service-ready** – Extract modules into microservices without rewrites
 - ✅ **Fast iteration** – Deliver features independently and incrementally
+- ✅ **Declarative features** – Handlers/listeners are described explicitly for effortless wiring
 - ✅ **Go-idiomatic** – Simple, explicit, and dependency-free
 
 > Hatch ships a complete vertical-slice stack meant to scale products and complex contexts with clear boundaries and opinionated workflows. If your problem is simpler, doesn’t demand this much ceremony, or you prefer to dial structure in later, consider [F-Hatch](https://github.com/charmingruby/f-hatch) for a flatter starter.
@@ -18,7 +18,7 @@ Hatch is a pragmatic Go project template designed for rapid feature development 
 
 Hatch follows the Vertical Slice Architecture, where each feature is a self-contained unit that owns its domain logic, use cases, and infrastructure.
 
-This approach enables fast delivery, clear boundaries, and effortless scalability as the domain evolves.
+This approach enables fast delivery, clear boundaries, and an explicit map of behaviors as the domain evolves.
 
 ### Module Organization
 
@@ -28,7 +28,6 @@ domain logic, features, and infrastructure are grouped inside the same bounded c
 ```text
 internal/
 ├── note/
-│   ├── register.go          ← Defines module behavior and interface layer
 │   ├── domain/
 │   │   ├── note_repository.go
 │   │   └── note.go
@@ -56,7 +55,7 @@ internal/
 │   ├── mocks/
 │   │   ├── NoteRepository.go
 │   │   └── UseCase.go
-│   └── note.go
+│   └── note.go ← Defines module behavior and interface layer
 ```
 
 **Structure overview:**
@@ -127,10 +126,11 @@ Add new providers by dropping another `<provider>.go` beside `postgres.go`; avoi
 
 ## Principles
 
-- **Modular by default** – Each module can live independently or evolve into a service
+- **Modular by default** – Each module owns its boundaries and dependencies explicitly
 - **Feature-driven** – Deliver use cases end-to-end in isolation
 - **Dependency inversion** – Domain defines interfaces, infrastructure implements them
 - **Explicit over magical** – No hidden frameworks, just clear Go code
+- **Declarative behaviors** – Features expose explicit functions for every handler/listener they own
 - **Intent-revealing structure** – Folder names express business purpose
 - **Simplicity first** – Add layers only when complexity demands it
 
@@ -144,7 +144,6 @@ When a bounded context needs to expose functionality to other modules, the simpl
 internal/
 ├── note/
 │   ├── note.go                ← Public facade: exports minimal API for other modules
-│   ├── register.go
 │   ├── domain/
 │   ├── feature/
 │   └── infra/
