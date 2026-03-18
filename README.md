@@ -24,6 +24,7 @@ This approach enables fast delivery, clear boundaries, and an explicit map of be
 
 Each module lives under `internal/` and follows a consistent vertical-slice layout:
 domain logic, features, and infrastructure are grouped inside the same bounded context.
+When a module's domain is very small, you can dial the ceremony down further and organize it using a package-by-slice layout (handlers, services, and domain objects co-located inside a single package) while still keeping the module boundary and declarative wiring intact.
 
 ```text
 internal/
