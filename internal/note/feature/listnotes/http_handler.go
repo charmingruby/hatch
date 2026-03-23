@@ -4,10 +4,11 @@ import (
 	"HATCH_APP/internal/note/domain"
 	"HATCH_APP/pkg/o11y"
 	"HATCH_APP/pkg/transport/httpx"
+	"fmt"
 	"net/http"
 )
 
-type Response = []*domain.Note
+type ResponseData []*domain.Note
 
 func NewHandler(svc *Service) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -26,12 +27,12 @@ func NewHandler(svc *Service) http.HandlerFunc {
 			}
 		}
 
-		var res = notes
-
 		httpx.WriteOKResponse(
 			w,
-			"",
-			res,
+			httpx.Response{
+				Message: fmt.Sprintf("%d notes listed", len(notes)),
+				Data:    notes,
+			},
 		)
 	}
 }

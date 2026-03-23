@@ -114,7 +114,7 @@ func Test_Service_Execute(t *testing.T) {
 
 			noteID := tc.arrange(t, s)
 
-			err := s.service.Execute(t.Context(), noteID)
+			err := s.service.ArchiveNote(t.Context(), noteID)
 
 			tc.assertErr(t, err)
 		})

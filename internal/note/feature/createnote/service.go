@@ -16,7 +16,7 @@ func NewService(repo domain.NoteRepository) *Service {
 	}
 }
 
-func (s *Service) Execute(ctx context.Context, title, content string) (string, error) {
+func (s *Service) CreateNote(ctx context.Context, title, content string) (string, error) {
 	note := domain.NewNote(title, content)
 
 	if err := s.repo.Create(ctx, note); err != nil {

@@ -17,7 +17,7 @@ func NewService(repo domain.NoteRepository) *Service {
 	}
 }
 
-func (s *Service) Execute(ctx context.Context, id string) error {
+func (s *Service) ArchiveNote(ctx context.Context, id string) error {
 	note, err := s.repo.FindByID(ctx, id)
 
 	if err != nil {
