@@ -2,13 +2,14 @@ package listnotes
 
 import (
 	"HATCH_APP/internal/note/domain"
-	"net/http"
 )
 
-func Route(repo domain.NoteRepository) http.HandlerFunc {
-	service := NewService(repo)
+type Feature struct {
+	service *Service
+}
 
-	handler := NewHandler(service)
-
-	return handler
+func New(repo domain.NoteRepository) *Feature {
+	return &Feature{
+		service: NewService(repo),
+	}
 }

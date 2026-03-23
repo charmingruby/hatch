@@ -18,12 +18,13 @@ func Register(r *chi.Mux, db *sqlx.DB) error {
 
 	createNote := createnote.New(repo)
 	archiveNote := archivenote.New(repo)
+	listNotes := listnotes.New(repo)
 
 	r.Route("/api", func(api chi.Router) {
 		api.Route("/v1", func(v1 chi.Router) {
 			v1.Route("/notes", func(notes chi.Router) {
 				notes.Post("/", createNote.HTTP)
-				notes.Get("/", listnotes.Route(repo))
+				notes.Get("/", listNotes.HTTP)
 				notes.Patch("/{id}", archiveNote.HTTP)
 			})
 		})

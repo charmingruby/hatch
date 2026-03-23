@@ -16,7 +16,7 @@ func NewService(repo domain.NoteRepository) *Service {
 	}
 }
 
-func (s *Service) Execute(ctx context.Context) ([]*domain.Note, error) {
+func (s *Service) ListNotes(ctx context.Context) ([]*domain.Note, error) {
 	notes, err := s.repo.List(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("failed to list notes: %w", err)

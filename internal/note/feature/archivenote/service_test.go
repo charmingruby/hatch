@@ -29,7 +29,7 @@ func setupSuite(t *testing.T) *serviceSuite {
 	}
 }
 
-func Test_Service_Execute(t *testing.T) {
+func TestServiceArchiveNote(t *testing.T) {
 	tests := []struct {
 		arrange   func(t *testing.T, s *serviceSuite) string
 		assertErr func(t *testing.T, err error)
