@@ -28,36 +28,56 @@ func setupSuite(t *testing.T) *suite {
 }
 
 func Test_Service_Execute(t *testing.T) {
-	t.Run("should list notes successfully", func(t *testing.T) {
-		s := setupSuite(t)
+	tests := []struct {
+		arrange func(t *testing.T, s *suite)
+		assert  func(t *testing.T, notes []*domain.Note, err error)
+		name    string
+	}{
+		{
+			name: "should list notes successfully",
+			arrange: func(t *testing.T, s *suite) {
+				ns := []*domain.Note{
+					domain.NewNote("title1", "content1"),
+					domain.NewNote("title2", "content2"),
+				}
 
-		ns := []*domain.Note{
-			domain.NewNote("title1", "content1"),
-			domain.NewNote("title2", "content2"),
-		}
+				s.repo.On("List", t.Context()).
+					Return(ns, nil).
+					Once()
+			},
+			assert: func(t *testing.T, notes []*domain.Note, err error) {
+				require.NoError(t, err)
+				assert.Len(t, notes, 2)
+				assert.Equal(t, "title1", notes[0].Title)
+				assert.Equal(t, "title2", notes[1].Title)
+			},
+		},
+		{
+			name: "should return error when List fails",
+			arrange: func(t *testing.T, s *suite) {
+				s.repo.On("List", t.Context()).
+					Return(nil, errors.New("db error")).
+					Once()
+			},
+			assert: func(t *testing.T, notes []*domain.Note, err error) {
+				assert.Zero(t, notes)
+				require.Error(t, err)
+			},
+		},
+	}
 
-		s.repo.On("List", t.Context()).
-			Return(ns, nil).
-			Once()
+	for _, tt := range tests {
+		tc := tt
+		t.Run(tc.name, func(t *testing.T) {
+			s := setupSuite(t)
 
-		notes, err := s.service.Execute(t.Context())
+			if tc.arrange != nil {
+				tc.arrange(t, s)
+			}
 
-		require.NoError(t, err)
-		assert.Len(t, notes, 2)
-		assert.Equal(t, "title1", notes[0].Title)
-		assert.Equal(t, "title2", notes[1].Title)
-	})
+			notes, err := s.service.Execute(t.Context())
 
-	t.Run("should return error when List fails", func(t *testing.T) {
-		s := setupSuite(t)
-
-		s.repo.On("List", t.Context()).
-			Return(nil, errors.New("db error")).
-			Once()
-
-		op, err := s.service.Execute(t.Context())
-
-		assert.Zero(t, op)
-		require.Error(t, err)
-	})
+			tc.assert(t, notes, err)
+		})
+	}
 }

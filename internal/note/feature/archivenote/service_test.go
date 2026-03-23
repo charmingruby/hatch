@@ -30,69 +30,93 @@ func setupSuite(t *testing.T) *suite {
 }
 
 func Test_Service_Execute(t *testing.T) {
-	t.Run("should archive successfully", func(t *testing.T) {
-		s := setupSuite(t)
+	tests := []struct {
+		arrange   func(t *testing.T, s *suite) string
+		assertErr func(t *testing.T, err error)
+		name      string
+	}{
+		{
+			name: "should archive successfully",
+			arrange: func(t *testing.T, s *suite) string {
+				n := domain.NewNote("title", "content")
 
-		n := domain.NewNote("title", "content")
+				s.repo.On("FindByID", t.Context(), n.ID).
+					Return(n, nil).
+					Once()
 
-		s.repo.On("FindByID", t.Context(), n.ID).
-			Return(n, nil).
-			Once()
+				s.repo.On("Save", t.Context(), mock.MatchedBy(func(note *domain.Note) bool {
+					return note.ID == n.ID &&
+						note.Archived &&
+						note.UpdatedAt != nil &&
+						time.Since(*note.UpdatedAt) < time.Second
+				})).
+					Return(nil).
+					Once()
 
-		s.repo.On("Save", t.Context(), mock.MatchedBy(func(note *domain.Note) bool {
-			return note.ID == n.ID &&
-				note.Archived &&
-				note.UpdatedAt != nil &&
-				time.Since(*note.UpdatedAt) < time.Second
-		})).
-			Return(nil).
-			Once()
+				return n.ID
+			},
+			assertErr: func(t *testing.T, err error) {
+				require.NoError(t, err)
+			},
+		},
+		{
+			name: "should return error when FindByID fails",
+			arrange: func(t *testing.T, s *suite) string {
+				s.repo.On("FindByID", t.Context(), "nonexistent").
+					Return((*domain.Note)(nil), errors.New("repo down")).
+					Once()
 
-		err := s.service.Execute(t.Context(), n.ID)
+				return "nonexistent"
+			},
+			assertErr: func(t *testing.T, err error) {
+				require.Error(t, err)
+			},
+		},
+		{
+			name: "should return error when Save fails",
+			arrange: func(t *testing.T, s *suite) string {
+				n := domain.NewNote("title", "content")
 
-		require.NoError(t, err)
-	})
+				s.repo.On("FindByID", t.Context(), n.ID).
+					Return(n, nil).
+					Once()
 
-	t.Run("should return error when FindByID fails", func(t *testing.T) {
-		s := setupSuite(t)
+				s.repo.On("Save", t.Context(), mock.Anything).
+					Return(errors.New("save error")).
+					Once()
 
-		s.repo.On("FindByID", t.Context(), "nonexistent").
-			Return((*domain.Note)(nil), errors.New("repo down")).
-			Once()
+				return n.ID
+			},
+			assertErr: func(t *testing.T, err error) {
+				require.Error(t, err)
+			},
+		},
+		{
+			name: "should return ErrNoteNotFound when note ID is empty",
+			arrange: func(t *testing.T, s *suite) string {
+				s.repo.On("FindByID", mock.Anything, "invalid-id").
+					Return((*domain.Note)(nil), domain.ErrNoteNotFound).
+					Once()
 
-		err := s.service.Execute(t.Context(), "nonexistent")
+				return "invalid-id"
+			},
+			assertErr: func(t *testing.T, err error) {
+				require.Error(t, err)
+				assert.ErrorIs(t, err, domain.ErrNoteNotFound)
+			},
+		},
+	}
 
-		require.Error(t, err)
-	})
+	for _, tt := range tests {
+		tc := tt
+		t.Run(tc.name, func(t *testing.T) {
+			s := setupSuite(t)
 
-	t.Run("should return error when Save fails", func(t *testing.T) {
-		s := setupSuite(t)
+			noteID := tc.arrange(t, s)
 
-		n := domain.NewNote("title", "content")
+			err := s.service.Execute(t.Context(), noteID)
 
-		s.repo.On("FindByID", t.Context(), n.ID).
-			Return(n, nil).
-			Once()
-
-		s.repo.On("Save", t.Context(), mock.Anything).
-			Return(errors.New("save error")).
-			Once()
-
-		err := s.service.Execute(t.Context(), n.ID)
-
-		require.Error(t, err)
-	})
-
-	t.Run("should return ErrNoteNotFound when note ID is empty", func(t *testing.T) {
-		s := setupSuite(t)
-
-		s.repo.On("FindByID", mock.Anything, "invalid-id").
-			Return((*domain.Note)(nil), nil).
-			Once()
-
-		err := s.service.Execute(t.Context(), "invalid-id")
-
-		require.Error(t, err)
-		assert.ErrorIs(t, err, domain.ErrNoteNotFound)
-	})
+			tc.assertErr(t, err)
+		})
+	}
 }

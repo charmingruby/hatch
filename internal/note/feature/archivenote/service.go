@@ -3,6 +3,7 @@ package archivenote
 import (
 	"HATCH_APP/internal/note/domain"
 	"context"
+	"errors"
 	"fmt"
 )
 
@@ -20,11 +21,11 @@ func (s *Service) Execute(ctx context.Context, id string) error {
 	note, err := s.repo.FindByID(ctx, id)
 
 	if err != nil {
-		return fmt.Errorf("failed to find note: %w", err)
-	}
+		if errors.Is(err, domain.ErrNoteNotFound) {
+			return err
+		}
 
-	if note == nil {
-		return domain.ErrNoteNotFound
+		return fmt.Errorf("failed to find note: %w", err)
 	}
 
 	note.Archive()

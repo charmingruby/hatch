@@ -32,32 +32,52 @@ func Test_Service_Execute(t *testing.T) {
 	title := "Hatch"
 	content := "Template"
 
-	t.Run("should create successfully", func(t *testing.T) {
-		s := setupSuite(t)
+	tests := []struct {
+		arrange func(t *testing.T, s *suite)
+		assert  func(t *testing.T, id string, err error)
+		name    string
+	}{
+		{
+			name: "should create successfully",
+			arrange: func(t *testing.T, s *suite) {
+				s.repo.On("Create", t.Context(), mock.MatchedBy(func(n *domain.Note) bool {
+					return n.Title == title &&
+						n.Content == content
+				})).
+					Return(nil).
+					Once()
+			},
+			assert: func(t *testing.T, id string, err error) {
+				require.NoError(t, err)
+				assert.NotEmpty(t, id)
+			},
+		},
+		{
+			name: "should return error when there is a datasource error",
+			arrange: func(t *testing.T, s *suite) {
+				s.repo.On("Create", mock.Anything, mock.Anything).
+					Return(errors.New("unhealthy repo")).
+					Once()
+			},
+			assert: func(t *testing.T, id string, err error) {
+				assert.Empty(t, id)
+				require.Error(t, err)
+			},
+		},
+	}
 
-		s.repo.On("Create", t.Context(), mock.MatchedBy(func(n *domain.Note) bool {
-			return n.Title == title &&
-				n.Content == content
-		})).
-			Return(nil).
-			Once()
+	for _, tt := range tests {
+		tc := tt
+		t.Run(tc.name, func(t *testing.T) {
+			s := setupSuite(t)
 
-		id, err := s.service.Execute(t.Context(), title, content)
+			if tc.arrange != nil {
+				tc.arrange(t, s)
+			}
 
-		require.NoError(t, err)
-		assert.NotEmpty(t, id)
-	})
+			id, err := s.service.Execute(t.Context(), title, content)
 
-	t.Run("should return error when there is a datasource error", func(t *testing.T) {
-		s := setupSuite(t)
-
-		s.repo.On("Create", mock.Anything, mock.Anything).
-			Return(errors.New("unhealthy repo")).
-			Once()
-
-		id, err := s.service.Execute(t.Context(), title, content)
-
-		assert.Empty(t, id)
-		require.Error(t, err)
-	})
+			tc.assert(t, id, err)
+		})
+	}
 }
