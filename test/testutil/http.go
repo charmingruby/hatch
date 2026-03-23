@@ -40,3 +40,9 @@ func RequestInjection(req *http.Request) *http.Request {
 
 	return req.WithContext(ctx)
 }
+
+func InjectPathParam(req *http.Request, k, v string) *http.Request {
+	req.SetPathValue(k, v)
+
+	return req
+}

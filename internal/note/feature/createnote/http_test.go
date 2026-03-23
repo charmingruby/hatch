@@ -16,12 +16,12 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-type handlerSuite struct {
+type httpSuite struct {
 	repo *postgres.NoteRepository
 	feat *createnote.Feature
 }
 
-func setupHandlerSuite(t *testing.T) *handlerSuite {
+func setupHTTPSuite(t *testing.T) *httpSuite {
 	db, dbTeardown := container.SetupPostgres(t)
 
 	t.Cleanup(func() {
@@ -31,17 +31,17 @@ func setupHandlerSuite(t *testing.T) *handlerSuite {
 	repo, err := postgres.NewNoteRepository(db)
 	require.NoError(t, err)
 
-	return &handlerSuite{
+	return &httpSuite{
 		repo: repo,
 		feat: createnote.New(repo),
 	}
 }
 
-func Test_Handler_Handle(t *testing.T) {
+func TestHTTP(t *testing.T) {
 	tests := []struct {
+		name           string
 		arrange        func(payload createnote.Request) *http.Request
 		checkResponse  func(t *testing.T, body []byte)
-		name           string
 		expectedStatus int
 	}{
 		{
@@ -128,7 +128,7 @@ func Test_Handler_Handle(t *testing.T) {
 	for _, tt := range tests {
 		tc := tt
 		t.Run(tc.name, func(t *testing.T) {
-			s := setupHandlerSuite(t)
+			s := setupHTTPSuite(t)
 
 			payload := createnote.Request{
 				Title:   "Test Note",
@@ -143,7 +143,7 @@ func Test_Handler_Handle(t *testing.T) {
 
 			rec := httptest.NewRecorder()
 
-			s.feat.HTTPHandler(rec, req)
+			s.feat.HTTP(rec, req)
 
 			assert.Equal(t, tc.expectedStatus, rec.Code)
 

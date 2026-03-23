@@ -13,17 +13,17 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-type suite struct {
+type serviceSuite struct {
 	repo    *mocks.NoteRepository
 	service *archivenote.Service
 }
 
-func setupSuite(t *testing.T) *suite {
+func setupSuite(t *testing.T) *serviceSuite {
 	repo := mocks.NewNoteRepository(t)
 
 	service := archivenote.NewService(repo)
 
-	return &suite{
+	return &serviceSuite{
 		repo:    repo,
 		service: service,
 	}
@@ -31,13 +31,13 @@ func setupSuite(t *testing.T) *suite {
 
 func Test_Service_Execute(t *testing.T) {
 	tests := []struct {
-		arrange   func(t *testing.T, s *suite) string
+		arrange   func(t *testing.T, s *serviceSuite) string
 		assertErr func(t *testing.T, err error)
 		name      string
 	}{
 		{
 			name: "should archive successfully",
-			arrange: func(t *testing.T, s *suite) string {
+			arrange: func(t *testing.T, s *serviceSuite) string {
 				n := domain.NewNote("title", "content")
 
 				s.repo.On("FindByID", t.Context(), n.ID).
@@ -61,7 +61,7 @@ func Test_Service_Execute(t *testing.T) {
 		},
 		{
 			name: "should return error when FindByID fails",
-			arrange: func(t *testing.T, s *suite) string {
+			arrange: func(t *testing.T, s *serviceSuite) string {
 				s.repo.On("FindByID", t.Context(), "nonexistent").
 					Return((*domain.Note)(nil), errors.New("repo down")).
 					Once()
@@ -74,7 +74,7 @@ func Test_Service_Execute(t *testing.T) {
 		},
 		{
 			name: "should return error when Save fails",
-			arrange: func(t *testing.T, s *suite) string {
+			arrange: func(t *testing.T, s *serviceSuite) string {
 				n := domain.NewNote("title", "content")
 
 				s.repo.On("FindByID", t.Context(), n.ID).
@@ -93,7 +93,7 @@ func Test_Service_Execute(t *testing.T) {
 		},
 		{
 			name: "should return ErrNoteNotFound when note ID is empty",
-			arrange: func(t *testing.T, s *suite) string {
+			arrange: func(t *testing.T, s *serviceSuite) string {
 				s.repo.On("FindByID", mock.Anything, "invalid-id").
 					Return((*domain.Note)(nil), domain.ErrNoteNotFound).
 					Once()
