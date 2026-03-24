@@ -55,15 +55,16 @@ Routes, event listeners, gRPC services — all explicitly wired. No hidden behav
 
 ### Shared Library (`pkg/`)
 
-Internal library consumed by all modules. Modules import from `pkg/` for cross-cutting concerns — never from other modules.
+Internal library consumed by all modules. Modules import from `pkg/` for cross-cutting concerns — never from other modules. Organize packages as the project grows.
 
 ```
 pkg/
-├── core/          ← Common primitives (ID generation, etc.)
+├── core/          ← Primitives, app errors (apperr/), etc.
 ├── database/      ← Datasource errors and provider connectors
 ├── transport/httpx/ ← HTTP server, request parsing, responses
-├── o11y/          ← Observability (structured logging)
-└── validator/     ← Input validation
+├── o11y/          ← Observability
+├── validator/     ← Input validation
+└── ...
 ```
 
 ### Test Utilities
