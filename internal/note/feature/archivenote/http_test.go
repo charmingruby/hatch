@@ -6,10 +6,9 @@ import (
 	"HATCH_APP/internal/note/infra/database/postgres"
 	"HATCH_APP/pkg/transport/httpx"
 	"HATCH_APP/test/container"
-	"HATCH_APP/test/testutil"
+	"HATCH_APP/test/httptest"
 	"encoding/json"
 	"net/http"
-	"net/http/httptest"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -38,69 +37,54 @@ func setupHTTPSuite(t *testing.T) *httpSuite {
 }
 
 func TestHTTP(t *testing.T) {
+	s := setupHTTPSuite(t)
+	httptest.Init()
+
 	tests := []struct {
-		name           string
-		arrange        func(s *httpSuite) *http.Request
-		expectedStatus int
-		checkResponse  func(t *testing.T, body []byte)
+		name string
+		tc   httptest.Case
 	}{
 		{
 			name: "should archive note successfully",
-			arrange: func(s *httpSuite) *http.Request {
-				note := domain.NewNote("Test Note", "Test Content")
+			tc: httptest.Case{
+				ArrangeRequest: func() *http.Request {
+					note := domain.NewNote("Test Note", "Test Content")
 
-				err := s.repo.Create(t.Context(), note)
-				require.NoError(t, err)
+					err := s.repo.Create(t.Context(), note)
+					require.NoError(t, err)
 
-				req := httptest.NewRequest(http.MethodPatch, "/api/v1/notes/"+note.ID, nil)
-
-				return testutil.InjectPathParam(req, "id", note.ID)
-			},
-			expectedStatus: http.StatusNoContent,
-			checkResponse: func(t *testing.T, body []byte) {
-				assert.Empty(t, body)
+					return httptest.WithParam(
+						httptest.NewRequest(http.MethodPatch, "/api/v1/notes/"+note.ID),
+						"id",
+						note.ID,
+					)
+				},
+				ExpectStatus: http.StatusNoContent,
+				CheckResponse: func(t *testing.T, body []byte) {
+					assert.Empty(t, body)
+				},
 			},
 		},
 		{
 			name: "should return 404 when note not found",
-			arrange: func(s *httpSuite) *http.Request {
-				id := "nonexistent-id"
+			tc: httptest.Case{
+				ExpectStatus: http.StatusNotFound,
+				CheckResponse: func(t *testing.T, body []byte) {
+					var resp httpx.Response
 
-				req := httptest.NewRequest(http.MethodPatch, "/api/v1/notes/"+id, nil)
+					err := json.Unmarshal(body, &resp)
 
-				return testutil.InjectPathParam(req, "id", id)
-			},
-			expectedStatus: http.StatusNotFound,
-			checkResponse: func(t *testing.T, body []byte) {
-				var resp httpx.Response
-
-				err := json.Unmarshal(body, &resp)
-
-				require.NoError(t, err)
-				assert.Contains(t, resp.Message, "note not found")
+					require.NoError(t, err)
+					assert.Contains(t, resp.Message, "note not found")
+				},
 			},
 		},
 	}
 
-	testutil.Init()
-
 	for _, tt := range tests {
 		tc := tt
 		t.Run(tc.name, func(t *testing.T) {
-			s := setupHTTPSuite(t)
-
-			req := tc.arrange(s)
-
-			req = testutil.RequestInjection(req)
-
-			req.Header.Set("Content-Type", "application/json")
-
-			rec := httptest.NewRecorder()
-
-			s.feat.HTTP(rec, req)
-
-			assert.Equal(t, tc.expectedStatus, rec.Code)
-			tc.checkResponse(t, rec.Body.Bytes())
+			httptest.Run(t, s.feat.HTTP, tc.tc)
 		})
 	}
 }

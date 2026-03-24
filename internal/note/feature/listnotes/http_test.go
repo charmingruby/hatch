@@ -5,9 +5,8 @@ import (
 	"HATCH_APP/internal/note/feature/listnotes"
 	"HATCH_APP/internal/note/infra/database/postgres"
 	"HATCH_APP/test/container"
-	"HATCH_APP/test/testutil"
+	"HATCH_APP/test/httptest"
 	"net/http"
-	"net/http/httptest"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -36,67 +35,60 @@ func setupHTTPSuite(t *testing.T) *httpSuite {
 }
 
 func TestHTTP(t *testing.T) {
+	s := setupHTTPSuite(t)
+	httptest.Init()
+
 	tests := []struct {
-		name           string
-		arrange        func(s *httpSuite)
-		expectedStatus int
-		checkResponse  func(t *testing.T, body []byte)
+		tc   httptest.Case
+		name string
 	}{
 		{
-			name: "should list notes successfully",
-			arrange: func(s *httpSuite) {
-				note1 := domain.NewNote("First Note", "First Content")
-				note2 := domain.NewNote("Second Note", "Second Content")
+			name: "should return empty list when no notes exist",
+			tc: httptest.Case{
+				ArrangeRequest: func() *http.Request {
+					return httptest.NewRequest(http.MethodGet, "/api/v1/notes")
+				},
+				ExpectStatus: http.StatusOK,
+				CheckResponse: func(t *testing.T, body []byte) {
+					data, resp, err := httptest.ParseResponse[listnotes.ResponseData](body)
 
-				err := s.repo.Create(t.Context(), note1)
-				require.NoError(t, err)
-
-				err = s.repo.Create(t.Context(), note2)
-				require.NoError(t, err)
-			},
-			expectedStatus: http.StatusOK,
-			checkResponse: func(t *testing.T, body []byte) {
-				data, resp, err := testutil.ParseResponse[listnotes.ResponseData](body)
-
-				require.NoError(t, err)
-				assert.Len(t, data, 2)
-				assert.Equal(t, "2 notes listed", resp.Message)
+					require.NoError(t, err)
+					assert.Empty(t, data)
+					assert.Equal(t, "0 notes listed", resp.Message)
+				},
 			},
 		},
 		{
-			name: "should return empty list when no notes exist",
-			arrange: func(s *httpSuite) {
-			},
-			expectedStatus: http.StatusOK,
-			checkResponse: func(t *testing.T, body []byte) {
-				data, resp, err := testutil.ParseResponse[listnotes.ResponseData](body)
+			name: "should list notes successfully",
+			tc: httptest.Case{
+				ArrangeRequest: func() *http.Request {
+					note1 := domain.NewNote("First Note", "First Content")
+					note2 := domain.NewNote("Second Note", "Second Content")
 
-				require.NoError(t, err)
-				assert.Empty(t, data)
-				assert.Equal(t, "0 notes listed", resp.Message)
+					err := s.repo.Create(t.Context(), note1)
+					require.NoError(t, err)
+
+					err = s.repo.Create(t.Context(), note2)
+					require.NoError(t, err)
+
+					return httptest.NewRequest(http.MethodGet, "/api/v1/notes")
+				},
+				ExpectStatus: http.StatusOK,
+				CheckResponse: func(t *testing.T, body []byte) {
+					data, resp, err := httptest.ParseResponse[listnotes.ResponseData](body)
+
+					require.NoError(t, err)
+					assert.Len(t, data, 2)
+					assert.Equal(t, "2 notes listed", resp.Message)
+				},
 			},
 		},
 	}
 
-	testutil.Init()
-
 	for _, tt := range tests {
 		tc := tt
 		t.Run(tc.name, func(t *testing.T) {
-			s := setupHTTPSuite(t)
-
-			tc.arrange(s)
-
-			req := httptest.NewRequest(http.MethodGet, "/api/v1/notes", nil)
-
-			req = testutil.RequestInjection(req)
-
-			rec := httptest.NewRecorder()
-
-			s.feat.HTTP(rec, req)
-
-			assert.Equal(t, tc.expectedStatus, rec.Code)
-			tc.checkResponse(t, rec.Body.Bytes())
+			httptest.Run(t, s.feat.HTTP, tc.tc)
 		})
 	}
 }

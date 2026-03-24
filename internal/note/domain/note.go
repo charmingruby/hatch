@@ -3,7 +3,7 @@ package domain
 import (
 	"time"
 
-	"HATCH_APP/pkg/id"
+	"HATCH_APP/pkg/core"
 )
 
 type Note struct {
@@ -17,7 +17,7 @@ type Note struct {
 
 func NewNote(title, content string) *Note {
 	return &Note{
-		ID:        id.New(),
+		ID:        core.NewID(),
 		Title:     title,
 		Content:   content,
 		Archived:  false,

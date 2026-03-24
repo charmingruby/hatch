@@ -33,9 +33,9 @@ func TestServiceCreateNote(t *testing.T) {
 	content := "Template"
 
 	tests := []struct {
-		name    string
 		arrange func(t *testing.T, s *serviceSuite)
 		assert  func(t *testing.T, id string, err error)
+		name    string
 	}{
 		{
 			name: "should create successfully",

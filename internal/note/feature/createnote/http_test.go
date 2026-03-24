@@ -5,11 +5,11 @@ import (
 	"HATCH_APP/internal/note/infra/database/postgres"
 	"HATCH_APP/pkg/transport/httpx"
 	"HATCH_APP/test/container"
-	"HATCH_APP/test/testutil"
+	"HATCH_APP/test/httptest"
 	"bytes"
 	"encoding/json"
 	"net/http"
-	"net/http/httptest"
+	stdhttptest "net/http/httptest"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -38,116 +38,119 @@ func setupHTTPSuite(t *testing.T) *httpSuite {
 }
 
 func TestHTTP(t *testing.T) {
+	s := setupHTTPSuite(t)
+	httptest.Init()
+
+	payload := createnote.Request{
+		Title:   "Test Note",
+		Content: "Test Content",
+	}
+
 	tests := []struct {
-		name           string
-		arrange        func(payload createnote.Request) *http.Request
-		checkResponse  func(t *testing.T, body []byte)
-		expectedStatus int
+		tc   httptest.Case
+		name string
 	}{
 		{
 			name: "should create note successfully",
-			arrange: func(payload createnote.Request) *http.Request {
-				body, _ := json.Marshal(payload)
+			tc: httptest.Case{
+				ArrangeRequest: func() *http.Request {
+					body, _ := json.Marshal(payload)
 
-				req := httptest.NewRequest(http.MethodPost, "/api/v1/notes", bytes.NewReader(body))
+					return stdhttptest.NewRequest(http.MethodPost, "/api/v1/notes", bytes.NewReader(body))
+				},
+				Headers: map[string]string{
+					"Content-Type": "application/json",
+				},
+				ExpectStatus: http.StatusCreated,
+				CheckResponse: func(t *testing.T, body []byte) {
+					data, resp, err := httptest.ParseResponse[createnote.ResponseData](body)
 
-				return req
-			},
-			expectedStatus: http.StatusCreated,
-			checkResponse: func(t *testing.T, body []byte) {
-				data, resp, err := testutil.ParseResponse[createnote.ResponseData](body)
-
-				require.NoError(t, err)
-				assert.NotEmpty(t, data.ID)
-				assert.Equal(t, "note created", resp.Message)
+					require.NoError(t, err)
+					assert.NotEmpty(t, data.ID)
+					assert.Equal(t, "note created", resp.Message)
+				},
 			},
 		},
 		{
 			name: "should return 400 when body is invalid json",
-			arrange: func(payload createnote.Request) *http.Request {
-				req := httptest.NewRequest(http.MethodPost, "/api/v1/notes", bytes.NewReader([]byte("invalid json")))
+			tc: httptest.Case{
+				ArrangeRequest: func() *http.Request {
+					return stdhttptest.NewRequest(
+						http.MethodPost,
+						"/api/v1/notes",
+						bytes.NewReader([]byte("invalid json")),
+					)
+				},
+				Headers: map[string]string{
+					"Content-Type": "application/json",
+				},
+				ExpectStatus: http.StatusBadRequest,
+				CheckResponse: func(t *testing.T, body []byte) {
+					var resp httpx.Response
 
-				return req
-			},
-			expectedStatus: http.StatusBadRequest,
-			checkResponse: func(t *testing.T, body []byte) {
-				var resp httpx.Response
+					err := json.Unmarshal(body, &resp)
 
-				err := json.Unmarshal(body, &resp)
-
-				require.NoError(t, err)
-				assert.Contains(t, resp.Message, "invalid payload")
+					require.NoError(t, err)
+					assert.Contains(t, resp.Message, "invalid payload")
+				},
 			},
 		},
 		{
 			name: "should return 400 when title is empty",
-			arrange: func(payload createnote.Request) *http.Request {
-				payload.Title = ""
+			tc: httptest.Case{
+				ArrangeRequest: func() *http.Request {
+					p := payload
+					p.Title = ""
 
-				body, _ := json.Marshal(payload)
+					body, _ := json.Marshal(p)
 
-				req := httptest.NewRequest(http.MethodPost, "/api/v1/notes", bytes.NewReader(body))
+					return stdhttptest.NewRequest(http.MethodPost, "/api/v1/notes", bytes.NewReader(body))
+				},
+				Headers: map[string]string{
+					"Content-Type": "application/json",
+				},
+				ExpectStatus: http.StatusBadRequest,
+				CheckResponse: func(t *testing.T, body []byte) {
+					var resp httpx.Response
 
-				return req
-			},
-			expectedStatus: http.StatusBadRequest,
-			checkResponse: func(t *testing.T, body []byte) {
-				var resp httpx.Response
+					err := json.Unmarshal(body, &resp)
 
-				err := json.Unmarshal(body, &resp)
-
-				require.NoError(t, err)
-				assert.Contains(t, resp.Message, "invalid payload")
+					require.NoError(t, err)
+					assert.Contains(t, resp.Message, "invalid payload")
+				},
 			},
 		},
 		{
 			name: "should return 400 when content is empty",
-			arrange: func(payload createnote.Request) *http.Request {
-				payload.Content = ""
+			tc: httptest.Case{
+				ArrangeRequest: func() *http.Request {
+					p := payload
+					p.Content = ""
 
-				body, _ := json.Marshal(payload)
+					body, _ := json.Marshal(p)
 
-				req := httptest.NewRequest(http.MethodPost, "/api/v1/notes", bytes.NewReader(body))
+					return stdhttptest.NewRequest(http.MethodPost, "/api/v1/notes", bytes.NewReader(body))
+				},
+				Headers: map[string]string{
+					"Content-Type": "application/json",
+				},
+				ExpectStatus: http.StatusBadRequest,
+				CheckResponse: func(t *testing.T, body []byte) {
+					var resp httpx.Response
 
-				return req
-			},
-			expectedStatus: http.StatusBadRequest,
-			checkResponse: func(t *testing.T, body []byte) {
-				var resp httpx.Response
+					err := json.Unmarshal(body, &resp)
 
-				err := json.Unmarshal(body, &resp)
-
-				require.NoError(t, err)
-				assert.Contains(t, resp.Message, "invalid payload")
+					require.NoError(t, err)
+					assert.Contains(t, resp.Message, "invalid payload")
+				},
 			},
 		},
 	}
 
-	testutil.Init()
-
 	for _, tt := range tests {
 		tc := tt
 		t.Run(tc.name, func(t *testing.T) {
-			s := setupHTTPSuite(t)
-
-			payload := createnote.Request{
-				Title:   "Test Note",
-				Content: "Test Content",
-			}
-
-			req := tc.arrange(payload)
-
-			req = testutil.RequestInjection(req)
-
-			req.Header.Set("Content-Type", "application/json")
-
-			rec := httptest.NewRecorder()
-
-			s.feat.HTTP(rec, req)
-
-			assert.Equal(t, tc.expectedStatus, rec.Code)
-
-			tc.checkResponse(t, rec.Body.Bytes())
+			httptest.Run(t, s.feat.HTTP, tc.tc)
 		})
 	}
 }
