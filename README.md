@@ -1,14 +1,6 @@
 # Hatch
 
-A production-ready Go template for building modular, feature-driven applications with explicit, declarative behaviors.
-
----
-
-## Why Hatch?
-
-- **Fast iteration** — Deliver features independently
-- **Declarative features** — Each feature exposes its behavior explicitly
-- **Go-idiomatic** — No magic, just clear Go code
+Feature-driven Go template built on declarative composition. Read a module, see everything it does.
 
 ---
 
@@ -31,7 +23,7 @@ internal/
 
 ### Features
 
-Each feature folder is a small, readable unit. A feature defines its dependencies, exposes its behavior via methods, and owns its tests.
+Each feature is a small, readable unit. A feature defines its dependencies, exposes its behavior via methods, and owns its tests.
 
 ```go
 // feature.go — Constructor and dependency wiring
@@ -42,16 +34,28 @@ func New(repo domain.NoteRepository) *Feature { ... }
 func (f *Feature) HTTP(w http.ResponseWriter, r *http.Request) { ... }
 ```
 
-The module entry point is a single declaration of all communication the module participates in — HTTP routes, event listeners, public API contracts, and anything else:
+**Declarative composition:** The module entry point is a single declaration of all communication the module participates in. Everything the module does is explicitly composed here:
 
 ```go
 createNote := createnote.New(repo)
+listNotes := listnotes.New(repo)
+
+// HTTP
 notes.Post("/", createNote.HTTP)
+notes.Get("/", listNotes.HTTP)
+
+// Event listener
+bus.On("user.created", createNote.OnUserCreated)
+
+// gRPC
+pb.RegisterNoteServiceServer(grpcServer, createNote.GRPC())
 ```
 
-### Shared Packages (`pkg/`)
+Routes, event listeners, gRPC services — all explicitly wired. No hidden behavior, no implicit registration.
 
-An internal library with common functionalities shared across modules. Flat and provider-agnostic:
+### Shared Library (`pkg/`)
+
+Internal library consumed by all modules. Modules import from `pkg/` for cross-cutting concerns — never from other modules.
 
 ```
 pkg/
@@ -62,21 +66,9 @@ pkg/
 └── validator/     ← Input validation
 ```
 
-### Test Infrastructure
+### Test Utilities
 
 Reusable helpers for consistent testing live under `test/`.
-
----
-
-## Principles
-
-1. **Modules own their boundaries** — Each module is self-contained with explicit dependencies
-2. **Features drive delivery** — Ship use cases end-to-end in isolation
-3. **Domain defines contracts** — Interfaces live in the domain, infrastructure implements them
-4. **No magic** — Everything is readable Go; no frameworks, no reflection tricks
-5. **Declarative wiring** — Features expose methods; modules compose them explicitly
-6. **Flat and discoverable** — Structure expresses intent; avoid nesting unless it clarifies
-7. **Test what matters** — Each feature owns its tests with real dependencies where practical
 
 ---
 
