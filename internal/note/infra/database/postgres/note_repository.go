@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"HATCH_APP/internal/note/domain"
-	"HATCH_APP/pkg/database"
+	"HATCH_APP/pkg/database/postgres"
 
 	"github.com/jmoiron/sqlx"
 )
@@ -31,18 +31,18 @@ var noteQueries = map[string]string{
 }
 
 type NoteRepository struct {
-	db    *sqlx.DB
+	db    postgres.Querier
 	stmts map[string]*sqlx.Stmt
 }
 
-func NewNoteRepository(db *sqlx.DB) (*NoteRepository, error) {
+func NewNoteRepository(db postgres.Querier) (*NoteRepository, error) {
 	stmts := make(map[string]*sqlx.Stmt)
 
 	for queryName, statement := range noteQueries {
 		stmt, err := db.Preparex(statement)
 		if err != nil {
 			return nil, fmt.Errorf("%w: failed to prepare query %s for note: %w",
-				database.ErrPostgresQueryPreparation, queryName, err)
+				postgres.ErrQueryPreparation, queryName, err)
 		}
 
 		stmts[queryName] = stmt
@@ -59,7 +59,7 @@ func (r *NoteRepository) statement(queryName string) (*sqlx.Stmt, error) {
 
 	if !ok {
 		return nil, fmt.Errorf("%w: statement %s not prepared for note",
-			database.ErrPostgresQueryPreparation, queryName)
+			postgres.ErrQueryPreparation, queryName)
 	}
 
 	return stmt, nil

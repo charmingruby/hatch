@@ -2,14 +2,14 @@ package container
 
 import (
 	"HATCH_APP/db/migration"
-	"HATCH_APP/pkg/database"
+	"HATCH_APP/pkg/database/postgres"
 	"context"
 	"errors"
 	"testing"
 	"time"
 
 	"github.com/golang-migrate/migrate/v4"
-	"github.com/golang-migrate/migrate/v4/database/postgres"
+	pgMg "github.com/golang-migrate/migrate/v4/database/postgres"
 	"github.com/golang-migrate/migrate/v4/source/iofs"
 	"github.com/jmoiron/sqlx"
 	pg "github.com/testcontainers/testcontainers-go/modules/postgres"
@@ -35,7 +35,7 @@ func SetupPostgres(t *testing.T) (*sqlx.DB, func()) {
 
 	var db *sqlx.DB
 	for range 10 {
-		db, err = database.PostgresConnect(ctx, connStr)
+		db, err = postgres.Connect(ctx, connStr)
 		if err == nil {
 			break
 		}
@@ -66,7 +66,7 @@ func SetupPostgres(t *testing.T) (*sqlx.DB, func()) {
 }
 
 func runMigrations(t *testing.T, db *sqlx.DB) {
-	driver, err := postgres.WithInstance(db.DB, &postgres.Config{})
+	driver, err := pgMg.WithInstance(db.DB, &pgMg.Config{})
 	if err != nil {
 		t.Fatalf("failed to create migration driver: %v", err)
 	}

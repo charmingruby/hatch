@@ -3,7 +3,7 @@ package main
 import (
 	"HATCH_APP/config"
 	"HATCH_APP/internal/note"
-	"HATCH_APP/pkg/database"
+	"HATCH_APP/pkg/database/postgres"
 	"HATCH_APP/pkg/o11y"
 	"HATCH_APP/pkg/transport/httpx"
 	"HATCH_APP/pkg/validator"
@@ -49,7 +49,7 @@ func run() error {
 
 	log.Info("postgres: connecting...")
 
-	db, err := database.PostgresConnect(ctx, cfg.PostgresURL)
+	db, err := postgres.Connect(ctx, cfg.PostgresURL)
 	if err != nil {
 		log.Error("postgres: connection error", "error", err)
 
