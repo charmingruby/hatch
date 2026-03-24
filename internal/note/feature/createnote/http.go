@@ -11,6 +11,11 @@ type Request struct {
 	Content string `json:"content" validate:"required,gt=0"`
 }
 
+type Response struct {
+	Message string       `json:"message"`
+	Data    ResponseData `json:"data"`
+}
+
 type ResponseData struct {
 	ID string `json:"id"`
 }
@@ -38,10 +43,8 @@ func (f *Feature) HTTP(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	httpx.WriteCreatedResponse(w,
-		httpx.Response{
-			Message: "note created",
-			Data:    ResponseData{ID: id},
-		},
-	)
+	httpx.WriteCreatedResponse(w, Response{
+		Message: "note created",
+		Data:    ResponseData{ID: id},
+	})
 }

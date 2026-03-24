@@ -11,9 +11,9 @@ import (
 func (f *Feature) HTTP(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
-	log := o11y.FromContext(ctx).With("feature", "ArchiveNote")
-
 	id := r.PathValue("id")
+
+	log := o11y.FromContext(ctx).With("feature", "ArchiveNote")
 	log = log.With("note_id", id)
 
 	if err := f.service.ArchiveNote(ctx, id); err != nil {
@@ -21,7 +21,7 @@ func (f *Feature) HTTP(w http.ResponseWriter, r *http.Request) {
 		case errors.Is(err, domain.ErrNoteNotFound):
 			log.WarnContext(ctx, "note not found", "error", err)
 
-			httpx.WriteNotFoundResponse(w, httpx.Response{
+			httpx.WriteNotFoundResponse(w, httpx.ErrorResponse{
 				Message: "note not found",
 			})
 

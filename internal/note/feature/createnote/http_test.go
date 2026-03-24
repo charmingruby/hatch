@@ -63,10 +63,10 @@ func TestHTTP(t *testing.T) {
 				},
 				ExpectStatus: http.StatusCreated,
 				CheckResponse: func(t *testing.T, body []byte) {
-					data, resp, err := httptest.ParseResponse[createnote.ResponseData](body)
+					resp, err := httptest.ParseResponse[createnote.Response](body)
 
 					require.NoError(t, err)
-					assert.NotEmpty(t, data.ID)
+					assert.NotEmpty(t, resp.Data.ID)
 					assert.Equal(t, "note created", resp.Message)
 				},
 			},
@@ -86,9 +86,7 @@ func TestHTTP(t *testing.T) {
 				},
 				ExpectStatus: http.StatusBadRequest,
 				CheckResponse: func(t *testing.T, body []byte) {
-					var resp httpx.Response
-
-					err := json.Unmarshal(body, &resp)
+					resp, err := httptest.ParseResponse[httpx.ErrorResponse](body)
 
 					require.NoError(t, err)
 					assert.Contains(t, resp.Message, "invalid payload")
@@ -111,9 +109,7 @@ func TestHTTP(t *testing.T) {
 				},
 				ExpectStatus: http.StatusBadRequest,
 				CheckResponse: func(t *testing.T, body []byte) {
-					var resp httpx.Response
-
-					err := json.Unmarshal(body, &resp)
+					resp, err := httptest.ParseResponse[httpx.ErrorResponse](body)
 
 					require.NoError(t, err)
 					assert.Contains(t, resp.Message, "invalid payload")
@@ -136,9 +132,7 @@ func TestHTTP(t *testing.T) {
 				},
 				ExpectStatus: http.StatusBadRequest,
 				CheckResponse: func(t *testing.T, body []byte) {
-					var resp httpx.Response
-
-					err := json.Unmarshal(body, &resp)
+					resp, err := httptest.ParseResponse[httpx.ErrorResponse](body)
 
 					require.NoError(t, err)
 					assert.Contains(t, resp.Message, "invalid payload")

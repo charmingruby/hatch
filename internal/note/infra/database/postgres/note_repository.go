@@ -19,17 +19,15 @@ const (
 	saveNote     = "save note"
 )
 
-func noteQueries() map[string]string {
-	return map[string]string{
-		createNote: `INSERT INTO notes
-			(id, title, content, archived, created_at, updated_at)
-			VALUES ($1, $2, $3, $4, $5, $6)`,
-		findNoteByID: `SELECT * FROM notes WHERE id = $1`,
-		listNotes:    `SELECT * FROM notes`,
-		saveNote: `UPDATE notes
-			SET archived = $1, updated_at = $2
-			WHERE id = $3`,
-	}
+var noteQueries = map[string]string{
+	createNote: `INSERT INTO notes
+		(id, title, content, archived, created_at, updated_at)
+		VALUES ($1, $2, $3, $4, $5, $6)`,
+	findNoteByID: `SELECT * FROM notes WHERE id = $1`,
+	listNotes:    `SELECT * FROM notes`,
+	saveNote: `UPDATE notes
+		SET archived = $1, updated_at = $2
+		WHERE id = $3`,
 }
 
 type NoteRepository struct {
@@ -40,7 +38,7 @@ type NoteRepository struct {
 func NewNoteRepository(db *sqlx.DB) (*NoteRepository, error) {
 	stmts := make(map[string]*sqlx.Stmt)
 
-	for queryName, statement := range noteQueries() {
+	for queryName, statement := range noteQueries {
 		stmt, err := db.Preparex(statement)
 		if err != nil {
 			return nil, fmt.Errorf("%w: failed to prepare query %s for note: %w",

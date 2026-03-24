@@ -50,10 +50,10 @@ func TestHTTP(t *testing.T) {
 				},
 				ExpectStatus: http.StatusOK,
 				CheckResponse: func(t *testing.T, body []byte) {
-					data, resp, err := httptest.ParseResponse[listnotes.ResponseData](body)
+					resp, err := httptest.ParseResponse[listnotes.Response](body)
 
 					require.NoError(t, err)
-					assert.Empty(t, data)
+					assert.Empty(t, resp.Data)
 					assert.Equal(t, "0 notes listed", resp.Message)
 				},
 			},
@@ -75,10 +75,10 @@ func TestHTTP(t *testing.T) {
 				},
 				ExpectStatus: http.StatusOK,
 				CheckResponse: func(t *testing.T, body []byte) {
-					data, resp, err := httptest.ParseResponse[listnotes.ResponseData](body)
+					resp, err := httptest.ParseResponse[listnotes.Response](body)
 
 					require.NoError(t, err)
-					assert.Len(t, data, 2)
+					assert.Len(t, resp.Data, 2)
 					assert.Equal(t, "2 notes listed", resp.Message)
 				},
 			},

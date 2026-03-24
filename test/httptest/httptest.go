@@ -2,7 +2,6 @@ package httptest
 
 import (
 	"HATCH_APP/pkg/o11y"
-	"HATCH_APP/pkg/transport/httpx"
 	"HATCH_APP/pkg/validator"
 	"context"
 	"encoding/json"
@@ -54,28 +53,12 @@ func Init() {
 	o11y.Init()
 }
 
-func ParseResponse[T any](body []byte) (T, httpx.Response, error) {
-	var raw httpx.Response
+func ParseResponse[T any](body []byte) (T, error) {
+	var v T
 
-	err := json.Unmarshal(body, &raw)
-	if err != nil {
-		var zero T
+	err := json.Unmarshal(body, &v)
 
-		return zero, httpx.Response{}, err
-	}
-
-	data, err := json.Marshal(raw.Data)
-	if err != nil {
-		var zero T
-
-		return zero, raw, err
-	}
-
-	var typed T
-
-	err = json.Unmarshal(data, &typed)
-
-	return typed, raw, err
+	return v, err
 }
 
 func WithParam(req *http.Request, k, v string) *http.Request {

@@ -8,7 +8,10 @@ import (
 	"net/http"
 )
 
-type ResponseData []*domain.Note
+type Response struct {
+	Message string         `json:"message"`
+	Data    []*domain.Note `json:"data"`
+}
 
 func (f *Feature) HTTP(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
@@ -26,11 +29,8 @@ func (f *Feature) HTTP(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	httpx.WriteOKResponse(
-		w,
-		httpx.Response{
-			Message: fmt.Sprintf("%d notes listed", len(notes)),
-			Data:    notes,
-		},
-	)
+	httpx.WriteOKResponse(w, Response{
+		Message: fmt.Sprintf("%d notes listed", len(notes)),
+		Data:    notes,
+	})
 }

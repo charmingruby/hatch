@@ -7,7 +7,6 @@ import (
 	"HATCH_APP/pkg/transport/httpx"
 	"HATCH_APP/test/container"
 	"HATCH_APP/test/httptest"
-	"encoding/json"
 	"net/http"
 	"testing"
 
@@ -70,12 +69,10 @@ func TestHTTP(t *testing.T) {
 			tc: httptest.Case{
 				ExpectStatus: http.StatusNotFound,
 				CheckResponse: func(t *testing.T, body []byte) {
-					var resp httpx.Response
-
-					err := json.Unmarshal(body, &resp)
+					resp, err := httptest.ParseResponse[httpx.ErrorResponse](body)
 
 					require.NoError(t, err)
-					assert.Contains(t, resp.Message, "note not found")
+					assert.Equal(t, "note not found", resp.Message)
 				},
 			},
 		},
