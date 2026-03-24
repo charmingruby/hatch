@@ -21,7 +21,9 @@ func registerProbes(r *chi.Mux, ext External) {
 
 func livenessRoute() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		WriteOKResponse(w, "healthy", nil)
+		WriteOKResponse(w, Response{
+			Message: "healthy",
+		})
 	}
 }
 
@@ -37,10 +39,15 @@ func readinessRoute(ext External) http.HandlerFunc {
 		if err := ext.DB.PingContext(ctx); err != nil {
 			log.ErrorContext(ctx, "endpoint/Readiness: database error", "error", err)
 
-			WriteServiceUnavailableResponse(w, "database")
+			WriteServiceUnavailableResponse(w, Response{
+				Message: "database is unavailable",
+			})
+
 			return
 		}
 
-		WriteOKResponse(w, "ready", nil)
+		WriteOKResponse(w, Response{
+			Message: "ready",
+		})
 	}
 }

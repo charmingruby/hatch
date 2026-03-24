@@ -5,65 +5,47 @@ import (
 	"net/http"
 )
 
-type response struct {
+type Response struct {
 	Data    any    `json:"data,omitempty"`
 	Message string `json:"message,omitempty"`
 }
 
-func WriteOKResponse(w http.ResponseWriter, msg string, data any) {
-	writeResponse(w, http.StatusOK, response{
-		Message: msg,
-		Data:    data,
-	})
+func WriteOKResponse(w http.ResponseWriter, r Response) {
+	writeResponse(w, http.StatusOK, r)
 }
 
-func WriteCreatedResponse(w http.ResponseWriter, msg string, data any) {
-	writeResponse(w, http.StatusCreated, response{
-		Message: msg,
-		Data:    data,
-	})
+func WriteCreatedResponse(w http.ResponseWriter, r Response) {
+	writeResponse(w, http.StatusCreated, r)
 }
 
-func WriteBadRequestResponse(w http.ResponseWriter, msg string) {
-	writeResponse(w, http.StatusBadRequest, response{
-		Message: msg,
-		Data:    nil,
-	})
+func WriteBadRequestResponse(w http.ResponseWriter, r Response) {
+	writeResponse(w, http.StatusBadRequest, r)
 }
 
-func WriteNotFoundResponse(w http.ResponseWriter, msg string) {
-	writeResponse(w, http.StatusNotFound, response{
-		Message: msg,
-		Data:    nil,
-	})
+func WriteNotFoundResponse(w http.ResponseWriter, r Response) {
+	writeResponse(w, http.StatusNotFound, r)
 }
 
-func WriteServiceUnavailableResponse(w http.ResponseWriter, msg string) {
-	writeResponse(w, http.StatusServiceUnavailable, response{
-		Message: msg,
-		Data:    nil,
-	})
+func WriteServiceUnavailableResponse(w http.ResponseWriter, r Response) {
+	writeResponse(w, http.StatusServiceUnavailable, r)
 }
 
-func WriteConflictResponse(w http.ResponseWriter, msg string) {
-	writeResponse(w, http.StatusInternalServerError, response{
-		Message: msg,
-		Data:    nil,
-	})
+func WriteConflictResponse(w http.ResponseWriter, r Response) {
+	writeResponse(w, http.StatusInternalServerError, r)
 }
 
 func WriteInternalServerErrorResponse(w http.ResponseWriter) {
-	writeResponse(w, http.StatusInternalServerError, response{
+	writeResponse(w, http.StatusInternalServerError, Response{
 		Message: "Internal Server Error",
 		Data:    nil,
 	})
 }
 
 func WriteEmptyResponse(w http.ResponseWriter) {
-	writeResponse(w, http.StatusNoContent, response{})
+	writeResponse(w, http.StatusNoContent, Response{})
 }
 
-func writeResponse(w http.ResponseWriter, status int, r response) {
+func writeResponse(w http.ResponseWriter, status int, r Response) {
 	if r.Message == "" && r.Data == nil {
 		w.WriteHeader(status)
 		return

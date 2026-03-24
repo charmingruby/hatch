@@ -1,7 +1,7 @@
-package id
+package core
 
 import "github.com/oklog/ulid/v2"
 
-func New() string {
+func NewID() string {
 	return ulid.Make().String()
 }

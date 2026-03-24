@@ -27,7 +27,7 @@ func setupSuite(t *testing.T) *suite {
 	}
 }
 
-func Test_Service_Execute(t *testing.T) {
+func TestServiceListNotes(t *testing.T) {
 	tests := []struct {
 		arrange func(t *testing.T, s *suite)
 		assert  func(t *testing.T, notes []*domain.Note, err error)
@@ -75,7 +75,7 @@ func Test_Service_Execute(t *testing.T) {
 				tc.arrange(t, s)
 			}
 
-			notes, err := s.service.Execute(t.Context())
+			notes, err := s.service.ListNotes(t.Context())
 
 			tc.assert(t, notes, err)
 		})
