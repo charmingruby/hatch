@@ -20,13 +20,8 @@ func (f *Feature) HTTP(w http.ResponseWriter, r *http.Request) {
 
 	notes, err := f.service.ListNotes(ctx)
 	if err != nil {
-		//nolint:gocritic // keep single-case switch for consistency with other handlers and declarative behaviours.
-		switch {
-		default:
-			log.ErrorContext(ctx, "execute list notes failed", "error", err)
-			httpx.WriteInternalServerErrorResponse(w)
-			return
-		}
+		httpx.WriteError(log, w, err)
+		return
 	}
 
 	httpx.WriteOKResponse(w, Response{

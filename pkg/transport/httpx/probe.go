@@ -37,7 +37,7 @@ func readinessRoute(ext External) http.HandlerFunc {
 		if err := ext.DB.PingContext(ctx); err != nil {
 			log.ErrorContext(ctx, "endpoint/Readiness: database error", "error", err)
 
-			WriteServiceUnavailableResponse(w, map[string]string{"message": "database is unavailable"})
+			writeResponse(w, http.StatusServiceUnavailable, map[string]string{"message": "database is unavailable"})
 
 			return
 		}

@@ -4,6 +4,7 @@ import (
 	"HATCH_APP/internal/note/domain"
 	"HATCH_APP/internal/note/feature/archivenote"
 	"HATCH_APP/internal/note/mocks"
+	"HATCH_APP/pkg/core/apperr"
 	"errors"
 	"testing"
 	"time"
@@ -92,17 +93,17 @@ func TestServiceArchiveNote(t *testing.T) {
 			},
 		},
 		{
-			name: "should return ErrNoteNotFound when note ID is empty",
+			name: "should return not found when note does not exist",
 			arrange: func(t *testing.T, s *serviceSuite) string {
 				s.repo.On("FindByID", mock.Anything, "invalid-id").
-					Return((*domain.Note)(nil), domain.ErrNoteNotFound).
+					Return((*domain.Note)(nil), nil).
 					Once()
 
 				return "invalid-id"
 			},
 			assertErr: func(t *testing.T, err error) {
 				require.Error(t, err)
-				assert.ErrorIs(t, err, domain.ErrNoteNotFound)
+				assert.True(t, apperr.IsNotFound(err))
 			},
 		},
 	}

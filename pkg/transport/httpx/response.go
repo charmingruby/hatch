@@ -1,12 +1,17 @@
 package httpx
 
 import (
+	"HATCH_APP/pkg/core/apperr"
 	"encoding/json"
+	"errors"
+	"log/slog"
 	"net/http"
 )
 
 type ErrorResponse struct {
+	Details any    `json:"details,omitempty"`
 	Message string `json:"message"`
+	Code    string `json:"code,omitempty"`
 }
 
 func WriteOKResponse(w http.ResponseWriter, v any) {
@@ -17,30 +22,23 @@ func WriteCreatedResponse(w http.ResponseWriter, v any) {
 	writeResponse(w, http.StatusCreated, v)
 }
 
-func WriteBadRequestResponse(w http.ResponseWriter, v any) {
-	writeResponse(w, http.StatusBadRequest, v)
+func WriteEmptyResponse(w http.ResponseWriter) {
+	w.WriteHeader(http.StatusNoContent)
 }
 
-func WriteNotFoundResponse(w http.ResponseWriter, v any) {
-	writeResponse(w, http.StatusNotFound, v)
-}
+func WriteError(log *slog.Logger, w http.ResponseWriter, err error) {
+	if appErr, ok := errors.AsType[*apperr.Error](err); ok {
+		log.Warn("application error", "type", appErr.Type, "code", appErr.Code, "message", appErr.Message)
 
-func WriteServiceUnavailableResponse(w http.ResponseWriter, v any) {
-	writeResponse(w, http.StatusServiceUnavailable, v)
-}
+		writeAppError(w, appErr)
+		return
+	}
 
-func WriteConflictResponse(w http.ResponseWriter, v any) {
-	writeResponse(w, http.StatusConflict, v)
-}
+	log.Error("internal server error", "error", err)
 
-func WriteInternalServerErrorResponse(w http.ResponseWriter) {
 	writeResponse(w, http.StatusInternalServerError, ErrorResponse{
 		Message: "Internal Server Error",
 	})
-}
-
-func WriteEmptyResponse(w http.ResponseWriter) {
-	w.WriteHeader(http.StatusNoContent)
 }
 
 func writeResponse(w http.ResponseWriter, status int, v any) {
@@ -59,4 +57,27 @@ func writeResponse(w http.ResponseWriter, status int, v any) {
 
 	w.WriteHeader(status)
 	_, _ = w.Write(body)
+}
+
+func writeAppError(w http.ResponseWriter, err *apperr.Error) {
+	status := mapStatus(err.Type)
+
+	writeResponse(w, status, ErrorResponse{
+		Message: err.Message,
+		Code:    err.Code,
+		Details: err.Details,
+	})
+}
+
+func mapStatus(t apperr.ErrorType) int {
+	switch t {
+	case apperr.TypeNotFound:
+		return http.StatusNotFound
+	case apperr.TypeValidation:
+		return http.StatusBadRequest
+	case apperr.TypeConflict:
+		return http.StatusConflict
+	default:
+		return http.StatusInternalServerError
+	}
 }

@@ -106,7 +106,7 @@ func (r *NoteRepository) FindByID(ctx context.Context, id string) (*domain.Note,
 		&note.UpdatedAt,
 	); err != nil {
 		if err == sql.ErrNoRows {
-			return nil, domain.ErrNoteNotFound
+			return nil, nil
 		}
 
 		return nil, err

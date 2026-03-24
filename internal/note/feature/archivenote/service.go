@@ -2,9 +2,8 @@ package archivenote
 
 import (
 	"HATCH_APP/internal/note/domain"
+	"HATCH_APP/pkg/core/apperr"
 	"context"
-	"errors"
-	"fmt"
 )
 
 type Service struct {
@@ -21,17 +20,17 @@ func (s *Service) ArchiveNote(ctx context.Context, id string) error {
 	note, err := s.repo.FindByID(ctx, id)
 
 	if err != nil {
-		if errors.Is(err, domain.ErrNoteNotFound) {
-			return err
-		}
+		return apperr.Internal("failed to find note", err)
+	}
 
-		return fmt.Errorf("failed to find note: %w", err)
+	if note == nil {
+		return apperr.NotFound("note not found")
 	}
 
 	note.Archive()
 
 	if err := s.repo.Save(ctx, note); err != nil {
-		return fmt.Errorf("failed to save note: %w", err)
+		return apperr.Internal("failed to save note", err)
 	}
 
 	return nil

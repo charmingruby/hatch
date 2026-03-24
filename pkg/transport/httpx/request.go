@@ -14,7 +14,7 @@ func ParseRequest[T any](w http.ResponseWriter, r *http.Request) (*T, error) {
 	var obj T
 
 	if err := json.NewDecoder(r.Body).Decode(&obj); err != nil {
-		WriteBadRequestResponse(w, map[string]string{
+		writeResponse(w, http.StatusBadRequest, map[string]string{
 			"message": fmt.Sprintf("%s: %s", ErrInvalidPayload.Error(), err.Error()),
 		})
 
@@ -24,7 +24,7 @@ func ParseRequest[T any](w http.ResponseWriter, r *http.Request) (*T, error) {
 	val := validator.FromContext(r.Context())
 
 	if err := val.Validate(obj); err != nil {
-		WriteBadRequestResponse(w, map[string]string{
+		writeResponse(w, http.StatusBadRequest, map[string]string{
 			"message": fmt.Sprintf("%s: %s", ErrInvalidPayload.Error(), err.Error()),
 		})
 
