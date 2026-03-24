@@ -1,160 +1,101 @@
 # Hatch
 
-Hatch is a pragmatic Go project template designed for rapid feature development with explicit, declarative behaviors. Modular, decoupled, and production-ready.
+A production-ready Go template for building modular, feature-driven applications with explicit, declarative behaviors.
 
 ---
 
 ## Why Hatch?
 
-- ✅ **Fast iteration** – Deliver features independently and incrementally
-- ✅ **Declarative features** – Handlers/listeners are described explicitly for effortless wiring
-- ✅ **Go-idiomatic** – Simple, explicit, and dependency-free
-
-> Hatch ships a complete vertical-slice stack meant to scale products and complex contexts with clear boundaries and opinionated workflows. If your problem is simpler, doesn’t demand this much ceremony, or you prefer to dial structure in later, consider [F-Hatch](https://github.com/charmingruby/f-hatch) for a flatter starter.
+- **Fast iteration** — Deliver features independently
+- **Declarative features** — Each feature exposes its behavior explicitly
+- **Go-idiomatic** — No magic, just clear Go code
 
 ---
 
 ## Architecture
 
-Hatch follows the Vertical Slice Architecture, where each feature is a self-contained unit that owns its domain logic, use cases, and infrastructure.
+Hatch uses **Vertical Slice Architecture**. Each feature is a self-contained unit that owns its domain logic, use cases, and infrastructure — all within the same bounded context.
 
-This approach enables fast delivery, clear boundaries, and an explicit map of behaviors as the domain evolves.
-
-### Module Organization
-
-Each module lives under `internal/` and follows a consistent vertical-slice layout:
-domain logic, features, and infrastructure are grouped inside the same bounded context.
-When a module's domain is very small, you can dial the ceremony down further and organize it using a package-by-slice layout (handlers, services, and domain objects co-located inside a single package) while still keeping the module boundary and declarative wiring intact.
-
-```text
+```
 internal/
-├── note/
-│   ├── domain/
-│   │   ├── note_repository.go
-│   │   └── note.go
-│   ├── feature/
-│   │   ├── archivenote/
-│   │   │   ├── handler.go
-│   │   │   ├── service.go
-│   │   │   ├── service_test.go
-│   │   │   └── feature.go
-│   │   ├── createnote/
-│   │   │   ├── handler.go
-│   │   │   ├── service.go
-│   │   │   ├── service_test.go
-│   │   │   └── feature.go
-│   │   └── listnotes/
-│   │       ├── handler.go
-│   │       ├── service.go
-│   │       ├── service_test.go
-│   │       └── feature.go
-│   ├── infra/
-│   │   └── db/
-│   │       └── postgres/
-│   │           ├── note_query.go
-│   │           └── note_repository.go
-│   ├── mocks/
-│   │   ├── NoteRepository.go
-│   │   └── UseCase.go
-│   └── note.go ← Defines module behavior and interface layer
+└── note/
+    ├── note.go              ← Module entry: declares all transports, listeners, and public contracts
+    ├── domain/              ← Entities, value objects, repository contracts
+    ├── feature/             ← One folder per use case
+    │   ├── createnote/
+    │   ├── archivenote/
+    │   └── listnotes/
+    ├── infra/               ← Persistence, external integrations
+    └── mocks/               ← Test doubles for interfaces
 ```
 
-**Structure overview:**
+### Features
 
-- **`{MODULE_NAME}.go`** → Defines module behavior and interface layer (HTTP, gRPC, CLI, etc)
-- **`domain/`** → Entities, value objects, interfaces, and domain rules
-- **`feature/`** → Independent use cases (each subfolder = one use case; files inside use role-based names like `handler.go`, `service.go`, `service_test.go`, and `feature.go`)
-- **`infra/`** → Persistence, messaging, or external integrations
-- **`mocks/`** → Generated test doubles for interfaces
-
-### Declarative features
-
-Think of each feature folder as a small declaration of behavior. It states which dependencies it needs, which transports it exposes, and which background jobs or listeners it runs. Everything stays in plain Go so you can read a feature and instantly know what it does.
-
-**Route-only feature (pure HTTP):** mirrors `internal/note/feature/createnote/feature.go`. The function name is the declaration: “This feature provides an HTTP handler for creating notes.”
+Each feature folder is a small, readable unit. A feature defines its dependencies, exposes its behavior via methods, and owns its tests.
 
 ```go
-func Route(repo domain.NoteRepository) http.HandlerFunc {
-    service := NewService(repo)
-    handler := NewHandler(service)
-    return handler
-}
+// feature.go — Constructor and dependency wiring
+type Feature struct { service *Service }
+func New(repo domain.NoteRepository) *Feature { ... }
+
+// http.go — Exposes HTTP behavior
+func (f *Feature) HTTP(w http.ResponseWriter, r *http.Request) { ... }
 ```
 
-From module code you can read `notes.Post("/", createnote.Route(repo))` and understand the behavior without opening other files.
-
-**Feature exporting multiple behaviors:** when the same use case must also emit/consume events, cron jobs, etc., just expose more functions. Each export describes one capability, and everything still returns native Go types.
+The module entry point is a single declaration of all communication the module participates in — HTTP routes, event listeners, public API contracts, and anything else:
 
 ```go
-// Declarative: "this feature serves HTTP"
-func Route(repo domain.NoteRepository, bus eventbus.Bus) http.HandlerFunc {
-    svc := NewService(repo, bus)
-    return NewHandler(svc)
-}
-
-// Declarative: "this feature listens to events"
-func Listener(repo domain.NoteRepository, bus eventbus.Bus) eventbus.Listener {
-    svc := NewService(repo, bus)
-    return eventbus.Listener{
-        Event: "note.created",
-        Handle: func(ctx context.Context, payload any) error {
-            return svc.HandleEvent(ctx, payload)
-        },
-    }
-}
+createNote := createnote.New(repo)
+notes.Post("/", createNote.HTTP)
 ```
 
-`internal/{module}/module.go` stays simple and declarative: call whichever functions a feature exposes, mount routes on the HTTP router, and register listeners on the event bus. There is no framework magic—just reading Go functions to understand the module’s behavior map.
+### Shared Packages (`pkg/`)
 
-### Shared Packages
+An internal library with common functionalities shared across modules. Flat and provider-agnostic:
 
-Infrastructure helpers live under `pkg/`. The database helpers are intentionally flat so each provider ships in a single Go file that owns its own connection logic and error values:
-
-```text
+```
 pkg/
-├── database/
-│   ├── error.go           ← Common datasource errors
-│   └── postgres.go        ← Provider-specific connect helpers + sentinels
-├── http/
-├── id/
-├── o11y/
-└── validator/
+├── core/          ← Common primitives (ID generation, etc.)
+├── database/      ← Datasource errors and provider connectors
+├── transport/httpx/ ← HTTP server, request parsing, responses
+├── o11y/          ← Observability (structured logging)
+└── validator/     ← Input validation
 ```
 
-Add new providers by dropping another `<provider>.go` beside `postgres.go`; avoid nested directories so all database concerns stay discoverable at a glance.
+### Test Infrastructure
+
+Reusable helpers for consistent testing live under `test/`.
 
 ---
 
 ## Principles
 
-- **Modular by default** – Each module owns its boundaries and dependencies explicitly
-- **Feature-driven** – Deliver use cases end-to-end in isolation
-- **Dependency inversion** – Domain defines interfaces, infrastructure implements them
-- **Explicit over magical** – No hidden frameworks, just clear Go code
-- **Declarative behaviors** – Features expose explicit functions for every handler/listener they own
-- **Intent-revealing structure** – Folder names express business purpose
-- **Simplicity first** – Add layers only when complexity demands it
+1. **Modules own their boundaries** — Each module is self-contained with explicit dependencies
+2. **Features drive delivery** — Ship use cases end-to-end in isolation
+3. **Domain defines contracts** — Interfaces live in the domain, infrastructure implements them
+4. **No magic** — Everything is readable Go; no frameworks, no reflection tricks
+5. **Declarative wiring** — Features expose methods; modules compose them explicitly
+6. **Flat and discoverable** — Structure expresses intent; avoid nesting unless it clarifies
+7. **Test what matters** — Each feature owns its tests with real dependencies where practical
 
 ---
 
 ## Cross-Module Communication
 
-When a bounded context needs to expose functionality to other modules, the simplest approach is to create a minimal public API (facade) that exports only what is strictly necessary.
+Modules expose a minimal facade when other bounded contexts need access. The facade protects internals and keeps coupling low.
 
-```text
+```
 internal/
 ├── note/
-│   ├── note.go                ← Public facade: exports minimal API for other modules
+│   ├── note.go          ← Public facade
 │   ├── domain/
 │   ├── feature/
 │   └── infra/
 ```
 
-**Guidelines:**
-
-- **Minimal surface** – Export only what other modules actually need
-- **Stable contracts** – The facade acts as a stable boundary, protecting internal changes
-- **Explicit dependencies** – Consumers depend on the facade, not on internal implementation
+- **Minimal surface** — Export only what's strictly needed
+- **Stable contracts** — The facade shields internal changes
+- **Explicit dependencies** — Consumers depend on the facade, not on internals
 
 ---
 

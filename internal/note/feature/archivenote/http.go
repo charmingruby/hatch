@@ -22,7 +22,7 @@ func (f *Feature) HTTP(w http.ResponseWriter, r *http.Request) {
 			log.WarnContext(ctx, "note not found", "error", err)
 
 			httpx.WriteNotFoundResponse(w, httpx.Response{
-				Message: err.Error(),
+				Message: "note not found",
 			})
 
 			return
