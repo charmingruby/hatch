@@ -37,7 +37,7 @@ func setupHTTPSuite(t *testing.T) *httpSuite {
 	}
 }
 
-func TestHTTP(t *testing.T) {
+func TestCreateNoteEndpoint(t *testing.T) {
 	s := setupHTTPSuite(t)
 	httptest.Init()
 
@@ -144,7 +144,7 @@ func TestHTTP(t *testing.T) {
 	for _, tt := range tests {
 		tc := tt
 		t.Run(tc.name, func(t *testing.T) {
-			httptest.Run(t, s.feat.HTTP, tc.tc)
+			httptest.Run(t, s.feat.CreateNoteEndpoint, tc.tc)
 		})
 	}
 }

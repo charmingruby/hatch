@@ -6,7 +6,7 @@ import (
 	"net/http"
 )
 
-func (f *Feature) HTTP(w http.ResponseWriter, r *http.Request) {
+func (f *Feature) ArchiveNoteEndpoint(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	id := r.PathValue("id")

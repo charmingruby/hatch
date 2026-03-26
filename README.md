@@ -31,24 +31,52 @@ type Feature struct { service *Service }
 func New(repo domain.NoteRepository) *Feature { ... }
 
 // http.go — Exposes HTTP behavior
-func (f *Feature) HTTP(w http.ResponseWriter, r *http.Request) { ... }
+func (f *Feature) XPTOEndpoint(w http.ResponseWriter, r *http.Request) { ... }
 ```
 
 **Declarative composition:** The module entry point is a single declaration of all communication the module participates in. Everything the module does is explicitly composed here:
 
 ```go
-createNote := createnote.New(repo)
-listNotes := listnotes.New(repo)
+createNoteF := createnote.New(repo)
+listNotesF := listnotes.New(repo)
 
 // HTTP
-notes.Post("/", createNote.HTTP)
-notes.Get("/", listNotes.HTTP)
+notes.Post("/", createNoteF.CreateNoteEndpoint)
+notes.Get("/", listNotesF.ListNotesEndpoint)
 
 // Event listener
-bus.On("user.created", createNote.OnUserCreated)
+bus.On("user.created", createNoteF.OnUserCreated)
 
 // gRPC
-pb.RegisterNoteServiceServer(grpcServer, createNote.GRPC())
+gRPCHandler := &gRPCHandler{
+	createNote: createNoteF,
+	listNotes: listNotesF,
+	archiveNote: archiveNoteF,
+}
+ 
+pb.RegisterNoteServiceServer(grpcServer, gRPCHandler)
+
+// ...
+
+type gRPCHandler struct {
+	pb.UnimplementedNoteServiceServer
+
+	createNote  *createnote.Feature
+	listNotes   *listnotes.Feature
+	archiveNote *archivenote.Feature
+}
+
+func (s *gRPCHandler) CreateNote(ctx context.Context, req *pb.CreateNoteRequest) (*pb.CreateNoteResponse, error) {
+	return s.createNote.CreateNote(ctx, req)
+}
+
+func (s *gRPCHandler) ListNotes(ctx context.Context, req *pb.ListNotesRequest) (*pb.ListNotesResponse, error) {
+	return s.listNotes.ListNotes(ctx, req)
+}
+
+func (s *gRPCHandler) ArchiveNote(ctx context.Context, req *pb.ArchiveNoteRequest) (*pb.ArchiveNoteResponse, error) {
+	return s.archiveNote.ArchiveNote(ctx, req)
+}
 ```
 
 Routes, event listeners, gRPC services — all explicitly wired. No hidden behavior, no implicit registration.

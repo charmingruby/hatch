@@ -20,7 +20,7 @@ type ResponseData struct {
 	ID string `json:"id"`
 }
 
-func (f *Feature) HTTP(w http.ResponseWriter, r *http.Request) {
+func (f *Feature) CreateNoteEndpoint(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	log := o11y.FromContext(ctx).With("feature", "CreateNote")
