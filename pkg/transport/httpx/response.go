@@ -77,6 +77,8 @@ func mapStatus(t apperr.ErrorType) int {
 		return http.StatusBadRequest
 	case apperr.TypeConflict:
 		return http.StatusConflict
+	case apperr.TypeInvalidOperation:
+		return http.StatusBadRequest
 	default:
 		return http.StatusInternalServerError
 	}

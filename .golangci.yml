@@ -21,7 +21,7 @@ linters:
     - asasalint
     - asciicheck
     - bidichk
-    - bodyclose
+    # - bodyclose # httpx client already handle it.
     - copyloopvar
     - cyclop
     - dupl

@@ -9,7 +9,6 @@ import (
 	"io"
 	"net/http"
 	"net/url"
-	"strings"
 	"time"
 )
 
@@ -32,19 +31,18 @@ var (
 )
 
 type Client struct {
-	client  *http.Client
-	baseURL string
+	client *http.Client
 }
 
 type Request struct {
-	URL     string
-	Path    string
-	Method  HTTPMethod
-	Headers http.Header
-	Body    []byte
+	Headers      http.Header
+	CustomClient *http.Client
+	URL          string
+	Method       HTTPMethod
+	Body         []byte
 }
 
-func NewClient(baseURL string, timeout time.Duration) *Client {
+func NewClient(timeout time.Duration) *Client {
 	to := defaultRequestTimeout
 	if timeout > 0 {
 		to = timeout
@@ -55,8 +53,7 @@ func NewClient(baseURL string, timeout time.Duration) *Client {
 	}
 
 	return &Client{
-		client:  &client,
-		baseURL: baseURL,
+		client: &client,
 	}
 }
 
@@ -71,17 +68,7 @@ func (c *Client) Do(ctx context.Context, req Request) (*http.Response, error) {
 		reader = bytes.NewReader(req.Body)
 	}
 
-	baseURL := c.baseURL
-	if req.URL != "" {
-		baseURL = req.URL
-	}
-
-	reqURLStr := strings.TrimRight(baseURL, "/")
-	if trimmedPath := strings.TrimLeft(req.Path, "/"); trimmedPath != "" {
-		reqURLStr += "/" + trimmedPath
-	}
-
-	reqURL, err := url.Parse(reqURLStr)
+	reqURL, err := url.Parse(req.URL)
 	if err != nil {
 		return nil, fmt.Errorf("invalid request url: %w", err)
 	}
@@ -95,7 +82,12 @@ func (c *Client) Do(ctx context.Context, req Request) (*http.Response, error) {
 		httpReq.Header = req.Headers.Clone()
 	}
 
-	res, err := c.client.Do(httpReq) // #nosec G704 -- request URL already validated
+	client := c.client
+	if req.CustomClient != nil {
+		client = req.CustomClient
+	}
+
+	res, err := client.Do(httpReq) // #nosec G704 -- request URL already validated
 	if err != nil {
 		return nil, fmt.Errorf("execute request: %w", err)
 	}
