@@ -10,6 +10,10 @@ Hatch uses **Vertical Slice Architecture**. Each feature is a self-contained uni
 
 ```
 internal/
+├── shared/              ← Project-specific code shared across modules
+│   ├── auth/            ← Auth middleware, guards
+│   ├── events/          ← Domain events
+│   └── contract/        ← Cross-module interfaces
 └── note/
     ├── note.go              ← Module entry: declares all transports, listeners, and public contracts
     ├── domain/              ← Entities, value objects, repository contracts
@@ -83,7 +87,7 @@ Routes, event listeners, gRPC services — all explicitly wired. No hidden behav
 
 ### Shared Library (`pkg/`)
 
-Internal library consumed by all modules. Modules import from `pkg/` for cross-cutting concerns — never from other modules. Organize packages as the project grows.
+General public library. Modules import from `pkg/` for cross-cutting concerns — never from other modules.
 
 ```
 pkg/
@@ -95,15 +99,21 @@ pkg/
 └── ...
 ```
 
+### Shared Kernel (`internal/shared/`)
+
+Project-specific code used by more than one module, but too app-specific for `pkg/` — e.g., an auth middleware, events messages.
+### Domain Layer
+
+Each module owns its business domain in `domain/` — entities, repository contracts, business rules. Example: `Note.Archive()` encapsulates the logic of archiving a note. Other modules never import `domain/` directly; they go through the facade.
+
 ### Test Utilities
 
 Reusable helpers for consistent testing live under `test/`.
 
----
 
-## Cross-Module Communication
+### Cross-Module Communication
 
-Modules expose a minimal facade when other bounded contexts need access. The facade protects internals and keeps coupling low.
+Modules should expose a minimal facade only when other bounded contexts truly need access. This facade shields internal complexity and maintains low coupling. When appropriate, prefer asynchronous communication via a queue instead.
 
 ```
 internal/
