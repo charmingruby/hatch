@@ -15,11 +15,11 @@ type ErrorResponse struct {
 }
 
 func WriteOKResponse(w http.ResponseWriter, v any) {
-	writeResponse(w, http.StatusOK, v)
+	WriteResponse(w, http.StatusOK, v)
 }
 
 func WriteCreatedResponse(w http.ResponseWriter, v any) {
-	writeResponse(w, http.StatusCreated, v)
+	WriteResponse(w, http.StatusCreated, v)
 }
 
 func WriteEmptyResponse(w http.ResponseWriter) {
@@ -36,12 +36,12 @@ func WriteError(log *slog.Logger, w http.ResponseWriter, err error) {
 
 	log.Error("internal server error", "error", err)
 
-	writeResponse(w, http.StatusInternalServerError, ErrorResponse{
+	WriteResponse(w, http.StatusInternalServerError, ErrorResponse{
 		Message: "Internal Server Error",
 	})
 }
 
-func writeResponse(w http.ResponseWriter, status int, v any) {
+func WriteResponse(w http.ResponseWriter, status int, v any) {
 	if v == nil {
 		w.WriteHeader(status)
 		return
@@ -62,7 +62,7 @@ func writeResponse(w http.ResponseWriter, status int, v any) {
 func writeAppError(w http.ResponseWriter, err *apperr.Error) {
 	status := mapStatus(err.Type)
 
-	writeResponse(w, status, ErrorResponse{
+	WriteResponse(w, status, ErrorResponse{
 		Message: err.Message,
 		Code:    err.Code,
 		Details: err.Details,
