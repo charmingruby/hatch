@@ -11,7 +11,7 @@ func (f *Feature) ArchiveNoteEndpoint(w http.ResponseWriter, r *http.Request) {
 
 	id := r.PathValue("id")
 
-	log := o11y.FromContext(ctx).
+	log := o11y.LoggerFromContext(ctx).
 		With("feature", "ArchiveNote").
 		With("note_id", id)
 

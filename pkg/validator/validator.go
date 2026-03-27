@@ -37,7 +37,7 @@ func WithValidator(ctx context.Context, val *Validator) context.Context {
 	return context.WithValue(ctx, ctxKey{}, val)
 }
 
-func FromContext(ctx context.Context) *Validator {
+func ValidatorFromContext(ctx context.Context) *Validator {
 	val, ok := ctx.Value(ctxKey{}).(*Validator)
 	if !ok {
 		return New()

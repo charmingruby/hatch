@@ -12,6 +12,7 @@ const (
 	TypeValidation       = "VALIDATION"
 	TypeConflict         = "CONFLICT"
 	TypeInvalidOperation = "INVALID_OPERATION"
+	TypeUnauthorized     = "UNAUTHORIZED"
 )
 
 type Error struct {
@@ -71,11 +72,19 @@ func IsValidation(err error) bool {
 }
 
 func Internal(message string, err error) *Error {
-	return New(TypeInternal, message, nil)
+	return New(TypeInternal, message, err)
 }
 
 func IsInternal(err error) bool {
 	return IsType(err, TypeInternal)
+}
+
+func Unauthorized(message string, err error) *Error {
+	return New(TypeUnauthorized, message, err)
+}
+
+func IsUnauthorized(err error) bool {
+	return IsType(err, TypeUnauthorized)
 }
 
 func (e *Error) WithDetails(details any) *Error {

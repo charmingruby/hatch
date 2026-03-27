@@ -10,7 +10,7 @@ var Log *Logger
 
 type Logger = slog.Logger
 
-type ctxKey struct{}
+type loggerCtxKey struct{}
 
 func Init() *Logger {
 	Log = slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
@@ -21,15 +21,15 @@ func Init() *Logger {
 }
 
 func WithLogger(ctx context.Context, log *Logger) context.Context {
-	return context.WithValue(ctx, ctxKey{}, log)
+	return context.WithValue(ctx, loggerCtxKey{}, log)
 }
 
-func FromContext(ctx context.Context) *Logger {
+func LoggerFromContext(ctx context.Context) *Logger {
 	if ctx == nil {
 		return Log
 	}
 
-	if log, ok := ctx.Value(ctxKey{}).(*Logger); ok {
+	if log, ok := ctx.Value(loggerCtxKey{}).(*Logger); ok {
 		return log
 	}
 

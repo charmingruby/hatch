@@ -28,7 +28,17 @@ func WriteEmptyResponse(w http.ResponseWriter) {
 
 func WriteError(log *slog.Logger, w http.ResponseWriter, err error) {
 	if appErr, ok := errors.AsType[*apperr.Error](err); ok {
-		log.Warn("application error", "type", appErr.Type, "code", appErr.Code, "message", appErr.Message)
+		var originalErrMsg string
+		if appErr.Err != nil {
+			originalErrMsg = appErr.Err.Error()
+		}
+
+		log.Warn("application error",
+			"type", appErr.Type,
+			"code", appErr.Code,
+			"message", appErr.Message,
+			"original_error", originalErrMsg,
+		)
 
 		writeAppError(w, appErr)
 		return
@@ -79,6 +89,8 @@ func mapStatus(t apperr.ErrorType) int {
 		return http.StatusConflict
 	case apperr.TypeInvalidOperation:
 		return http.StatusBadRequest
+	case apperr.TypeUnauthorized:
+		return http.StatusUnauthorized
 	default:
 		return http.StatusInternalServerError
 	}

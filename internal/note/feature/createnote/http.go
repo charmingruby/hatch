@@ -23,7 +23,7 @@ type ResponseData struct {
 func (f *Feature) CreateNoteEndpoint(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
-	log := o11y.FromContext(ctx).With("feature", "CreateNote")
+	log := o11y.LoggerFromContext(ctx).With("feature", "CreateNote")
 
 	req, err := httpx.ParseRequest[Request](w, r)
 	if err != nil {

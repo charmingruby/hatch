@@ -26,7 +26,7 @@ func ParseRequest[T any](w http.ResponseWriter, r *http.Request) (*T, error) {
 		return nil, err
 	}
 
-	val := validator.FromContext(r.Context())
+	val := validator.ValidatorFromContext(r.Context())
 
 	if err := val.Validate(obj); err != nil {
 		WriteResponse(w, http.StatusBadRequest, map[string]string{

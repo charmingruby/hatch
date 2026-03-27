@@ -27,7 +27,7 @@ func livenessRoute() http.HandlerFunc {
 
 func readinessRoute(ext External) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		log := o11y.FromContext(r.Context())
+		log := o11y.LoggerFromContext(r.Context())
 
 		ctx := r.Context()
 
