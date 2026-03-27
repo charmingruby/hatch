@@ -16,7 +16,7 @@ type Response struct {
 func (f *Feature) ListNotesEndpoint(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
-	log := o11y.LoggerFromContext(ctx).With("feature", "ListNotes")
+	log := o11y.LoggerFromContext(ctx).With("endpoint", "ListNotes")
 
 	notes, err := f.service.ListNotes(ctx)
 	if err != nil {
