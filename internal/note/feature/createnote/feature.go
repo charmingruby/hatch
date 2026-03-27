@@ -8,8 +8,8 @@ type Feature struct {
 	service *Service
 }
 
-func New(repo domain.NoteRepository) *Feature {
+func New(noteRepo domain.NoteRepository) *Feature {
 	return &Feature{
-		service: NewService(repo),
+		service: NewService(noteRepo),
 	}
 }

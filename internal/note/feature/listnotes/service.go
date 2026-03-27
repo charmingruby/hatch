@@ -7,17 +7,17 @@ import (
 )
 
 type Service struct {
-	repo domain.NoteRepository
+	noteRepo domain.NoteRepository
 }
 
-func NewService(repo domain.NoteRepository) *Service {
+func NewService(noteRepo domain.NoteRepository) *Service {
 	return &Service{
-		repo: repo,
+		noteRepo: noteRepo,
 	}
 }
 
 func (s *Service) ListNotes(ctx context.Context) ([]*domain.Note, error) {
-	notes, err := s.repo.List(ctx)
+	notes, err := s.noteRepo.List(ctx)
 	if err != nil {
 		return nil, apperr.Internal("failed to list notes", err)
 	}

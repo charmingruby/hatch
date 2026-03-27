@@ -11,14 +11,14 @@ import (
 )
 
 func Register(r *chi.Mux, db *sqlx.DB) error {
-	repo, err := postgres.NewNoteRepository(db)
+	noteRepo, err := postgres.NewNoteRepository(db)
 	if err != nil {
 		return err
 	}
 
-	createNoteF := createnote.New(repo)
-	archiveNoteF := archivenote.New(repo)
-	listNotesF := listnotes.New(repo)
+	createNoteF := createnote.New(noteRepo)
+	archiveNoteF := archivenote.New(noteRepo)
+	listNotesF := listnotes.New(noteRepo)
 
 	r.Route("/api", func(apiR chi.Router) {
 		apiR.Route("/v1", func(v1R chi.Router) {

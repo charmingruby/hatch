@@ -7,19 +7,19 @@ import (
 )
 
 type Service struct {
-	repo domain.NoteRepository
+	noteRepo domain.NoteRepository
 }
 
-func NewService(repo domain.NoteRepository) *Service {
+func NewService(noteRepo domain.NoteRepository) *Service {
 	return &Service{
-		repo: repo,
+		noteRepo: noteRepo,
 	}
 }
 
 func (s *Service) CreateNote(ctx context.Context, title, content string) (string, error) {
 	note := domain.NewNote(title, content)
 
-	if err := s.repo.Create(ctx, note); err != nil {
+	if err := s.noteRepo.Create(ctx, note); err != nil {
 		return "", apperr.Internal("failed to create note", err)
 	}
 
