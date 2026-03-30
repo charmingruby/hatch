@@ -14,7 +14,7 @@ type Server struct {
 	http.Server
 }
 
-func NewServer(port string, v *validator.Validator, ext External) (*Server, *chi.Mux) {
+func NewServer(port string, v *validator.Validator, ext External) (*Server, chi.Router) {
 	addr := ":" + port
 
 	r := chi.NewRouter()
@@ -22,6 +22,11 @@ func NewServer(port string, v *validator.Validator, ext External) (*Server, *chi
 	r.Use(withO11y, withValidator(v))
 
 	registerProbes(r, ext)
+
+	var router chi.Router
+	r.Route("/api", func(apiR chi.Router) {
+		router = apiR
+	})
 
 	return &Server{
 		Server: http.Server{
@@ -31,7 +36,7 @@ func NewServer(port string, v *validator.Validator, ext External) (*Server, *chi
 			Addr:         addr,
 			Handler:      r,
 		},
-	}, r
+	}, router
 }
 
 func (s *Server) Start() error {

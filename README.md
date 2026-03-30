@@ -45,8 +45,10 @@ createNoteF := createnote.New(repo)
 listNotesF := listnotes.New(repo)
 
 // HTTP
-notes.Post("/", createNoteF.CreateNoteEndpoint)
-notes.Get("/", listNotesF.ListNotesEndpoint)
+r.Route("/api/v1/notes", func(r chi.Router) {
+		r.Post("/", createNoteF.CreateNoteEndpoint)
+		r.Get("/", listNotesF.ListNotesEndpoint)
+})
 
 // Event listener
 bus.On("user.created", createNoteF.OnUserCreated)
