@@ -50,7 +50,7 @@ func Run(t *testing.T, handler http.HandlerFunc, tc Case) {
 }
 
 func Init() {
-	o11y.Init()
+	o11y.InitLogger()
 }
 
 func ParseResponse[T any](body []byte) (T, error) {
