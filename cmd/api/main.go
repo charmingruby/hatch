@@ -34,7 +34,7 @@ func run() error {
 	)
 	defer stop()
 
-	log := o11y.Init()
+	log := o11y.InitLogger()
 
 	log.Info("config: loading...")
 
