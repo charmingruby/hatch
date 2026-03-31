@@ -2,7 +2,7 @@ package container
 
 import (
 	"HATCH_APP/db/migration"
-	"HATCH_APP/pkg/database/postgres"
+	"HATCH_APP/pkg/resource/postgres"
 	"context"
 	"errors"
 	"testing"

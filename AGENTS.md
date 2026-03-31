@@ -10,7 +10,10 @@ internal/<module>/
 ├── domain/            ← Entities, value objects, repository interfaces
 ├── feature/<name>/    ← Self-contained use case
 │   ├── feature.go     ← Constructor + dependency wiring
-│   └── http.go        ← HTTP handler (or other transport)
+│   ├── event.go       ← Event handlers
+│   ├── service.go     ← Domain Logic
+│   ├── grpc.go        ← gRPC handlers
+│   └── http.go        ← HTTP handlers
 ├── infra/             ← Repository implementations, external services
 └── mocks/             ← Test doubles
 ```
@@ -20,7 +23,6 @@ internal/<module>/
 **Always:**
 - Changes stay inside the active module
 - Follow existing patterns and naming
-- Test every use case
 - Wire features declaratively in `<module>.go`
 
 **Never:**

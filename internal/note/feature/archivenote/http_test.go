@@ -3,7 +3,7 @@ package archivenote_test
 import (
 	"HATCH_APP/internal/note/domain"
 	"HATCH_APP/internal/note/feature/archivenote"
-	"HATCH_APP/internal/note/infra/database/postgres"
+	"HATCH_APP/internal/note/infra/store/postgres"
 	"HATCH_APP/pkg/transport/httpx"
 	"HATCH_APP/test/container"
 	"HATCH_APP/test/httptest"

@@ -3,8 +3,8 @@ package main
 import (
 	"HATCH_APP/config"
 	"HATCH_APP/internal/note"
-	"HATCH_APP/pkg/database/postgres"
 	"HATCH_APP/pkg/o11y"
+	"HATCH_APP/pkg/resource/postgres"
 	"HATCH_APP/pkg/transport/httpx"
 	"HATCH_APP/pkg/validator"
 	"context"

@@ -4,7 +4,7 @@ import (
 	"HATCH_APP/internal/note/feature/archivenote"
 	"HATCH_APP/internal/note/feature/createnote"
 	"HATCH_APP/internal/note/feature/listnotes"
-	"HATCH_APP/internal/note/infra/database/postgres"
+	"HATCH_APP/internal/note/infra/store/postgres"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/jmoiron/sqlx"

@@ -6,6 +6,11 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
+type Querier interface {
+	sqlx.ExtContext
+	Preparex(query string) (*sqlx.Stmt, error)
+}
+
 type TransactionManager[T any] interface {
 	Transact(func(tx T) error) error
 }

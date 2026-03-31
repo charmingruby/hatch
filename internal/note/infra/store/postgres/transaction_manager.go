@@ -2,7 +2,7 @@ package postgres
 
 import (
 	"HATCH_APP/internal/note/domain"
-	"HATCH_APP/pkg/database/postgres"
+	"HATCH_APP/pkg/store/postgres"
 
 	"github.com/jmoiron/sqlx"
 )

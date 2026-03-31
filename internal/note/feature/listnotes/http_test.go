@@ -3,7 +3,7 @@ package listnotes_test
 import (
 	"HATCH_APP/internal/note/domain"
 	"HATCH_APP/internal/note/feature/listnotes"
-	"HATCH_APP/internal/note/infra/database/postgres"
+	"HATCH_APP/internal/note/infra/store/postgres"
 	"HATCH_APP/test/container"
 	"HATCH_APP/test/httptest"
 	"net/http"
