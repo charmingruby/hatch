@@ -2,9 +2,11 @@ package postgres
 
 import (
 	"context"
+
 	"time"
 
 	"github.com/jmoiron/sqlx"
+	_ "github.com/lib/pq"
 )
 
 const driver = "postgres"
