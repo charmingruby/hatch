@@ -41,7 +41,6 @@ func run() error {
 	cfg, err := config.Load()
 	if err != nil {
 		log.Error("config: error loading config", "error", err)
-
 		return err
 	}
 
@@ -52,7 +51,6 @@ func run() error {
 	db, err := postgres.Connect(ctx, cfg.PostgresURL)
 	if err != nil {
 		log.Error("postgres: connection error", "error", err)
-
 		return err
 	}
 
@@ -64,15 +62,10 @@ func run() error {
 		DB: db,
 	})
 
-	log.Info("note: creating module...")
-
 	if err := note.Register(r, db); err != nil {
 		log.Error("note: module error", "error", err)
-
 		return err
 	}
-
-	log.Info("note: module created")
 
 	shutdownErrCh := make(chan error, 1)
 
@@ -91,7 +84,6 @@ func run() error {
 	err = <-shutdownErrCh
 	if err != nil {
 		log.Error("shutdown: shutdown error", "error", err)
-
 		return err
 	}
 
