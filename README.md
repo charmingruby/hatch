@@ -21,6 +21,8 @@ internal/
     └── mocks/           ← Test doubles
 ```
 
+**Example:** [sturdy](https://github.com/charmingruby/sturdy) — distributed e-commerce with Outbox Pattern
+
 ---
 
 ## Features
