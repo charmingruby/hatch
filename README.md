@@ -2,6 +2,12 @@
 
 Feature-driven Go template built on declarative composition. Read a module, see everything it does.
 
+> ⚠️ When to use
+>
+> This template is designed for already complex systems or applications expected to grow into multiple modules, integrations, and bounded contexts.
+>
+> If you're starting something small, exploratory, or with limited scope, this structure will likely add unnecessary overhead. In those cases, a simpler approach is recommended.
+
 ---
 
 ## Architecture
