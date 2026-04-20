@@ -77,7 +77,7 @@ Modules import from `pkg/` for cross-cutting concerns — never from other modul
 ```
 pkg/
 ├── core/              ← Primitives, app errors
-├── resource/          ← Shared connections (redis/, postgres/)
+├── connection/        ← Shared connections (redis/, postgres/)
 ├── cache/             ← Capability: caching (redis/)
 ├── lock/              ← Capability: distributed locking (redis/, postgres/)
 ├── store/             ← Capability: data persistence (postgres/)

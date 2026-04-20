@@ -3,8 +3,8 @@ package main
 import (
 	"HATCH_APP/config"
 	"HATCH_APP/internal/note"
+	"HATCH_APP/pkg/connection/postgres"
 	"HATCH_APP/pkg/o11y"
-	"HATCH_APP/pkg/resource/postgres"
 	"HATCH_APP/pkg/transport/httpx"
 	"HATCH_APP/pkg/validator"
 	"context"
@@ -94,7 +94,7 @@ func run() error {
 
 func shutdown(
 	ctx context.Context,
-	errShutdown chan error,
+	errCh chan error,
 	srv *httpx.Server,
 	db *sqlx.DB,
 ) {
@@ -103,21 +103,20 @@ func shutdown(
 	ctxTimeout, cancel := context.WithTimeout(context.Background(), SHUTDOWN_TIMEOUT)
 	defer cancel()
 
-	err := srv.Close(ctxTimeout)
-	switch {
-	case err == nil:
-	case errors.Is(err, context.DeadlineExceeded):
-		errShutdown <- errors.New("deadline exceeded, forcing shutdown")
-		return
-	default:
-		errShutdown <- errors.New("forcing shutdown")
+	if err := srv.Close(ctxTimeout); err != nil {
+		if errors.Is(err, context.DeadlineExceeded) {
+			errCh <- errors.New("deadline exceeded, forcing shutdown")
+			return
+		}
+
+		errCh <- errors.New("forcing shutdown")
 		return
 	}
 
 	if err := db.Close(); err != nil {
-		errShutdown <- err
+		errCh <- err
 		return
 	}
 
-	errShutdown <- nil
+	errCh <- nil
 }
